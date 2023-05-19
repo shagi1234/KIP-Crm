@@ -1,0 +1,35 @@
+package tm.payhas.crm.api.service;
+
+import com.google.gson.JsonObject;
+
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
+import retrofit2.http.PATCH;
+import retrofit2.http.POST;
+import tm.payhas.crm.api.data.response.ResponseSignIn;
+import tm.payhas.crm.api.request.RequestCreateTask;
+import tm.payhas.crm.api.request.RequestUserTasks;
+import tm.payhas.crm.api.response.ResponseTasks;
+
+public interface Services {
+
+    @Headers({"Content-Type: application/json"})
+    @POST("/auth/singin")
+    Call<ResponseSignIn> signIn(@Body JsonObject jsonObject);
+
+    @Headers({"Content-Type: application/json"})
+    @PATCH("tasks/user")
+    Call<ResponseTasks> getUserTasks(@Header("Authorization") String token, @Body RequestUserTasks requestUserTasks);
+
+    @Headers({"Content-Type: application/json"})
+    @POST("tasks")
+    Call<ResponseTasks> createTask(@Header("Authorization") String token, @Body RequestCreateTask requestCreateTask);
+
+    @GET("chat/rooms")
+    Call<>
+
+
+}

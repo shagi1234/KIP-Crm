@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/home"
+        android:enabled="true"
+        android:icon="@drawable/ic_home_selectable"
+        android:title="@string/home"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/chat"
+        android:enabled="true"
+        android:icon="@drawable/ic_chat_selectable"
+        android:title="@string/chat"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/document"
+        android:enabled="true"
+        android:icon="@drawable/ic_document_selectable"
+        android:title="@string/document"
+        android:visible="true" />
+    <item
+        android:id="@+id/document_cloud"
+        android:enabled="true"
+        android:icon="@drawable/ic_document_cloud"
+        android:title="Document cloud"
+        android:visible="true" />
+    <item
+        android:id="@+id/profile"
+        android:enabled="true"
+        android:icon="@drawable/ic_profile_selectable"
+        android:title="@string/profile"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+
+</menu>

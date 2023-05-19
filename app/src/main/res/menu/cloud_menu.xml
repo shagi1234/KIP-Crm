@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/edit"
+        android:enabled="true"
+        android:icon="@drawable/ic_edit"
+        android:title="Edit"
+        tools:ignore="HardcodedText" />
+    <item
+        android:id="@+id/download"
+        android:enabled="true"
+        android:icon="@drawable/ic_download"
+        android:iconTint="@color/edt_hint_color"
+        android:title="Download"
+        android:visible="true"
+        tools:ignore="HardcodedText" />
+
+    <item
+        android:id="@+id/add"
+        android:enabled="true"
+        android:icon="@drawable/ic_add_circle"
+        android:title="Add"
+        tools:ignore="HardcodedText" />
+
+    <item
+        android:id="@+id/share"
+        android:enabled="true"
+        android:icon="@drawable/ic_share"
+        android:title="Share"
+        tools:ignore="HardcodedText" />
+
+    <item
+        android:id="@+id/delete"
+        android:enabled="true"
+        android:icon="@drawable/ic_trash"
+        android:title="Delete"
+        tools:ignore="HardcodedText" />
+
+
+</menu>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="end"
+    android:layout_marginVertical="10dp"
+    android:gravity="end"
+    android:maxWidth="250dp"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:id="@+id/msg_indicator"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_msg_indicator_sent"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/message_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginEnd="2dp"
+            android:fontFamily="@font/inter_regular"
+            android:text="2:45"
+            android:textColor="@color/chat_time_color"
+            android:textSize="10sp"
+            tools:ignore="HardcodedText,SmallSp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/received_msg_bg"
+        android:orientation="horizontal"
+        tools:ignore="UselessParent">
+
+        <ImageView
+            android:id="@+id/play_pause_voice_message"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginVertical="8dp"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_play_circle"
+            tools:ignore="ContentDescription" />
+
+        <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginHorizontal="10dp"
+            android:orientation="vertical">
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                style="@style/Widget.MaterialComponents.LinearProgressIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:progress="70"
+                android:theme="@style/Widget.MaterialComponents.LinearProgressIndicator" />
+
+            <TextView
+                android:id="@+id/voice_message_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="6dp"
+                android:fontFamily="@font/inter_regular"
+                android:maxLines="1"
+                android:text="2:45, 103KB"
+                android:textColor="@color/text_color"
+                android:textSize="10sp"
+                tools:ignore="HardcodedText,SmallSp" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/cloud_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ripple"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal"
+        tools:ignore="MissingPrefix,UselessParent">
+
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginVertical="12sp"
+            android:layout_marginStart="20dp"
+            android:button="@null"
+            android:drawableStart="@drawable/custom_checkbox"
+            android:gravity="center"
+            android:paddingStart="5dp"
+            android:visibility="gone"
+            tools:ignore="RtlSymmetry" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginVertical="5dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="10dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_folder"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/file_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginVertical="12dp"
+            android:layout_marginEnd="20dp"
+            android:fontFamily="@font/inter_regular"
+            android:maxLines="1"
+            android:text="Demo"
+            android:textColor="@color/text_color"
+            android:textSize="12sp"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+</FrameLayout>

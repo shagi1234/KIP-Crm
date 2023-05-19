@@ -1,0 +1,76 @@
+{
+  "id": 1,
+  "personalData": {
+    "name": "Durdy",
+    "surname": "Durdyyew",
+    "birthday": "1991-01-01",
+    "lastname": "Durdyyewich",
+    "birthPlace": "test string data",
+    "homePhoneNumber": "Домашний номер тел, 99312121211"
+  },
+  "avatar": "hello/bb63d41d-dec3-4ce0-9daa-00894939c204.png",
+  "gender": "male",
+  "nationality": "turkmen",
+  "passportData": {
+    "seriya": "I-BN",
+    "fileUrl": "unique field, passport file url 1",
+    "fileName": "passport.pdf",
+    "passportNumber": 1
+  },
+  "tabelNumber": 1,
+  "registeredAddress": "Адрес по прописке",
+  "registeredRegionId": 1,
+  "livingAddress": "Адрес проживания (временный)",
+  "livingRegionId": 2,
+  "migrationPermission": {
+    "exists": false,
+    "fileUrl": null,
+    "fileName": null
+  },
+  "workBook": {
+    "fileUrl": "the workbook url",
+    "fileName": "workbook.pdf",
+    "workBookNumber": "112233"
+  },
+  "generalInformation": {
+    "fileUrl": "Общие сведения, 3 arka file url",
+    "fileName": "3arka.pdf"
+  },
+  "cv": {
+    "fileUrl": "Объективка, cv file url",
+    "fileName": "cv.pdf"
+  },
+  "army": {
+    "exists": false,
+    "fileUrl": null,
+    "fileName": null,
+    "militaryId": null
+  },
+  "email": "user1@gmail.com",
+  "mobilePhoneNumber": "+99365000001",
+  "entrepreneur": {
+    "exists": false,
+    "fileUrl": null,
+    "fileName": null
+  },
+  "driverLicense": {},
+  "pensioner": {
+    "exists": false,
+    "fileUrl": null,
+    "fileName": null
+  },
+  "disability": {
+    "exists": false,
+    "fileUrl": null,
+    "fileName": null
+  },
+  "status": "working",
+  "medicalBypass": null,
+  "certification": null,
+  "createdAt": "2023-04-06T06:40:12.563Z",
+  "updatedAt": "2023-04-20T04:20:23.748Z",
+  "deletedAt": "2023-04-07T09:40:18.586Z",
+  "token": {
+    "acceToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZXMiOltdLCJpYXQiOjE2ODMwMjY5OTB9.Xn4No8Iqmeus4-dWP0N60CA4_GtqjmO2c7OZlx85V7M"
+  }
+}

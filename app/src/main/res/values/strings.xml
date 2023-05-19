@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">CRM</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="remember_me">Remember me?</string>
+    <string name="login">Girmek</string>
+    <string name="friends">СОТРУДНИКИ</string>|
+    <string name="group">группы</string>
+    <string name="register">Agza bolmak</string>
+    <string name="home">Home</string>
+    <string name="chat">Chat</string>
+    <string name="document">Document</string>
+    <string name="profile">Profile</string>
+    <string name="chats">Чаты</string>
+    <string name="search">Search</string>
+
+</resources>

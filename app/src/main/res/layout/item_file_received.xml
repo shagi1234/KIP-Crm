@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="10dp"
+    android:gravity="start"
+    android:maxWidth="250dp"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/received_msg_bg"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/play_pause_voice_message"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginVertical="8dp"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_folder_word" />
+
+        <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginHorizontal="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/msg_file_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="6dp"
+                android:fontFamily="@font/inter_regular"
+                android:maxWidth="100dp"
+                android:maxLines="1"
+                android:text="Lorem ipsum"
+                android:textColor="@color/text_color"
+                android:textSize="12sp"
+                tools:ignore="HardcodedText,SmallSp" />
+
+            <TextView
+                android:id="@+id/file_msg_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="6dp"
+                android:fontFamily="@font/inter_regular"
+                android:text="2:45, 103KB"
+                android:textColor="@color/text_color"
+                android:textSize="10sp"
+                tools:ignore="HardcodedText,SmallSp" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/message_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="2dp"
+        android:fontFamily="@font/inter_regular"
+        android:text="2:45"
+        android:textColor="@color/chat_time_color"
+        android:textSize="10sp"
+        tools:ignore="HardcodedText,SmallSp" />
+
+</LinearLayout>

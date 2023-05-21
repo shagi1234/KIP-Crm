@@ -1,10 +1,6 @@
 package tm.payhas.crm.webSocket;
 
 import static tm.payhas.crm.api.network.Network.BASE_URL_SOCKET;
-import static tm.payhas.crm.statics.StaticConstants.FILE;
-import static tm.payhas.crm.statics.StaticConstants.PHOTO;
-import static tm.payhas.crm.statics.StaticConstants.STRING;
-import static tm.payhas.crm.statics.StaticConstants.VOICE;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,7 +20,6 @@ import java.util.ArrayList;
 import dev.gustavoavila.websocketclient.WebSocketClient;
 import tm.payhas.crm.interfaces.MessageCallBack;
 import tm.payhas.crm.preference.AccountPreferences;
-import tm.payhas.crm.interfaces.MessageCallBack;
 
 public class WebSocket {
 
@@ -145,5 +140,12 @@ public class WebSocket {
         webSocketClient.setReadTimeout(70000);
         webSocketClient.enableAutomaticReconnection(5000);
         webSocketClient.connect();
+    }
+
+
+    public void sendMessage(String s) {
+        webSocketClient.send(s);
+        Log.e(TAG, "sendMessage: " + "messageSent");
+        Log.e(TAG, "sendMessage: "+s );
     }
 }

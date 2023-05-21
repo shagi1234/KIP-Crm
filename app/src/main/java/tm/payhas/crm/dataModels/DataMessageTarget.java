@@ -4,12 +4,12 @@ import tm.payhas.crm.api.data.dto.DtoUserInfo;
 
 public class DataMessageTarget {
     private int roomId;
-    private int id;
+    private Integer id = null;
     private String localId;
     private String type;
     private String text;
-    private int forwardId;
-    private int answerId;
+    private Integer forwardId = null;
+    private Integer answerId = null;
     private int friendId;
     private String status;
     private int authorId;
@@ -18,19 +18,6 @@ public class DataMessageTarget {
     private String updatedAt;
     private String deletedAt;
     private DtoUserInfo author;
-
-    public DataMessageTarget(int roomId, int id, String localId, String type, String text, int forwardId, int answerId, int friendId, String status, DataAttachment attachment) {
-        this.roomId = roomId;
-        this.id = id;
-        this.localId = localId;
-        this.type = type;
-        this.text = text;
-        this.forwardId = forwardId;
-        this.answerId = answerId;
-        this.friendId = friendId;
-        this.status = status;
-        this.attachment = attachment;
-    }
 
     public int getRoomId() {
         return roomId;

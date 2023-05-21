@@ -1,13 +1,20 @@
 package tm.payhas.crm.adapters;
 
+import static tm.payhas.crm.statics.StaticConstants.FILE;
+import static tm.payhas.crm.statics.StaticConstants.PHOTO;
+import static tm.payhas.crm.statics.StaticConstants.STRING;
+import static tm.payhas.crm.statics.StaticConstants.VOICE;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.menu.MenuBuilder;
@@ -17,10 +24,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import tm.payhas.crm.R;
-import tm.payhas.crm.model.ModelMessage;
+import tm.payhas.crm.api.data.dto.subClassesUserInfo.DataRoomChat;
+import tm.payhas.crm.dataModels.DataMessageTarget;
+import tm.payhas.crm.interfaces.NewMessage;
 
-public class AdapterSingleChat extends RecyclerView.Adapter {
-    private ArrayList<ModelMessage> messages = new ArrayList<>();
+public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessage {
+    private ArrayList<DataRoomChat> messages = new ArrayList<>();
     private Context context;
     private Activity activity;
 
@@ -28,8 +37,9 @@ public class AdapterSingleChat extends RecyclerView.Adapter {
         this.context = context;
     }
 
-    public void setMessages(ArrayList<ModelMessage> messages) {
+    public void setMessages(ArrayList<DataRoomChat> messages) {
         this.messages = messages;
+        notifyDataSetChanged();
     }
 
     public static final int LAYOUT_SEND_MESSAGE = 1;
@@ -49,31 +59,18 @@ public class AdapterSingleChat extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        switch (messages.get(position).getViewType()) {
-            case 1:
-                return LAYOUT_SEND_MESSAGE;
-            case 2:
-                return LAYOUT_RECEIVED_MESSAGE;
-            case 3:
-                return LAYOUT_SEND_VOICE_MESSAGE;
-            case 4:
-                return LAYOUT_RECEIVED_VOICE_MESSAGE;
-            case 5:
-                return LAYOUT_SEND_FILE;
-            case 6:
-                return LAYOUT_RECEIVED_FILE;
-            case 7:
-                return LAYOUT_SEND_IMAGE;
-            case 8:
-                return LAYOUT_RECEIVED_IMAGE;
-            case 9:
-                return LAYOUT_SEND_REPLY;
-            case 10:
-                return LAYOUT_RECEIVED_REPLY;
-            default:
-                return -1;
+        DataMessageTarget oneMessage = messages.get(position).getMessages().get(position);
 
+        if (oneMessage.getType().equals(STRING)) {
+            return LAYOUT_SEND_MESSAGE;
+        } else if (oneMessage.getType().equals(PHOTO)) {
+            return LAYOUT_SEND_IMAGE;
+        } else if (oneMessage.getType().equals(VOICE)) {
+            return LAYOUT_SEND_VOICE_MESSAGE;
+        } else if (oneMessage.getType().equals(FILE)) {
+            return LAYOUT_SEND_FILE;
         }
+        return LAYOUT_SEND_MESSAGE;
     }
 
     @NonNull
@@ -118,20 +115,31 @@ public class AdapterSingleChat extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        switch (messages.get(position).getViewType()) {
-            case LAYOUT_SEND_MESSAGE:
-                ((SenderMessageViewHolder) holder).bind();
-                break;
-            case LAYOUT_RECEIVED_MESSAGE:
-                ModelMessage receivedMsg = messages.get(position);
-                ((ReceivedMessageViewHolder) holder).msgReceived.setText(receivedMsg.getMessage());
-                break;
+        DataMessageTarget oneMessage = messages.get(position).getMessages().get(position);
+        if (oneMessage.getType().equals(STRING)) {
+            ((SenderMessageViewHolder) holder).bind(oneMessage.getText());
+        } else if (oneMessage.getType().equals(PHOTO)) {
+            ((ReceivedMessageViewHolder) holder).bind();
         }
+
     }
 
     @Override
     public int getItemCount() {
         return messages.size();
+    }
+
+    @Override
+    public void onNewMessage(DataMessageTarget dataMessageTarget) {
+        Toast.makeText(context, dataMessageTarget.getText(), Toast.LENGTH_SHORT).show();
+//        ArrayList<DataMessageTarget> oneMessageList = new ArrayList<>();
+//        oneMessageList.add(dataMessageTarget);
+//        DataRoomChat dataRoomChat = new DataRoomChat();
+//        dataRoomChat.setChatData("54455454");
+//        dataRoomChat.setMessages(oneMessageList);
+//        messages.add(dataRoomChat);
+        notifyDataSetChanged();
+        Log.e("Adapter", "onNewMessage: " + "added");
     }
 
     class SenderMessageViewHolder extends RecyclerView.ViewHolder {
@@ -142,24 +150,8 @@ public class AdapterSingleChat extends RecyclerView.Adapter {
             msgSent = itemView.findViewById(R.id.message_sent);
         }
 
-        public void bind() {
-            ModelMessage oneMessage = messages.get(getAdapterPosition());
-            msgSent.setText(oneMessage.getMessage());
-
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @SuppressLint("RestrictedApi")
-                @Override
-                public boolean onLongClick(View view) {
-                    @SuppressLint("RestrictedApi")
-                    MenuBuilder menuBuilder = new MenuBuilder(context);
-                    MenuInflater menuInflater = new MenuInflater(context);
-                    menuInflater.inflate(R.menu.context_menu, menuBuilder);
-                    MenuPopupHelper popupHelper = new MenuPopupHelper(context, menuBuilder, itemView);
-                    popupHelper.setForceShowIcon(true);
-                    popupHelper.show(300, 0);
-                    return true;
-                }
-            });
+        public void bind(String text) {
+            msgSent.setText(text);
         }
     }
 
@@ -185,6 +177,8 @@ public class AdapterSingleChat extends RecyclerView.Adapter {
         }
 
 
+        public void bind() {
+        }
     }
 
     private class SenderVoiceViewHolder extends RecyclerView.ViewHolder {

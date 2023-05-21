@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".fragment.FragmentGroupChat">
+    tools:context=".fragment.FragmentGroups">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rec_group_contact"

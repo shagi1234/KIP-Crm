@@ -1,9 +1,15 @@
 package tm.payhas.crm.api.response;
 
-import java.util.ArrayList;
-
-import tm.payhas.crm.api.data.dto.DtoUserInfo;
+import tm.payhas.crm.api.data.dto.DataUserGroup;
 
 public class ResponseUserGroup {
-    private ArrayList<DtoUserInfo> private
+    private DataUserGroup data;
+
+    public DataUserGroup getData() {
+        return data;
+    }
+
+    public void setData(DataUserGroup data) {
+        this.data = data;
+    }
 }

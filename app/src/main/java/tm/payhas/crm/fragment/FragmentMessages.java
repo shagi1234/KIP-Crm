@@ -22,6 +22,7 @@ import tm.payhas.crm.databinding.FragmentMessagesBinding;
 public class FragmentMessages extends Fragment {
     private FragmentMessagesBinding b;
     private AdapterViewPager adapterViewPager = new AdapterViewPager(mainFragmentManager);
+    private Fragment fragmentContacts;
 
     public static FragmentMessages newInstance() {
         FragmentMessages fragment = new FragmentMessages();
@@ -58,6 +59,7 @@ public class FragmentMessages extends Fragment {
         return b.getRoot();
     }
 
+
     private void initListeners() {
         b.searchCancel.setOnClickListener(view -> b.searchInput.setText(""));
         b.searchInput.addTextChangedListener(new TextWatcher() {
@@ -87,8 +89,8 @@ public class FragmentMessages extends Fragment {
     }
 
     private void setViewPager() {
-        adapterViewPager.addFragment(new FragmentChatContact(), getResources().getString(R.string.friends));
-        adapterViewPager.addFragment(new FragmentGroupChat(), getResources().getString(R.string.group));
+        adapterViewPager.addFragment(new FragmentContacts(), getResources().getString(R.string.friends));
+        adapterViewPager.addFragment(new FragmentGroups(), getResources().getString(R.string.group));
         b.tabLayout.setupWithViewPager(b.viewPager);
         b.viewPager.setAdapter(adapterViewPager);
     }

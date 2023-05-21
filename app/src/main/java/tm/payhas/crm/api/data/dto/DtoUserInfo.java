@@ -1,5 +1,6 @@
 package tm.payhas.crm.api.data.dto;
 
+import tm.payhas.crm.api.data.dto.subClassesUserInfo.DataMessageRoom;
 import tm.payhas.crm.api.data.dto.subClassesUserInfo.DtoArmy;
 import tm.payhas.crm.api.data.dto.subClassesUserInfo.DtoCv;
 import tm.payhas.crm.api.data.dto.subClassesUserInfo.DtoEntrepreneur;
@@ -37,6 +38,24 @@ public class DtoUserInfo {
     private String updatedAt;
     private String deletedAt;
     private DtoToken token;
+    private DataMessageRoom messageRoom;
+    private int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public DataMessageRoom getMessageRoom() {
+        return messageRoom;
+    }
+
+    public void setMessageRoom(DataMessageRoom messageRoom) {
+        this.messageRoom = messageRoom;
+    }
 
     public String getLastActivity() {
         return lastActivity;

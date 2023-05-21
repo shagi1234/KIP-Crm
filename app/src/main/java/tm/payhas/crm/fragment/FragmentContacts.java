@@ -1,21 +1,36 @@
 package tm.payhas.crm.fragment;
 
-import static tm.payhas.crm.helpers.StaticMethods.setPadding;
-import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
+import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
-import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import tm.payhas.crm.R;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import tm.payhas.crm.adapters.AdapterChatContact;
+import tm.payhas.crm.api.data.dto.DtoUserInfo;
+import tm.payhas.crm.api.response.ResponseUserGroup;
+import tm.payhas.crm.databinding.FragmentContactsBinding;
+import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentContacts extends Fragment {
-    // TODO: Rename and change types and number of parameters
+    private FragmentContactsBinding b;
+    private AdapterChatContact adapterChatContact;
+    private ArrayList<DtoUserInfo> privateUsers;
+    private AccountPreferences accountPreferences;
+    private final String TAG = "FragmentChatContacts";
+
     public static FragmentContacts newInstance() {
         FragmentContacts fragment = new FragmentContacts();
         Bundle args = new Bundle();
@@ -23,22 +38,55 @@ public class FragmentContacts extends Fragment {
         return fragment;
     }
 
+    public void setPrivateUsers(ArrayList<DtoUserInfo> privateUsers) {
+        this.privateUsers = privateUsers;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_contacts, container, false);
+        b = FragmentContactsBinding.inflate(inflater);
+        accountPreferences = new AccountPreferences(getContext());
+        getPrivateContacts();
+        setRecycler();
+        initListeners();
+        return b.getRoot();
     }
+
+    private void getPrivateContacts() {
+        Call<ResponseUserGroup> call = Common.getApi().getContacts(accountPreferences.getToken());
+        call.enqueue(new Callback<ResponseUserGroup>() {
+            @Override
+            public void onResponse(Call<ResponseUserGroup> call, Response<ResponseUserGroup> response) {
+                if (response.isSuccessful()) {
+                    privateUsers = response.body().getData().getUsersPrivate();
+                    adapterChatContact.setPrivateUserList(privateUsers);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseUserGroup> call, Throwable t) {
+                Log.e(TAG, "onFailure: " + t.getMessage());
+            }
+        });
+    }
+
+
+    private void initListeners() {
+        b.recGroupContact.setOnClickListener(view -> hideSoftKeyboard(getActivity()));
+
+    }
+
+    private void setRecycler() {
+        adapterChatContact = new AdapterChatContact(getContext());
+        adapterChatContact.setActivity(getActivity());
+        b.recGroupContact.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        b.recGroupContact.setAdapter(adapterChatContact);
+    }
+
 }

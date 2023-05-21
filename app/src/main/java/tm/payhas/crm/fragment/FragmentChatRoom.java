@@ -2,12 +2,15 @@ package tm.payhas.crm.fragment;
 
 import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
+import static tm.payhas.crm.statics.StaticConstants.MESSAGE_SENT;
+import static tm.payhas.crm.statics.StaticConstants.STRING;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -21,14 +24,24 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import tm.payhas.crm.R;
 import tm.payhas.crm.adapters.AdapterSingleChat;
+import tm.payhas.crm.api.data.dto.subClassesUserInfo.DataRoomChat;
+import tm.payhas.crm.api.data.response.ResponseChatRoom;
 import tm.payhas.crm.api.request.RequestNewMessage;
+import tm.payhas.crm.dataModels.DataMessageTarget;
 import tm.payhas.crm.databinding.FragmentChatRoomBinding;
+import tm.payhas.crm.helpers.Common;
 import tm.payhas.crm.helpers.SoftInputAssist;
-import tm.payhas.crm.model.ModelMessage;
+import tm.payhas.crm.interfaces.NewMessage;
+import tm.payhas.crm.preference.AccountPreferences;
 import tm.payhas.crm.webSocket.WebSocket;
 
 public class FragmentChatRoom extends Fragment {
@@ -36,12 +49,18 @@ public class FragmentChatRoom extends Fragment {
     private AdapterSingleChat adapterSingleChat;
     private SoftInputAssist softInputAssist;
     private boolean isMessage = false;
-    private boolean isSet = false;
+    private final String TAG = "chatRoom";
     private WebSocket webSocket;
+    private int roomId;
+    private int userId;
+    private AccountPreferences accountPreferences;
+    private ArrayList<DataRoomChat> listMessages = new ArrayList<DataRoomChat>();
 
-    public static FragmentChatRoom newInstance() {
+    public static FragmentChatRoom newInstance(int roomId, int userId) {
         FragmentChatRoom fragment = new FragmentChatRoom();
         Bundle args = new Bundle();
+        args.putInt("roomId", roomId);
+        args.putInt("userId", userId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,14 +75,42 @@ public class FragmentChatRoom extends Fragment {
                              Bundle savedInstanceState) {
         b = FragmentChatRoomBinding.inflate(inflater);
         webSocket = new WebSocket(getContext(), getActivity());
+        if (getArguments() != null) {
+            roomId = getArguments().getInt("roomId");
+            userId = getArguments().getInt("userId");
+        }
         if (getActivity() != null) {
             softInputAssist = new SoftInputAssist(getActivity());
         }
+        accountPreferences = new AccountPreferences(getContext());
         setBackground();
         setRecycler();
         initListeners();
         setWebSocket();
+        getMessages();
+        Log.e(TAG, "onCreateView: roomId" + roomId);
+        Log.e(TAG, "onCreateView: userId" + userId);
         return b.getRoot();
+    }
+
+    private void getMessages() {
+        Call<ResponseChatRoom> messagesRooms = Common.getApi().getMessageRoom(accountPreferences.getToken(), roomId, 1, 10);
+        messagesRooms.enqueue(new Callback<ResponseChatRoom>() {
+            @Override
+            public void onResponse(Call<ResponseChatRoom> call, Response<ResponseChatRoom> response) {
+                if (response.isSuccessful()) {
+                    listMessages = response.body().getData();
+                    adapterSingleChat.setMessages(listMessages);
+                    Log.e(TAG, "onResponse: listSize " + listMessages.size());
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseChatRoom> call, Throwable t) {
+
+            }
+        });
     }
 
     private void setWebSocket() {
@@ -77,8 +124,9 @@ public class FragmentChatRoom extends Fragment {
                 getActivity().onBackPressed();
             }
         });
-        b.message.setOnClickListener(view -> Toast.makeText(getContext(), "Send Message", Toast.LENGTH_SHORT).show());
-        b.recordVoice.setOnClickListener(view -> Toast.makeText(getContext(), "Send Voice", Toast.LENGTH_SHORT).show());
+        b.sendMessage.setOnClickListener(view -> sendMessage());
+        b.recordVoice.setOnClickListener(view ->
+                Toast.makeText(getContext(), "Send Voice", Toast.LENGTH_SHORT).show());
         b.input.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -89,11 +137,11 @@ public class FragmentChatRoom extends Fragment {
                 if (b.input.getText().length() != 0) {
                     isMessage = true;
                     b.recordVoice.setVisibility(View.GONE);
-                    b.message.setVisibility(View.VISIBLE);
+                    b.sendMessage.setVisibility(View.VISIBLE);
                 } else {
                     isMessage = false;
                     b.recordVoice.setVisibility(View.VISIBLE);
-                    b.message.setVisibility(View.GONE);
+                    b.sendMessage.setVisibility(View.GONE);
                 }
             }
 
@@ -102,14 +150,14 @@ public class FragmentChatRoom extends Fragment {
 
             }
         });
-        b.recChatScreen.addOnLayoutChangeListener((view, i, i1, i2, i3, i4, i5, i6, i7) -> {
-            if (isSet) {
-                b.recChatScreen.smoothScrollToPosition(adapterSingleChat.getItemCount() - 1);
-            } else {
-                b.recChatScreen.scrollToPosition(adapterSingleChat.getItemCount() - 1);
-                isSet = true;
-            }
-        });
+//        b.recChatScreen.addOnLayoutChangeListener((view, i, i1, i2, i3, i4, i5, i6, i7) -> {
+//            if (isSet) {
+//                b.recChatScreen.smoothScrollToPosition(adapterSingleChat.getItemCount() - 1);
+//            } else {
+//                b.recChatScreen.scrollToPosition(adapterSingleChat.getItemCount() - 1);
+//                isSet = true;
+//            }
+//        });
     }
 
 
@@ -141,51 +189,6 @@ public class FragmentChatRoom extends Fragment {
     @SuppressLint("UseCompatLoadingForDrawables")
     private void setRecycler() {
         adapterSingleChat = new AdapterSingleChat(getContext());
-        ArrayList<ModelMessage> testMessagesArray = new ArrayList<>();
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 1));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 2));
-        testMessagesArray.add(new ModelMessage(1, 3));
-        testMessagesArray.add(new ModelMessage(1, 4));
-        testMessagesArray.add(new ModelMessage(1, 5));
-        testMessagesArray.add(new ModelMessage(1, 6));
-        testMessagesArray.add(new ModelMessage(getResources().getDrawable(R.drawable.ic_logo_crm), 7));
-        testMessagesArray.add(new ModelMessage(R.drawable.ic_logo_crm, 8));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 1));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 2));
-        testMessagesArray.add(new ModelMessage(1, 3));
-        testMessagesArray.add(new ModelMessage(1, 4));
-        testMessagesArray.add(new ModelMessage(1, 5));
-        testMessagesArray.add(new ModelMessage(1, 6));
-        testMessagesArray.add(new ModelMessage(getResources().getDrawable(R.drawable.ic_logo_crm), 7));
-        testMessagesArray.add(new ModelMessage(R.drawable.ic_logo_crm, 8));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 1));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 2));
-        testMessagesArray.add(new ModelMessage(1, 3));
-        testMessagesArray.add(new ModelMessage(1, 4));
-        testMessagesArray.add(new ModelMessage(1, 5));
-        testMessagesArray.add(new ModelMessage(1, 6));
-        testMessagesArray.add(new ModelMessage(getResources().getDrawable(R.drawable.ic_logo_crm), 7));
-        testMessagesArray.add(new ModelMessage(R.drawable.ic_logo_crm, 8));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 9));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 10));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 9));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 10));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 9));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 10));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 9));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 10));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 9));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 10));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 9));
-        testMessagesArray.add(new ModelMessage("Bu zada in birimji chat Model testi bolayjagay", 10));
-
-        testMessagesArray.add(new ModelMessage(1, 3));
-        testMessagesArray.add(new ModelMessage(1, 4));
-        testMessagesArray.add(new ModelMessage(1, 5));
-        testMessagesArray.add(new ModelMessage(1, 6));
-        testMessagesArray.add(new ModelMessage(getResources().getDrawable(R.drawable.ic_logo_crm), 7));
-        testMessagesArray.add(new ModelMessage(R.drawable.ic_logo_crm, 8));
-        adapterSingleChat.setMessages(testMessagesArray);
         b.recChatScreen.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         b.recChatScreen.setAdapter(adapterSingleChat);
         adapterSingleChat.setActivity(getActivity());
@@ -209,6 +212,28 @@ public class FragmentChatRoom extends Fragment {
 
 
     private void sendMessage() {
+        DataMessageTarget newMessageData = new DataMessageTarget();
+        newMessageData.setRoomId(roomId);
+        newMessageData.setType(STRING);
+        newMessageData.setText(b.input.getText().toString());
+        newMessageData.setFriendId(userId);
+        newMessageData.setStatus(MESSAGE_SENT);
+        newMessageData.setLocalId("1aksdgghahfk");
         RequestNewMessage newMessage = new RequestNewMessage();
+        newMessage.setEvent("createMessage");
+        newMessage.setData(newMessageData);
+        newMessage.setId(0);
+        String s = new Gson().toJson(newMessage);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                webSocket.sendMessage(s);
+            }
+        }, 500);
+
+        if (adapterSingleChat != null) {
+            ((NewMessage) adapterSingleChat).onNewMessage(newMessageData);
+        }
+        Log.e(TAG, "sendMessage: " + "messageSent");
     }
 }

@@ -9,10 +9,14 @@ import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
+import tm.payhas.crm.api.data.response.ResponseChatRoom;
 import tm.payhas.crm.api.data.response.ResponseSignIn;
 import tm.payhas.crm.api.request.RequestCreateTask;
 import tm.payhas.crm.api.request.RequestUserTasks;
 import tm.payhas.crm.api.response.ResponseTasks;
+import tm.payhas.crm.api.response.ResponseUserGroup;
 
 public interface Services {
 
@@ -29,7 +33,10 @@ public interface Services {
     Call<ResponseTasks> createTask(@Header("Authorization") String token, @Body RequestCreateTask requestCreateTask);
 
     @GET("chat/rooms")
-    Call<>
+    Call<ResponseUserGroup> getContacts(@Header("Authorization") String token);
+
+    @GET("chat/room/messages/{id}")
+    Call<ResponseChatRoom> getMessageRoom(@Header("Authorization") String token, @Path("id") int id, @Query("page") int page, @Query("limit") int limit);
 
 
 }

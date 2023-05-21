@@ -16,8 +16,8 @@ public class AccountPreferences {
     private static final String PREF_NAME = "Crm_account";
     public static final String LANG_RU = "ru";
     public static final String LANG_TK = "tk";
-    private static final String  IS_LOGGED_IN = "false";
-    private static final String PREF_TOKEN = "token";
+    private static final String  IS_LOGGED_IN = "_is_logged_in";
+    private static final String PREF_TOKEN = "_token";
     private static final String PREF_SURNAME = "_surname";
     private static final String PREF_BIRTHDAY = "_birthday";
     private static final String PREF_USER_NAME = "_username";
@@ -34,15 +34,15 @@ public class AccountPreferences {
         return accountPreferences;
     }
 
-    public void setIsLoggedIn(String isLoggedIn) {
-        editor.putString(IS_LOGGED_IN, isLoggedIn);
+    public void setIsLoggedIn() {
+        editor.putBoolean(IS_LOGGED_IN, true);
         editor.commit();
     }
 
-    public String  getLoggedIn() {
-        if (_context == null) return "false";
+    public boolean  getLoggedIn() {
+        if (_context == null) return false;
         else
-            return pref.getString(IS_LOGGED_IN, "false");
+            return pref.getBoolean(IS_LOGGED_IN, false);
     }
 
     public void setPrefSurname(String surname) {

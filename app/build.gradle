@@ -40,14 +40,15 @@ dependencies {
 
     //rounded image view
     implementation 'com.makeramen:roundedimageview:2.3.0'
+
     // retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
     implementation 'com.google.code.gson:gson:2.9.0'
+
+    //websocket
     implementation 'dev.gustavoavila:java-android-websocket-client:2.0.2'
-    //
-    implementation "org.java-websocket:Java-WebSocket:1.3.0"
 
     //Room Database
     implementation "androidx.room:room-runtime:2.4.0"

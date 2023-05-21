@@ -17,7 +17,7 @@ public class SplashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ac = new AccountPreferences(this);
         new Handler().postDelayed(() -> {
-            if (ac.getLoggedIn().equals("true")) {
+            if (ac.getLoggedIn()) {
                 Intent intent = new Intent(SplashScreen.this, ActivityMain.class);
                 startActivity(intent);
                 finish();

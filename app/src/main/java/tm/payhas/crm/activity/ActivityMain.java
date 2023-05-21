@@ -18,18 +18,27 @@ import tm.payhas.crm.fragment.FragmentFlow;
 import tm.payhas.crm.fragment.FragmentHome;
 import tm.payhas.crm.fragment.FragmentMessages;
 import tm.payhas.crm.helpers.SoftInputAssist;
+import tm.payhas.crm.webSocket.WebSocket;
 
 public class ActivityMain extends AppCompatActivity {
 
     public static FragmentManager mainFragmentManager;
     private FrameLayout root;
     private SoftInputAssist softInputAssist;
+    public static WebSocket webSocket;
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        webSocket.createWebSocketClient();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        webSocket = new WebSocket(getApplicationContext(), this);
+
         root = findViewById(R.id.main_content);
         transparentStatusAndNavigation(this);
         ActivityLoginRegister.mainFragmentManager = getSupportFragmentManager();

@@ -93,13 +93,13 @@ public class FragmentLogin extends Fragment {
                 if (response.code() == 201) {
                     accountPreferences.setPrefUserName(response.body().getData().getPersonalData().getName());
                     accountPreferences.setToken(response.body().getData().getToken().getToken());
-                    Log.e("TOken", "onResponse: " + response.body().getData().getToken().getToken());
                     accountPreferences.setPrefLastname(response.body().getData().getPersonalData().getLastName());
                     accountPreferences.setPrefBirthday(response.body().getData().getPersonalData().getBirthday());
                     accountPreferences.setPrefBirthPlace(response.body().getData().getPersonalData().getBirthPlace());
                     accountPreferences.setPrefSurname(response.body().getData().getPersonalData().getSurname());
                     accountPreferences.setPrefAvatarUrl(response.body().getData().getAvatar());
-                    accountPreferences.setIsLoggedIn("true");
+                    accountPreferences.setIsLoggedIn();
+
                     if (getActivity() == null) return;
                     getActivity().finish();
                     Intent intent = new Intent(getContext(), ActivityMain.class);

@@ -9,10 +9,6 @@ import android.util.Log;
 
 import androidx.core.app.NotificationManagerCompat;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -46,12 +42,13 @@ public class WebSocket {
 
     public void createWebSocketClient() {
         URI uri;
-
+        if (connected)
+            return;
         try {
-            uri = new URI(BASE_URL_SOCKET + accountPreferences.getTokenForWebSocket());
-            Log.e(TAG, "createWebSocketClient: " + accountPreferences.getTokenForWebSocket());
+            uri = new URI(BASE_URL_SOCKET + "Bearer%20eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6IlUyRnNkR1ZrWDE5MUpIZDNQVjZwWnVKSndOTFBTOU1lVUtFT3ZzRERHaWc9IiwiYXZhdGFyIjoiaW1hZ2UgdXJsIDEiLCJpYXQiOjE2ODQ2ODg4MDJ9.Vm37IYx9sfZVSfwjOhrUiPosFrSrwsPshIMrVcWJIVk");
+            Log.e(TAG, "createWebSocketClient:" + uri);
         } catch (URISyntaxException e) {
-            Log.e(TAG, "createWebSocketClient: " + e.getMessage());
+            Log.e(TAG, "createWebSocketClient: error " + e.getMessage());
             return;
         }
 
@@ -59,54 +56,11 @@ public class WebSocket {
             @Override
             public void onOpen() {
                 Log.e(TAG, "onOpen: ");
+                connected = true;
             }
 
             @Override
             public void onTextReceived(String emit) {
-
-//                try {
-//                    JSONObject messageJson = new JSONObject(emit);
-//                    Log.e(TAG, "onTextReceived: " + messageJson);
-//                } catch (JSONException e) {
-//                    Log.e(TAG, "onTextReceived: " + e);
-//                }
-                Log.e("TAG", "onTextReceived: " + emit);
-                JSONObject dataObj;
-                JSONArray dataArr;
-                try {
-
-                    JSONObject messageJson = new JSONObject(emit);
-                    String channel = messageJson.getString("type");
-                    switch (channel) {
-//
-//                        case STRING:
-//                            dataObj = messageJson.getJSONObject("data");
-////                            newMessage(dataObj);
-//                            break;
-//
-//                        case PHOTO:
-//                            dataObj = messageJson.getJSONObject("data");
-////                            newMessagePhoto(dataObj);
-//                            break;
-//                        case VOICE:
-//                            dataObj = messageJson.getJSONObject("data");
-////                            newMessageVoice(dataObj);
-//                            break;
-//
-//                        case FILE:
-//                            dataObj = messageJson.getJSONObject("data");
-////                            newMessageFile();
-//                            break;
-
-                    }
-
-
-                } catch (JSONException e) {
-
-                    Log.e("TAG", "onTextReceived:" + e.getMessage());
-
-                }
-
 
             }
 
@@ -117,7 +71,7 @@ public class WebSocket {
 
             @Override
             public void onPingReceived(byte[] data) {
-                System.out.println("onPingReceived");
+                Log.e(TAG, "onPingReceived: " + data);
             }
 
             @Override
@@ -127,7 +81,6 @@ public class WebSocket {
 
             @Override
             public void onException(Exception e) {
-
                 Log.e(TAG, "onException: !!!" + e.getMessage());
             }
 
@@ -136,8 +89,9 @@ public class WebSocket {
                 Log.e(TAG, "onCloseReceived: socket connection closed");
             }
         };
-        webSocketClient.setConnectTimeout(5000);
-        webSocketClient.setReadTimeout(70000);
+        webSocketClient.setConnectTimeout(10000);
+        webSocketClient.setReadTimeout(60000);
+        webSocketClient.addHeader("Origin", "http://guncha.com.tm:8080");
         webSocketClient.enableAutomaticReconnection(5000);
         webSocketClient.connect();
     }
@@ -145,7 +99,6 @@ public class WebSocket {
 
     public void sendMessage(String s) {
         webSocketClient.send(s);
-        Log.e(TAG, "sendMessage: " + "messageSent");
-        Log.e(TAG, "sendMessage: "+s );
+        Log.e(TAG, "sendMessage: " + s);
     }
 }

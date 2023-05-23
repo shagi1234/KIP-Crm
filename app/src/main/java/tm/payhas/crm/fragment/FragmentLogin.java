@@ -7,7 +7,6 @@ import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,6 +98,7 @@ public class FragmentLogin extends Fragment {
                     accountPreferences.setPrefSurname(response.body().getData().getPersonalData().getSurname());
                     accountPreferences.setPrefAvatarUrl(response.body().getData().getAvatar());
                     accountPreferences.setIsLoggedIn();
+                    accountPreferences.setPrefAuthorId(response.body().getData().getId());
 
                     if (getActivity() == null) return;
                     getActivity().finish();

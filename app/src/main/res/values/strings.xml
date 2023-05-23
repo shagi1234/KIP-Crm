@@ -16,4 +16,18 @@
     <string name="chats">Чаты</string>
     <string name="search">Search</string>
 
+    <string-array name="importancy">
+        <item>Низкий</item>
+        <item>Средний</item>
+        <item>Высокий</item>
+        <item>Неотложный</item>
+    </string-array>
+    <string-array name="status">
+        <item>Не начата</item>
+        <item>В процессе</item>
+        <item>На проверке</item>
+        <item>В ожидании ответашенo</item>
+        <item>Завершенo</item>
+    </string-array>
+
 </resources>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/cloud_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ripple"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal"
+        tools:ignore="MissingPrefix,UselessParent">
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginVertical="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/inter_regular"
+            android:maxLines="1"
+            android:text="Demo"
+            android:textColor="@color/text_color"
+            android:textSize="12sp"
+            tools:ignore="HardcodedText" />
+
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="10dp"
+            android:button="@null"
+            android:drawableStart="@drawable/custom_checkbox_2"
+            android:gravity="center"
+            android:paddingStart="5dp"
+            android:visibility="visible"
+            tools:ignore="RtlSymmetry" />
+    </LinearLayout>
+</FrameLayout>

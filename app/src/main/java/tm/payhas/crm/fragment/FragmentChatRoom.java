@@ -3,6 +3,7 @@ package tm.payhas.crm.fragment;
 import static tm.payhas.crm.activity.ActivityMain.webSocket;
 import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
+import static tm.payhas.crm.statics.StaticConstants.DATE;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGE_SENT;
 import static tm.payhas.crm.statics.StaticConstants.STRING;
 
@@ -37,13 +38,16 @@ import tm.payhas.crm.adapters.AdapterSingleChat;
 import tm.payhas.crm.api.data.response.ResponseChatRoom;
 import tm.payhas.crm.api.request.RequestNewMessage;
 import tm.payhas.crm.dataModels.DataMessageTarget;
+import tm.payhas.crm.dataModels.DataProjectUsers;
 import tm.payhas.crm.databinding.FragmentChatRoomBinding;
 import tm.payhas.crm.helpers.Common;
 import tm.payhas.crm.helpers.SoftInputAssist;
+import tm.payhas.crm.interfaces.MultiSelector;
 import tm.payhas.crm.interfaces.NewMessage;
+import tm.payhas.crm.model.ModelFile;
 import tm.payhas.crm.preference.AccountPreferences;
 
-public class FragmentChatRoom extends Fragment {
+public class FragmentChatRoom extends Fragment implements MultiSelector {
     private FragmentChatRoomBinding b;
     private AdapterSingleChat adapterSingleChat;
     private SoftInputAssist softInputAssist;
@@ -53,7 +57,7 @@ public class FragmentChatRoom extends Fragment {
     private int roomId;
     private int userId;
     private AccountPreferences accountPreferences;
-    private ArrayList<DataMessageTarget> listMessages = new ArrayList<DataMessageTarget>();
+    private ArrayList<DataMessageTarget> listMessagesWithDate = new ArrayList<DataMessageTarget>();
 
     public static FragmentChatRoom newInstance(int roomId, int userId) {
         FragmentChatRoom fragment = new FragmentChatRoom();
@@ -81,15 +85,20 @@ public class FragmentChatRoom extends Fragment {
         if (getActivity() != null) {
             softInputAssist = new SoftInputAssist(getActivity());
         }
-
-        setBackground();
         setRecycler();
+        setAuthorId();
+        setBackground();
         initListeners();
-        getMessages();
-
+        if (roomId != 0) {
+            getMessages();
+        }
         Log.e(TAG, "onCreateView: roomId" + roomId);
         Log.e(TAG, "onCreateView: userId" + userId);
         return b.getRoot();
+    }
+
+    private void setAuthorId() {
+        adapterSingleChat.setAuthorId(accountPreferences.getAuthorId());
     }
 
     private void getMessages() {
@@ -98,10 +107,17 @@ public class FragmentChatRoom extends Fragment {
             @Override
             public void onResponse(Call<ResponseChatRoom> call, Response<ResponseChatRoom> response) {
                 if (response.isSuccessful()) {
-                    listMessages = response.body().getData().get(2).getMessages();
-//                    adapterSingleChat.setMessages(listMessages);
-                    Log.e(TAG, "onResponse: "+listMessages.size() );
-
+                    for (int i = 0; i <response.body().getData().size(); i++) {
+                        String chatData = response.body().getData().get(i).getChatData();
+                        DataMessageTarget dateMessage = new DataMessageTarget();
+                        dateMessage.setText(chatData);
+                        dateMessage.setType(DATE);
+                        listMessagesWithDate.add(dateMessage);
+                        listMessagesWithDate.addAll(response.body().getData().get(i).getMessages());
+                        i++;
+                    }
+                    Log.e(TAG, "onResponse: list Size" + listMessagesWithDate.size());
+                    adapterSingleChat.setMessages(listMessagesWithDate);
                 }
             }
 
@@ -222,5 +238,15 @@ public class FragmentChatRoom extends Fragment {
         if (adapterSingleChat != null) {
             ((NewMessage) adapterSingleChat).onNewMessage(newMessageData);
         }
+    }
+
+    @Override
+    public void multiSelectedArray(ArrayList<ModelFile> selected) {
+
+    }
+
+    @Override
+    public void selectedUserList(ArrayList<DataProjectUsers> selected) {
+        Log.e(TAG, "selectedUserList: " + selected.size());
     }
 }

@@ -19,9 +19,9 @@ import tm.payhas.crm.preference.AccountPreferences;
 
 public class WebSocket {
 
-    WebSocketClient webSocketClient;
-    Context context;
-    Activity activity;
+    private WebSocketClient webSocketClient;
+    private Context context;
+    private Activity activity;
     private final String TAG = "WebSocket";
     NotificationManagerCompat notificationManagerCompat;
     private AccountPreferences accountPreferences;
@@ -45,7 +45,7 @@ public class WebSocket {
         if (connected)
             return;
         try {
-            uri = new URI(BASE_URL_SOCKET + "Bearer%20eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlciI6IlUyRnNkR1ZrWDE5MUpIZDNQVjZwWnVKSndOTFBTOU1lVUtFT3ZzRERHaWc9IiwiYXZhdGFyIjoiaW1hZ2UgdXJsIDEiLCJpYXQiOjE2ODQ2ODg4MDJ9.Vm37IYx9sfZVSfwjOhrUiPosFrSrwsPshIMrVcWJIVk");
+            uri = new URI(BASE_URL_SOCKET + accountPreferences.getTokenForWebSocket());
             Log.e(TAG, "createWebSocketClient:" + uri);
         } catch (URISyntaxException e) {
             Log.e(TAG, "createWebSocketClient: error " + e.getMessage());
@@ -61,6 +61,7 @@ public class WebSocket {
 
             @Override
             public void onTextReceived(String emit) {
+                Log.e(TAG, "onTextReceived: " + emit);
 
             }
 
@@ -89,9 +90,8 @@ public class WebSocket {
                 Log.e(TAG, "onCloseReceived: socket connection closed");
             }
         };
-        webSocketClient.setConnectTimeout(10000);
-        webSocketClient.setReadTimeout(60000);
-        webSocketClient.addHeader("Origin", "http://guncha.com.tm:8080");
+        webSocketClient.setConnectTimeout(5000);
+        webSocketClient.setReadTimeout(70000);
         webSocketClient.enableAutomaticReconnection(5000);
         webSocketClient.connect();
     }

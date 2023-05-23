@@ -16,7 +16,7 @@ public class AccountPreferences {
     private static final String PREF_NAME = "Crm_account";
     public static final String LANG_RU = "ru";
     public static final String LANG_TK = "tk";
-    private static final String  IS_LOGGED_IN = "_is_logged_in";
+    private static final String IS_LOGGED_IN = "_is_logged_in";
     private static final String PREF_TOKEN = "_token";
     private static final String PREF_SURNAME = "_surname";
     private static final String PREF_BIRTHDAY = "_birthday";
@@ -25,6 +25,7 @@ public class AccountPreferences {
     private static final String PREF_LASTNAME = "_lastname";
     private static final String PREF_BIRTH_PLACE = "_birthplace";
     private static final String PREF_AVATAR_URL = "_avatar";
+    private static final String PREF_AUTHOR_ID = "_authorId";
 
 
     public static AccountPreferences newInstance(Context context) {
@@ -39,10 +40,20 @@ public class AccountPreferences {
         editor.commit();
     }
 
-    public boolean  getLoggedIn() {
+    public boolean getLoggedIn() {
         if (_context == null) return false;
         else
             return pref.getBoolean(IS_LOGGED_IN, false);
+    }
+
+    public void setPrefAuthorId(int authorId) {
+        editor.putInt(PREF_AUTHOR_ID, authorId);
+        editor.commit();
+    }
+
+    public int getAuthorId() {
+        if (_context == null) return 0;
+        else return pref.getInt(PREF_AUTHOR_ID, 0);
     }
 
     public void setPrefSurname(String surname) {
@@ -113,7 +124,7 @@ public class AccountPreferences {
         if (_context == null) {
             return "";
         } else {
-            return "Bearer " +pref.getString(PREF_TOKEN, "");
+            return "Bearer " + pref.getString(PREF_TOKEN, "");
         }
     }
 
@@ -121,7 +132,7 @@ public class AccountPreferences {
         if (_context == null) {
             return "";
         } else {
-            return pref.getString(PREF_TOKEN, "");
+            return "Bearer%20" + pref.getString(PREF_TOKEN, "");
         }
     }
 

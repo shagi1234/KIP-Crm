@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 import tm.payhas.crm.R;
 import tm.payhas.crm.adapters.AdapterCloud;
+import tm.payhas.crm.dataModels.DataProjectUsers;
 import tm.payhas.crm.databinding.FragmentCloudFolderBinding;
 import tm.payhas.crm.interfaces.MultiSelector;
 import tm.payhas.crm.model.ModelFile;
@@ -171,5 +172,10 @@ public class FragmentCloudFolder extends Fragment implements MultiSelector {
         int selectedSize = selected.size();
         b.deleteCount.setText(String.valueOf(selectedSize));
         selectedArray.addAll(selected);
+    }
+
+    @Override
+    public void selectedUserList(ArrayList<DataProjectUsers> selected) {
+
     }
 }

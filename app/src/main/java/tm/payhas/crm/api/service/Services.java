@@ -15,6 +15,7 @@ import tm.payhas.crm.api.data.response.ResponseChatRoom;
 import tm.payhas.crm.api.data.response.ResponseSignIn;
 import tm.payhas.crm.api.request.RequestCreateTask;
 import tm.payhas.crm.api.request.RequestUserTasks;
+import tm.payhas.crm.api.response.ResponseProjects;
 import tm.payhas.crm.api.response.ResponseTasks;
 import tm.payhas.crm.api.response.ResponseUserGroup;
 
@@ -34,6 +35,9 @@ public interface Services {
 
     @GET("chat/rooms")
     Call<ResponseUserGroup> getContacts(@Header("Authorization") String token);
+
+    @GET("projects/all")
+    Call<ResponseProjects> getAllProjects();
 
     @GET("chat/room/messages/{id}")
     Call<ResponseChatRoom> getMessageRoom(@Header("Authorization") String token, @Path("id") int id, @Query("page") int page, @Query("limit") int limit);

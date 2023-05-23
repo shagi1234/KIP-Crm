@@ -1,13 +1,129 @@
 {
+  "statusCode": 200,
+  "success": true,
   "data": {
-    "authorId": 0,
-    "friendId": 4,
-    "localId": "1aksdgghahfk",
-    "roomId": 5,
-    "status": "status1",
-    "text": "fufxciicovvoob",
-    "type": "type0"
-  },
-  "event": "createMessage",
-  "id": 0
+    "private": [
+      {
+        "id": 7,
+        "personalData":{
+          "name": "Aman",
+          "surname": "Amanow",
+          "birthday": null,
+          "lastname": "Amanowich",
+          "birthPlace": null,
+          "homePhoneNumber": null
+        },
+        "avatar": "avatar/b6567cda-4ff1-4242-8af1-e282816d92e9.jpg",
+        "lastActivity": "2023-05-23T08:49:11.414Z",
+        "isActive": true,
+        "messageRoom": {
+          "text": "",
+          "roomId": 0,
+          "createdAt": "",
+          "room": {
+            "_count": {
+              "messages": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 10,
+        "personalData": {
+          "name": "Chary",
+          "surname": "Charyyew",
+          "birthday": null,
+          "lastname": "Charyyewich",
+          "birthPlace": null,
+          "homePhoneNumber": null
+        },
+        "avatar": "avatar/84e34e51-511f-4d8b-a3da-0a300d694d48.jfif",
+        "lastActivity": "2023-05-23T09:01:23.154Z",
+        "isActive": false,
+        "messageRoom": {
+          "text": "",
+          "roomId": 17,
+          "createdAt": "",
+          "room": {
+            "_count": {
+              "messages": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 15,
+        "personalData": {
+          "name": "Chary",
+          "surname": "Charyyew",
+          "birthday": null,
+          "lastname": "Charyyewich",
+          "birthPlace": null,
+          "homePhoneNumber": null
+        },
+        "avatar": "avatar/84e34e51-511f-4d8b-a3da-.jfif",
+        "lastActivity": "2023-05-22T19:24:40.923Z",
+        "isActive": true,
+        "messageRoom": {
+          "text": "gsifshfsdfjhsj",
+          "roomId": 11,
+          "createdAt": "2023-05-23T09:37:02.692Z",
+          "room": {
+            "_count": {
+              "messages": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 17,
+        "personalData": {
+          "name": "Chary",
+          "surname": "Charyyew",
+          "birthday": null,
+          "lastname": "Charyyewich",
+          "birthPlace": null,
+          "homePhoneNumber": null
+        },
+        "avatar": "avatar/84e34e51-511f-a3da-.jfif",
+        "lastActivity": "2023-05-22T19:05:54.688Z",
+        "isActive": false,
+        "messageRoom": {
+          "text": "",
+          "roomId": 0,
+          "createdAt": "",
+          "room": {
+            "_count": {
+              "messages": 0
+            }
+          }
+        }
+      },
+      {
+        "id": 8,
+        "personalData": {
+          "name": "Berdi",
+          "surname": "Berdiyew",
+          "birthday": null,
+          "lastname": "Bediyewich",
+          "birthPlace": null,
+          "homePhoneNumber": null
+        },
+        "avatar": "avatar/925cf43a-d544-49d7-9e75-9dd7056269bc.jpg",
+        "lastActivity": "2023-05-22T05:10:00.076Z",
+        "isActive": true,
+        "messageRoom": {
+          "text": "",
+          "roomId": 0,
+          "createdAt": "",
+          "room": {
+            "_count": {
+              "messages": 0
+            }
+          }
+        }
+      }
+    ],
+    "groups": []
+  }
 }

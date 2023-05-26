@@ -26,6 +26,7 @@ public class AccountPreferences {
     private static final String PREF_BIRTH_PLACE = "_birthplace";
     private static final String PREF_AVATAR_URL = "_avatar";
     private static final String PREF_AUTHOR_ID = "_authorId";
+    private static final String PREF_CURRENT_PROJECT_ID = "_currentProjectId";
 
 
     public static AccountPreferences newInstance(Context context) {
@@ -38,6 +39,16 @@ public class AccountPreferences {
     public void setIsLoggedIn() {
         editor.putBoolean(IS_LOGGED_IN, true);
         editor.commit();
+    }
+
+    public void setPrefCurrentProjectId(int projectId) {
+        editor.putInt(PREF_CURRENT_PROJECT_ID, projectId);
+        editor.commit();
+    }
+
+    public int getPrefCurrentProjectId() {
+        if (_context == null) return 0;
+        return pref.getInt(PREF_CURRENT_PROJECT_ID, 0);
     }
 
     public boolean getLoggedIn() {

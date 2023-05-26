@@ -61,6 +61,7 @@
                     tools:ignore="HardcodedText">
 
                     <TextView
+                        android:id="@+id/username"
                         android:layout_width="wrap_content"
                         android:layout_height="17dp"
                         android:layout_marginBottom="4dp"
@@ -71,6 +72,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/user_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_regular"
@@ -170,6 +172,7 @@
                         android:focusable="true"
                         android:padding="5dp"
                         android:src="@drawable/ic_emoji"
+                        android:visibility="gone"
                         tools:ignore="ContentDescription" />
 
                     <EditText

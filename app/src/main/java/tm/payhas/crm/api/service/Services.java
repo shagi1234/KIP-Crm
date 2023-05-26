@@ -11,8 +11,8 @@ import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import tm.payhas.crm.api.data.response.ResponseChatRoom;
-import tm.payhas.crm.api.data.response.ResponseSignIn;
+import tm.payhas.crm.api.response.ResponseRoomMessages;
+import tm.payhas.crm.api.response.ResponseSignIn;
 import tm.payhas.crm.api.request.RequestCreateTask;
 import tm.payhas.crm.api.request.RequestUserTasks;
 import tm.payhas.crm.api.response.ResponseProjects;
@@ -39,8 +39,8 @@ public interface Services {
     @GET("projects/all")
     Call<ResponseProjects> getAllProjects();
 
-    @GET("chat/room/messages/{id}")
-    Call<ResponseChatRoom> getMessageRoom(@Header("Authorization") String token, @Path("id") int id, @Query("page") int page, @Query("limit") int limit);
+    @GET("chat/room/messages/mobile/{id}")
+    Call<ResponseRoomMessages> getMessageRoom(@Header("Authorization") String token, @Path("id") int id, @Query("page") int page, @Query("limit") int limit);
 
 
 }

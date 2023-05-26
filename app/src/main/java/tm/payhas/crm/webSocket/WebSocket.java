@@ -1,5 +1,6 @@
 package tm.payhas.crm.webSocket;
 
+import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.api.network.Network.BASE_URL_SOCKET;
 
 import android.app.Activity;
@@ -8,12 +9,22 @@ import android.os.Handler;
 import android.util.Log;
 
 import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.Fragment;
+
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import dev.gustavoavila.websocketclient.WebSocketClient;
+import tm.payhas.crm.dataModels.DataMessageTarget;
+import tm.payhas.crm.fragment.FragmentChatRoom;
+import tm.payhas.crm.interfaces.ChatRoomInterface;
 import tm.payhas.crm.interfaces.MessageCallBack;
 import tm.payhas.crm.preference.AccountPreferences;
 
@@ -62,6 +73,31 @@ public class WebSocket {
             @Override
             public void onTextReceived(String emit) {
                 Log.e(TAG, "onTextReceived: " + emit);
+                JSONObject dataObj;
+                JSONArray dataArr;
+                try {
+
+                    JSONObject messageJson = new JSONObject(emit);
+                    String event = messageJson.getString("event");
+                    JSONObject receivedMessage = messageJson.getJSONObject("data");
+                    DataMessageTarget newMessage = new Gson().fromJson(String.valueOf(receivedMessage), DataMessageTarget.class);
+
+                    Log.e(TAG, "DATA Message: " + receivedMessage);
+
+                    activity.runOnUiThread(() -> {
+                        Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
+                        if (chatRoom instanceof ChatRoomInterface) {
+                            ((ChatRoomInterface) chatRoom).newMessage(newMessage);
+                        }
+
+                    });
+
+
+                } catch (JSONException e) {
+
+
+                    e.printStackTrace();
+                }
 
             }
 

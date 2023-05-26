@@ -142,9 +142,11 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:gravity="center_vertical"
                             android:id="@+id/v_task_projects"
                             android:layout_width="0dp"
                             android:layout_height="46dp"
+                            android:layout_gravity="center_vertical"
                             android:layout_weight="1"
                             android:clickable="true"
                             android:dropDownWidth="match_parent"

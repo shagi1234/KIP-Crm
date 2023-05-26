@@ -1,129 +1,489 @@
 {
   "statusCode": 200,
   "success": true,
-  "data": {
-    "private": [
-      {
-        "id": 7,
-        "personalData":{
-          "name": "Aman",
-          "surname": "Amanow",
-          "birthday": null,
-          "lastname": "Amanowich",
-          "birthPlace": null,
-          "homePhoneNumber": null
-        },
-        "avatar": "avatar/b6567cda-4ff1-4242-8af1-e282816d92e9.jpg",
-        "lastActivity": "2023-05-23T08:49:11.414Z",
-        "isActive": true,
-        "messageRoom": {
-          "text": "",
-          "roomId": 0,
-          "createdAt": "",
-          "room": {
-            "_count": {
-              "messages": 0
-            }
-          }
-        }
-      },
-      {
-        "id": 10,
+  "data": [
+    {
+      "id": 939,
+      "localId": "35c3d6e8-763c-49ac-9e7c-90e24e6e23f6",
+      "text": "131l3",
+      "attachment": {},
+      "type": "type0",
+      "status": "status1",
+      "authorId": 19,
+      "roomId": 21,
+      "createdAt": "2023-05-26T10:08:40.044Z",
+      "updatedAt": "2023-05-26T10:08:40.044Z",
+      "deletedAt": null,
+      "answerId": null,
+      "forwardId": null,
+      "author": {
+        "id": 19,
         "personalData": {
-          "name": "Chary",
-          "surname": "Charyyew",
+          "name": "Shanur",
+          "surname": "Daniyarow",
           "birthday": null,
-          "lastname": "Charyyewich",
+          "lastname": "123123",
           "birthPlace": null,
           "homePhoneNumber": null
         },
-        "avatar": "avatar/84e34e51-511f-4d8b-a3da-0a300d694d48.jfif",
-        "lastActivity": "2023-05-23T09:01:23.154Z",
-        "isActive": false,
-        "messageRoom": {
-          "text": "",
-          "roomId": 17,
-          "createdAt": "",
-          "room": {
-            "_count": {
-              "messages": 0
-            }
-          }
-        }
+        "avatar": "avatar/84e34e51-511f-4d8b-a3da-0a300d694d48.jfif11",
+        "lastActivity": "2023-05-26T10:08:02.721Z",
+        "isActive": true
       },
-      {
-        "id": 15,
+      "forwarding": null,
+      "answering": null
+    },
+    {
+      "text": "5/26/2023",
+      "type": "type4"
+    },
+    {
+      "id": 866,
+      "localId": "d56828c1-403d-4e8f-8aa5-018b5419ee6d",
+      "text": "jsjsjs",
+      "attachment": {},
+      "type": "type0",
+      "status": "status1",
+      "authorId": 19,
+      "roomId": 21,
+      "createdAt": "2023-05-25T19:32:46.569Z",
+      "updatedAt": "2023-05-25T19:32:46.569Z",
+      "deletedAt": null,
+      "answerId": null,
+      "forwardId": null,
+      "author": {
+        "id": 19,
         "personalData": {
-          "name": "Chary",
-          "surname": "Charyyew",
+          "name": "Shanur",
+          "surname": "Daniyarow",
           "birthday": null,
-          "lastname": "Charyyewich",
+          "lastname": "123123",
           "birthPlace": null,
           "homePhoneNumber": null
         },
-        "avatar": "avatar/84e34e51-511f-4d8b-a3da-.jfif",
-        "lastActivity": "2023-05-22T19:24:40.923Z",
-        "isActive": true,
-        "messageRoom": {
-          "text": "gsifshfsdfjhsj",
-          "roomId": 11,
-          "createdAt": "2023-05-23T09:37:02.692Z",
-          "room": {
-            "_count": {
-              "messages": 0
-            }
-          }
-        }
+        "avatar": "avatar/84e34e51-511f-4d8b-a3da-0a300d694d48.jfif11",
+        "lastActivity": "2023-05-26T10:08:02.721Z",
+        "isActive": true
       },
-      {
-        "id": 17,
+      "forwarding": null,
+      "answering": null
+    },
+    {
+      "id": 865,
+      "localId": "16ccfdec-7b59-4ce0-9c08-e7a6591c94a3",
+      "text": "snnsns",
+      "attachment": {},
+      "type": "type0",
+      "status": "status1",
+      "authorId": 19,
+      "roomId": 21,
+      "createdAt": "2023-05-25T19:32:45.568Z",
+      "updatedAt": "2023-05-25T19:32:45.568Z",
+      "deletedAt": null,
+      "answerId": null,
+      "forwardId": null,
+      "author": {
+        "id": 19,
         "personalData": {
-          "name": "Chary",
-          "surname": "Charyyew",
+          "name": "Shanur",
+          "surname": "Daniyarow",
           "birthday": null,
-          "lastname": "Charyyewich",
+          "lastname": "123123",
           "birthPlace": null,
           "homePhoneNumber": null
         },
-        "avatar": "avatar/84e34e51-511f-a3da-.jfif",
-        "lastActivity": "2023-05-22T19:05:54.688Z",
-        "isActive": false,
-        "messageRoom": {
-          "text": "",
-          "roomId": 0,
-          "createdAt": "",
-          "room": {
-            "_count": {
-              "messages": 0
-            }
-          }
-        }
+        "avatar": "avatar/84e34e51-511f-4d8b-a3da-0a300d694d48.jfif11",
+        "lastActivity": "2023-05-26T10:08:02.721Z",
+        "isActive": true
       },
-      {
-        "id": 8,
+      "forwarding": null,
+      "answering": null
+    },
+    {
+      "id": 864,
+      "localId": "c747971b-91d1-401b-9ddb-5e60192c80dc",
+      "text": "zjdjdj",
+      "attachment": {},
+      "type": "type0",
+      "status": "status1",
+      "authorId": 19,
+      "roomId": 21,
+      "createdAt": "2023-05-25T19:32:44.489Z",
+      "updatedAt": "2023-05-25T19:32:44.489Z",
+      "deletedAt": null,
+      "answerId": null,
+      "forwardId": null,
+      "author": {
+        "id": 19,
         "personalData": {
-          "name": "Berdi",
-          "surname": "Berdiyew",
+          "name": "Shanur",
+          "surname": "Daniyarow",
           "birthday": null,
-          "lastname": "Bediyewich",
+          "lastname": "123123",
           "birthPlace": null,
           "homePhoneNumber": null
         },
-        "avatar": "avatar/925cf43a-d544-49d7-9e75-9dd7056269bc.jpg",
-        "lastActivity": "2023-05-22T05:10:00.076Z",
-        "isActive": true,
-        "messageRoom": {
-          "text": "",
-          "roomId": 0,
-          "createdAt": "",
-          "room": {
-            "_count": {
-              "messages": 0
-            }
-          }
-        }
-      }
-    ],
-    "groups": []
-  }
-}
+        "avatar": "avatar/84e34e51-511f-4d8b-a3da-0a300d694d48.jfif11",
+        "lastActivity": "2023-05-26T10:08:02.721Z",
+        "isActive": true
+      },
+      "forwarding": null,
+      "answering": null
+    },
+    {
+      "id": 863,
+      "localId": "9922cb16-81cb-4eac-958c-5491cdd1f4ea",
+      "text": "Nznzn",
+      "attachment": {},
+      "type": "type0",
+      "status": "status1",
+      "authorId": 19,
+      "roomId": 21,
+      "createdAt": "2023-05-25T19:32:43.475Z",
+      "updatedAt": "2023-05-25T19:32:43.475Z",
+      "deletedAt": null,
+      "answerId": null,
+      "forwardId": null,
+      "author": {
+        "id": 19,
+        "personalData": {
+          "name": "Shanur",
+          "surname": "Daniyarow",
+          "birthday": null,
+          "lastname": "123123",
+          "birthPlace": null,
+          "homePhoneNumber": null
+        },
+        "avatar": "avatar/84e34e51-511f-4d8b-a3da-0a300d694d48.jfif11",
+        "lastActivity": "2023-05-26T10:08:02.721Z",
+        "isActive": true
+      },
+      "forwarding": null,
+      "answering": null
+    },
+    {
+      "id": 862,
+      "localId": "f5fd64cb-0eac-40f4-9a1e-f9e3d396771c",
+      "text": "5",
+      "attachment": {},
+      "type": "type0",
+      "status": "status1",
+      "authorId": 19,
+      "roomId": 21,
+      "createdAt": "2023-05-25T19:32:23.173Z",
+      "updatedAt": "2023-05-25T19:32:23.173Z",
+      "deletedAt": null,
+      "answerId": null,
+      "forwardId": null,
+      "author": {
+        "id": 19,
+        "personalData": {
+          "name": "Shanur",
+          "surname": "Daniyarow",
+          "birthday": null,
+          "lastname": "123123",
+          "birthPlace": null,
+          "homePhoneNumber": null
+        },
+        "avatar": "avatar/84e34e51-511f-4d8b-a3da-0a300d694d48.jfif11",
+        "lastActivity": "2023-05-26T10:08:02.721Z",
+        "isActive": true
+      },
+      "forwarding": null,
+      "answering": null
+    },
+    {
+      "id": 861,
+      "localId": "e327ea50-7ae4-4fe9-848e-a0a7af1c6181",
+      "text": "4",
+      "attachment": {},
+      "type": "type0",
+      "status": "status1",
+      "authorId": 19,
+      "roomId": 21,
+      "createdAt": "2023-05-25T19:32:21.897Z",
+      "updatedAt": "2023-05-25T19:32:21.897Z",
+      "deletedAt": null,
+      "answerId": null,
+      "forwardId": null,
+      "author": {
+        "id": 19,
+        "personalData": {
+          "name": "Shanur",
+          "surname": "Daniyarow",
+          "birthday": null,
+          "lastname": "123123",
+          "birthPlace": null,
+          "homePhoneNumb
+          D/OkHttp: er
+          ":null},"
+          avatar
+          ":"
+          avatar/84e34e51-511f-4d8b-a3da-0a300d694d48.jfif11
+          ","
+          lastActivity
+          ":"
+          2023-05-26T10: 08
+          :
+          02.721Z
+          ","
+          isActive
+          ":true},"
+          forwarding
+          ":null,"
+          answering
+          ":null},{"
+          id
+          ":860,"
+          localId
+          ":"
+          88785258-da74-466b-9910-7ce25d233cee
+          ","
+          text
+          ":"
+          3
+          ","
+          attachment
+          ":{},"
+          type
+          ":"
+          type0
+          ","
+          status
+          ":"
+          status1
+          ","
+          authorId
+          ":19,"
+          roomId
+          ":21,"
+          createdAt
+          ":"
+          2023-05-25T19: 32
+          :
+          20.704Z
+          ","
+          updatedAt
+          ":"
+          2023-05-25T19: 32
+          :
+          20.704Z
+          ","
+          deletedAt
+          ":null,"
+          answerId
+          ":null,"
+          forwardId
+          ":null,"
+          author
+          ":{"
+          id
+          ":19,"
+          personalData
+          ":{"
+          name
+          ":"
+          Shanur
+          ","
+          surname
+          ":"
+          Daniyarow
+          ","
+          birthday
+          ":null,"
+          lastname
+          ":"
+          123123
+          ","
+          birthPlace
+          ":null,"
+          homePhoneNumber
+          ":null},"
+          avatar
+          ":"
+          avatar/84e34e51-511f-4d8b-a3da-0a300d694d48.jfif11
+          ","
+          lastActivity
+          ":"
+          2023-05-26T10: 08
+          :
+          02.721Z
+          ","
+          isActive
+          ":true},"
+          forwarding
+          ":null,"
+          answering
+          ":null},{"
+          id
+          ":859,"
+          localId
+          ":"
+          5f167a42-23da-4738-8e1c-7020ff5f5221
+          ","
+          text
+          ":"
+          2
+          ","
+          attachment
+          ":{},"
+          type
+          ":"
+          type0
+          ","
+          status
+          ":"
+          status1
+          ","
+          authorId
+          ":19,"
+          roomId
+          ":21,"
+          createdAt
+          ":"
+          2023-05-25T19: 32
+          :
+          19.417Z
+          ","
+          updatedAt
+          ":"
+          2023-05-25T19: 32
+          :
+          19.417Z
+          ","
+          deletedAt
+          ":null,"
+          answerId
+          ":null,"
+          forwardId
+          ":null,"
+          author
+          ":{"
+          id
+          ":19,"
+          personalData
+          ":{"
+          name
+          ":"
+          Shanur
+          ","
+          surname
+          ":"
+          Daniyarow
+          ","
+          birthday
+          ":null,"
+          lastname
+          ":"
+          123123
+          ","
+          birthPlace
+          ":null,"
+          homePhoneNumber
+          ":null},"
+          avatar
+          ":"
+          avatar/84e34e51-511f-4d8b-a3da-0a300d694d48.jfif11
+          ","
+          lastActivity
+          ":"
+          2023-05-26T10: 08
+          :
+          02.721Z
+          ","
+          isActive
+          ":true},"
+          forwarding
+          ":null,"
+          answering
+          ":null},{"
+          id
+          ":858,"
+          localId
+          ":"
+          0ddfa6a7-d211-45c4-8406-87a60f2a0443
+          ","
+          text
+          ":"
+          1
+          ","
+          attachment
+          ":{},"
+          type
+          ":"
+          type0
+          ","
+          status
+          ":"
+          status1
+          ","
+          authorId
+          ":19,"
+          roomId
+          ":21,"
+          createdAt
+          ":"
+          2023-05-25T19: 32
+          :
+          17.883Z
+          ","
+          updatedAt
+          ":"
+          2023-05-25T19: 32
+          :
+          17.883Z
+          ","
+          deletedAt
+          ":null,"
+          answerId
+          ":null,"
+          forwardId
+          ":null,"
+          author
+          ":{"
+          id
+          ":19,"
+          personalData
+          ":{"
+          name
+          ":"
+          Shanur
+          ","
+          surname
+          ":"
+          Daniyarow
+          ","
+          birthday
+          ":null,"
+          lastname
+          ":"
+          123123
+          ","
+          birthPlace
+          ":null,"
+          homePhoneNumber
+          ":null},"
+          avatar
+          ":"
+          avatar/84e34e51-511f-4d8b-a3da-0a300d694d48.jfif11
+          ","
+          lastActivity
+          ":"
+          2023-05-26T10: 08
+          :
+          02.721Z
+          ","
+          isActive
+          ":true},"
+          forwarding
+          ":null,"
+          answering
+          ":null},{"
+          text
+          ":"
+          5/25/2023
+          ","
+          type
+          ":"
+          type4
+          "}]}

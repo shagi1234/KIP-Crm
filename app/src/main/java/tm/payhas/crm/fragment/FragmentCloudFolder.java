@@ -24,12 +24,13 @@ import java.util.ArrayList;
 
 import tm.payhas.crm.R;
 import tm.payhas.crm.adapters.AdapterCloud;
+import tm.payhas.crm.dataModels.DataMessageTarget;
 import tm.payhas.crm.dataModels.DataProjectUsers;
 import tm.payhas.crm.databinding.FragmentCloudFolderBinding;
-import tm.payhas.crm.interfaces.MultiSelector;
+import tm.payhas.crm.interfaces.ChatRoomInterface;
 import tm.payhas.crm.model.ModelFile;
 
-public class FragmentCloudFolder extends Fragment implements MultiSelector {
+public class FragmentCloudFolder extends Fragment implements ChatRoomInterface {
     private FragmentCloudFolderBinding b;
     private AdapterCloud adapterCloudFolder;
     private ArrayList<ModelFile> files = new ArrayList<>();
@@ -176,6 +177,16 @@ public class FragmentCloudFolder extends Fragment implements MultiSelector {
 
     @Override
     public void selectedUserList(ArrayList<DataProjectUsers> selected) {
+
+    }
+
+    @Override
+    public void userStatus(boolean isActive) {
+
+    }
+
+    @Override
+    public void newMessage(DataMessageTarget messageTarget) {
 
     }
 }

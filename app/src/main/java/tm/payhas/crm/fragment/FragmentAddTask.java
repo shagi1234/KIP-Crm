@@ -3,6 +3,7 @@ package tm.payhas.crm.fragment;
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.fragment.FragmentSpinner.OBSERVERS;
 import static tm.payhas.crm.fragment.FragmentSpinner.PROJECTS;
+import static tm.payhas.crm.fragment.FragmentSpinner.RESPONSIBLE;
 import static tm.payhas.crm.helpers.Common.addFragment;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import static tm.payhas.crm.statics.StaticConstants.FINISHED;
@@ -34,14 +35,18 @@ import retrofit2.Response;
 import tm.payhas.crm.R;
 import tm.payhas.crm.api.request.RequestCreateTask;
 import tm.payhas.crm.api.response.ResponseTasks;
+import tm.payhas.crm.dataModels.DataProject;
 import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.interfaces.AddTask;
 import tm.payhas.crm.preference.AccountPreferences;
 
-public class FragmentAddTask extends Fragment {
+public class FragmentAddTask extends Fragment implements AddTask {
     private tm.payhas.crm.databinding.FragmentAddTaskBinding b;
     private AccountPreferences accountPreferences;
     private String status;
     private String importancy;
+    private int projectId = 0;
+    private ArrayList<Integer> selectedObserverList = new ArrayList<>();
 
     public static FragmentAddTask newInstance() {
         FragmentAddTask fragment = new FragmentAddTask();
@@ -67,6 +72,7 @@ public class FragmentAddTask extends Fragment {
     }
 
     private void setUpSpinners() {
+        b.spinnerTaskStatus.setVisibility(View.GONE);
         String[] statuses = getResources().getStringArray(R.array.status);
         String[] importancy = getResources().getStringArray(R.array.importancy);
         ArrayAdapter adapterStatus = new ArrayAdapter(getContext(), R.layout.item_spinner, statuses);
@@ -99,6 +105,11 @@ public class FragmentAddTask extends Fragment {
             addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(OBSERVERS));
             new Handler().postDelayed(() -> b.vObservers.setEnabled(true), 200);
 
+        });
+        b.vResponsible.setOnClickListener(view -> {
+            b.vObservers.setEnabled(false);
+            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(RESPONSIBLE));
+            new Handler().postDelayed(() -> b.vObservers.setEnabled(true), 200);
         });
         b.spinnerTaskStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -170,11 +181,6 @@ public class FragmentAddTask extends Fragment {
     }
 
     private void createTask() {
-        ArrayList<Integer> observerTeacher = new ArrayList<>();
-        observerTeacher.add(1);
-        observerTeacher.add(2);
-        observerTeacher.add(3);
-        observerTeacher.add(4);
         ArrayList<String> remindAt = new ArrayList<>();
         remindAt.add("2023-04-10T12:00");
         remindAt.add("2023-04-10T12:00");
@@ -183,15 +189,14 @@ public class FragmentAddTask extends Fragment {
         String name = b.edtTaskName.getText().toString();
         String info = b.infoInput.getText().toString();
         RequestCreateTask requestCreateTask = new RequestCreateTask();
+        requestCreateTask.setObserverUsers(selectedObserverList);
         requestCreateTask.setName(name);
-        requestCreateTask.setProjectId(null);
         requestCreateTask.setName(info);
         requestCreateTask.setRemindAt(remindAt);
         requestCreateTask.setReminderType("author");
         requestCreateTask.setStartsAt("2023-03-30");
         requestCreateTask.setFinishesAt("2023-03-30");
-        requestCreateTask.setObserverUsers(observerTeacher);
-        requestCreateTask.setResponsibleUsers(observerTeacher);
+        requestCreateTask.setProjectId(projectId);
         requestCreateTask.setPriority(importancy);
         requestCreateTask.setDescription("slfjaskhfuagudjahfywjhdajkugduyfajsfus");
         requestCreateTask.setStatus(status);
@@ -205,7 +210,6 @@ public class FragmentAddTask extends Fragment {
                 if (getActivity() != null) {
                     getActivity().onBackPressed();
                 }
-
             }
 
             @Override
@@ -215,4 +219,15 @@ public class FragmentAddTask extends Fragment {
         });
     }
 
+    @Override
+    public void selectedProjectId(DataProject oneProject) {
+        projectId = oneProject.getId();
+        accountPreferences.setPrefCurrentProjectId(oneProject.getId());
+        b.vTaskProjects.setText(oneProject.getName());
+    }
+
+    @Override
+    public void selectedObserverList(ArrayList<Integer> userList) {
+        selectedObserverList = userList;
+    }
 }

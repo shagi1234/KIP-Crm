@@ -1,7 +1,9 @@
 package tm.payhas.crm.adapters;
 
+import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
+
+import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,17 +12,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
 import tm.payhas.crm.R;
 import tm.payhas.crm.dataModels.DataProject;
+import tm.payhas.crm.fragment.FragmentAddTask;
+import tm.payhas.crm.interfaces.AddTask;
 
 public class AdapterListProjects extends RecyclerView.Adapter<AdapterListProjects.ViewHolder> {
 
     private Context context;
     private ArrayList<DataProject> projects = new ArrayList<>();
+    private Activity activity;
 
 
     public AdapterListProjects(Context context) {
@@ -32,6 +38,14 @@ public class AdapterListProjects extends RecyclerView.Adapter<AdapterListProject
         notifyDataSetChanged();
     }
 
+    public Activity getActivity() {
+        return activity;
+    }
+
+    public void setActivity(Activity activity) {
+        this.activity = activity;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -41,7 +55,8 @@ public class AdapterListProjects extends RecyclerView.Adapter<AdapterListProject
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
+        holder.checkBox.setVisibility(View.GONE);
+        holder.bind();
     }
 
     @Override
@@ -62,16 +77,14 @@ public class AdapterListProjects extends RecyclerView.Adapter<AdapterListProject
         }
 
         public void bind() {
-            main.setBackgroundColor(Color.parseColor("#FFFFFF"));
             DataProject oneProjects = projects.get(getAdapterPosition());
             userName.setText(oneProjects.getName());
             main.setOnClickListener(view -> {
-                checkBox.setChecked(!checkBox.isChecked());
-                if (checkBox.isChecked()) {
-                    main.setBackgroundColor(Color.parseColor("#197E69FF"));
-                } else {
-                    main.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                Fragment addTask = mainFragmentManager.findFragmentByTag(FragmentAddTask.class.getSimpleName());
+                if (addTask instanceof AddTask) {
+                    ((AddTask) addTask).selectedProjectId(oneProjects);
                 }
+                getActivity().onBackPressed();
 
             });
         }

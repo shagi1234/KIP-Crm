@@ -1,5 +1,6 @@
 package tm.payhas.crm.adapters;
 
+import static tm.payhas.crm.helpers.Common.normalTime;
 import static tm.payhas.crm.statics.StaticConstants.DATE;
 import static tm.payhas.crm.statics.StaticConstants.FILE;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGE_DELIVERED;
@@ -20,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.menu.MenuBuilder;
@@ -28,13 +28,18 @@ import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.makeramen.roundedimageview.RoundedImageView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import tm.payhas.crm.R;
 import tm.payhas.crm.dataModels.DataMessageTarget;
 import tm.payhas.crm.interfaces.NewMessage;
-import tm.payhas.crm.preference.AccountPreferences;
 
 public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessage {
     private ArrayList<DataMessageTarget> messages = new ArrayList<>();
@@ -47,13 +52,20 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
         this.context = context;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setAuthorId(int authorId) {
         this.authorId = authorId;
         notifyDataSetChanged();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setMessages(ArrayList<DataMessageTarget> messages) {
         this.messages = messages;
+        notifyDataSetChanged();
+    }
+
+    public void addMessages(DataMessageTarget message) {
+        messages.add(message);
         notifyDataSetChanged();
     }
 
@@ -76,6 +88,8 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
     @Override
     public int getItemViewType(int position) {
         DataMessageTarget oneMessage = messages.get(position);
+        Log.e("Adapter", "getItemViewType: " + authorId);
+        Log.e("Adapter", "getItemViewType: " + oneMessage.getAuthorId());
         switch (oneMessage.getType()) {
             case STRING:
                 if (oneMessage.getAuthorId() == authorId)
@@ -98,9 +112,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
                 else
                     return LAYOUT_RECEIVED_FILE;
             case DATE:
-                if (oneMessage.getAuthorId() == authorId)
-                    return LAYOUT_DATE;
-
+                return LAYOUT_DATE;
             default:
                 return LAYOUT_SEND_MESSAGE;
         }
@@ -142,7 +154,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
                 return new ReceivedImageViewHolder(layout10);
             case LAYOUT_DATE:
                 View layout11 = LayoutInflater.from(context).inflate(R.layout.item_date, parent, false);
-                return new ReceivedImageViewHolder(layout11);
+                return new DateViewHolder(layout11);
             default:
                 return null;
 
@@ -160,24 +172,28 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
                     ((SenderMessageViewHolder) holder).bind(oneMessage);
                 else
                     ((ReceivedMessageViewHolder) holder).bind(oneMessage);
-//            case VOICE:
-//                if (oneMessage.getAuthorId() == authorId)
-//                    ((SenderVoiceViewHolder) holder).bind(oneMessage);
-//                else
-//                    ((ReceivedVoiceViewHolder) holder).bind(oneMessage);
-//            case PHOTO:
-//                if (oneMessage.getAuthorId() == authorId)
-//                    ((SendImageViewHolder) holder).bind(oneMessage);
-//                else
-//                    ((ReceivedImageViewHolder) holder).bind(oneMessage);
-//            case FILE:
-//                if (oneMessage.getAuthorId() == authorId)
-//                    ((SenderFileViewHolder) holder).bind(oneMessage);
-//                else
-//                    ((ReceivedFileViewHolder) holder).bind(oneMessage);
-//            case DATE:
-//                if (oneMessage.getAuthorId() == authorId)
-//                    ((DateViewHolder) holder).bind(oneMessage);
+                break;
+            case VOICE:
+                if (oneMessage.getAuthorId() == authorId)
+                    ((SenderVoiceViewHolder) holder).bind(oneMessage);
+                else
+                    ((ReceivedVoiceViewHolder) holder).bind(oneMessage);
+                break;
+            case PHOTO:
+                if (oneMessage.getAuthorId() == authorId)
+                    ((SendImageViewHolder) holder).bind(oneMessage);
+                else
+                    ((ReceivedImageViewHolder) holder).bind(oneMessage);
+                break;
+            case FILE:
+                if (oneMessage.getAuthorId() == authorId)
+                    ((SenderFileViewHolder) holder).bind(oneMessage);
+                else
+                    ((ReceivedFileViewHolder) holder).bind(oneMessage);
+                break;
+            case DATE:
+                ((DateViewHolder) holder).bind(oneMessage);
+                break;
         }
     }
 
@@ -186,12 +202,11 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
         return messages.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onNewMessage(DataMessageTarget dataMessageTarget) {
-        Toast.makeText(context, dataMessageTarget.getText(), Toast.LENGTH_SHORT).show();
-        messages.add(dataMessageTarget);
+        messages.add(0, dataMessageTarget);
         notifyDataSetChanged();
-        Log.e("Adapter", "onNewMessage: " + "added");
     }
 
     private static class SenderMessageViewHolder extends RecyclerView.ViewHolder {
@@ -208,7 +223,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
 
         public void bind(DataMessageTarget messageTarget) {
             msgSent.setText(messageTarget.getText());
-            time.setText(messageTarget.getCreatedAt());
+            time.setText(normalTime(messageTarget.getCreatedAt()));
             switch (messageTarget.getStatus()) {
                 case MESSAGE_UN_SEND:
                 case MESSAGE_SENT:
@@ -250,7 +265,8 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
 
         public void bind(DataMessageTarget messageTarget) {
             msgReceived.setText(messageTarget.getText());
-            time.setText(messageTarget.getCreatedAt());
+            time.setText(normalTime(messageTarget.getCreatedAt()));
+
         }
     }
 
@@ -268,7 +284,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
 
         public void bind(DataMessageTarget oneMessage) {
             voiceInformation.setText(oneMessage.getAttachment().getDuration() + "," + oneMessage.getAttachment().getSize());
-            time.setText(oneMessage.getCreatedAt());
+            time.setText(normalTime(oneMessage.getCreatedAt()));
             switch (oneMessage.getStatus()) {
                 case MESSAGE_UN_SEND:
                 case MESSAGE_SENT:
@@ -284,7 +300,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
         }
     }
 
-    private class ReceivedVoiceViewHolder extends RecyclerView.ViewHolder {
+    private static class ReceivedVoiceViewHolder extends RecyclerView.ViewHolder {
         private final TextView voiceInformation;
         private final TextView time;
 
@@ -296,11 +312,11 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
 
         public void bind(DataMessageTarget oneMessage) {
             voiceInformation.setText(oneMessage.getAttachment().getDuration() + "," + oneMessage.getAttachment().getSize());
-            time.setText(oneMessage.getCreatedAt());
+            time.setText(normalTime(oneMessage.getCreatedAt()));
         }
     }
 
-    private class SenderFileViewHolder extends RecyclerView.ViewHolder {
+    private static class SenderFileViewHolder extends RecyclerView.ViewHolder {
         private final TextView fileName;
         private final TextView time;
         private final ImageView status;
@@ -317,7 +333,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
         public void bind(DataMessageTarget oneMessage) {
             fileName.setText(oneMessage.getAttachment().getFileName());
             fileInformation.setText(oneMessage.getAttachment().getDuration() + "," + oneMessage.getAttachment().getSize());
-            time.setText(oneMessage.getCreatedAt());
+            time.setText(normalTime(oneMessage.getCreatedAt()));
             switch (oneMessage.getStatus()) {
                 case MESSAGE_UN_SEND:
                 case MESSAGE_SENT:
@@ -334,7 +350,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
 
     }
 
-    private class ReceivedFileViewHolder extends RecyclerView.ViewHolder {
+    private static class ReceivedFileViewHolder extends RecyclerView.ViewHolder {
         private final TextView fileName;
         private final TextView time;
         private final TextView fileInformation;
@@ -343,18 +359,26 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
             super(itemView);
             fileName = itemView.findViewById(R.id.msg_file_name);
             time = itemView.findViewById(R.id.message_time);
-            fileInformation = itemView.findViewById(R.id.msg_file_info);
+            fileInformation = itemView.findViewById(R.id.file_msg_rec_info);
         }
 
         public void bind(DataMessageTarget oneMessage) {
-            fileName.setText(oneMessage.getAttachment().getFileName());
-            fileInformation.setText(oneMessage.getAttachment().getDuration() + "," + oneMessage.getAttachment().getSize());
-            time.setText(oneMessage.getCreatedAt());
+            if (oneMessage.getAttachment() != null) {
+                if (oneMessage.getAttachment().getFileName() != null) {
+                    fileName.setText(oneMessage.getAttachment().getFileName());
+                }
+                if (oneMessage.getAttachment().getSize() != null) {
+                    fileInformation.setText(oneMessage.getAttachment().getSize());
+                }
+                if (oneMessage.getCreatedAt() != null)
+                    time.setText(normalTime(oneMessage.getCreatedAt()));
+            }
+
         }
     }
 
     private class SendImageViewHolder extends RecyclerView.ViewHolder {
-        private final ImageView image;
+        private final RoundedImageView image;
         private final ImageView status;
         private final TextView imageSentTime;
         private final TextView imageSentSize;
@@ -369,7 +393,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
 
         public void bind(DataMessageTarget oneMessage) {
             Glide.with(context).load(oneMessage.getAttachment().getFileUrl()).placeholder(R.color.primary).into(image);
-            imageSentTime.setText(oneMessage.getCreatedAt());
+            imageSentTime.setText(normalTime(oneMessage.getCreatedAt()));
             imageSentSize.setText(oneMessage.getAttachment().getSize());
             switch (oneMessage.getStatus()) {
                 case MESSAGE_UN_SEND:
@@ -388,7 +412,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
     }
 
     private class ReceivedImageViewHolder extends RecyclerView.ViewHolder {
-        private final ImageView image;
+        private final RoundedImageView image;
         private final TextView imageSentTime;
         private final TextView imageSentSize;
 
@@ -401,12 +425,12 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
 
         public void bind(DataMessageTarget oneMessage) {
             Glide.with(context).load(oneMessage.getAttachment().getFileUrl()).placeholder(R.color.primary).into(image);
-            imageSentTime.setText(oneMessage.getCreatedAt());
+            imageSentTime.setText(normalTime(oneMessage.getCreatedAt()));
             imageSentSize.setText(oneMessage.getAttachment().getSize());
         }
     }
 
-    private static class DateViewHolder extends RecyclerView.ViewHolder {
+    private class DateViewHolder extends RecyclerView.ViewHolder {
         private final TextView date;
 
         public DateViewHolder(View itemView) {
@@ -418,4 +442,6 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
             date.setText(oneMessage.getText());
         }
     }
+
+
 }

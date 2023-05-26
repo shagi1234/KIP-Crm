@@ -1,10 +1,17 @@
 package tm.payhas.crm.helpers;
 
+import android.util.Log;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import tm.payhas.crm.R;
 import tm.payhas.crm.api.response.RetrofitClient;
@@ -23,6 +30,7 @@ public class Common {
 
         ft.commit();
     }
+
     public static Services getApi() {
         return (Services) RetrofitClient.createRequest(Services.class);
     }
@@ -87,6 +95,44 @@ public class Common {
 
         ft.commit();
 
+    }
+
+    public static String normalTime(String dateGiven) {
+
+        String initialStringDate = dateGiven;
+        Locale us = new Locale("US");
+        String time = "null";
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", us);
+        try {
+            Date date = format.parse(initialStringDate);
+            String stringDate = new SimpleDateFormat("yyyy/MM/dd", us).format(date);
+            String stringTime = new SimpleDateFormat("HH:mm", us).format(date);
+            String finalDateTime = stringDate.concat(" ").concat(stringTime);
+            time = finalDateTime;
+            Log.i("Date_and_Time", "" + finalDateTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return time;
+
+    }
+
+    public static String normalDate(String dateGiven) {
+        String initialStringDate = dateGiven;
+        Locale us = new Locale("US");
+        String dateTaken = "";
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.ss'Z'", us);
+        try {
+            Date date = format.parse(initialStringDate);
+            String stringDate = new SimpleDateFormat("yyyy/MM/dd", us).format(date);
+            String stringTime = new SimpleDateFormat("HH:mm", us).format(date);
+            String finalDateTime = stringDate.concat(" ").concat(stringTime);
+            dateTaken = stringDate;
+            Log.i("Date_and_Time", "" + finalDateTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return dateTaken;
     }
 
 

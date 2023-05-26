@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import tm.payhas.crm.R;
 import tm.payhas.crm.fragment.FragmentCloudFile;
 import tm.payhas.crm.fragment.FragmentCloudFolder;
-import tm.payhas.crm.interfaces.MultiSelector;
+import tm.payhas.crm.interfaces.ChatRoomInterface;
 import tm.payhas.crm.model.ModelFile;
 
 public class AdapterCloud extends RecyclerView.Adapter<AdapterCloud.ViewHolder> {
@@ -132,8 +132,8 @@ public class AdapterCloud extends RecyclerView.Adapter<AdapterCloud.ViewHolder> 
                         main.setBackgroundColor(Color.parseColor("#FFFFFF"));
                     }
                     Fragment cloudFolder = mainFragmentManager.findFragmentByTag(FragmentCloudFolder.class.getSimpleName());
-                    if (cloudFolder instanceof MultiSelector) {
-                        ((MultiSelector) cloudFolder).multiSelectedArray(selected);
+                    if (cloudFolder instanceof ChatRoomInterface) {
+                        ((ChatRoomInterface) cloudFolder).multiSelectedArray(selected);
                     }
                 });
                 if (selectedOne.isSelected()) {

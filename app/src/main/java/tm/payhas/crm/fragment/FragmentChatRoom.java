@@ -3,7 +3,6 @@ package tm.payhas.crm.fragment;
 import static tm.payhas.crm.activity.ActivityMain.webSocket;
 import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
-import static tm.payhas.crm.statics.StaticConstants.DATE;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGE_SENT;
 import static tm.payhas.crm.statics.StaticConstants.STRING;
 
@@ -26,8 +25,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 import retrofit2.Call;
@@ -35,35 +37,39 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tm.payhas.crm.R;
 import tm.payhas.crm.adapters.AdapterSingleChat;
-import tm.payhas.crm.api.data.response.ResponseChatRoom;
 import tm.payhas.crm.api.request.RequestNewMessage;
+import tm.payhas.crm.api.response.ResponseRoomMessages;
 import tm.payhas.crm.dataModels.DataMessageTarget;
 import tm.payhas.crm.dataModels.DataProjectUsers;
 import tm.payhas.crm.databinding.FragmentChatRoomBinding;
 import tm.payhas.crm.helpers.Common;
 import tm.payhas.crm.helpers.SoftInputAssist;
-import tm.payhas.crm.interfaces.MultiSelector;
+import tm.payhas.crm.interfaces.ChatRoomInterface;
 import tm.payhas.crm.interfaces.NewMessage;
 import tm.payhas.crm.model.ModelFile;
 import tm.payhas.crm.preference.AccountPreferences;
 
-public class FragmentChatRoom extends Fragment implements MultiSelector {
+public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     private FragmentChatRoomBinding b;
-    private AdapterSingleChat adapterSingleChat;
     private SoftInputAssist softInputAssist;
     private boolean isMessage = false;
     private final String TAG = "chatRoom";
     private boolean isSet = false;
     private int roomId;
     private int userId;
+    private String userName;
+    private String avatarUrl;
     private AccountPreferences accountPreferences;
-    private ArrayList<DataMessageTarget> listMessagesWithDate = new ArrayList<DataMessageTarget>();
+    private AdapterSingleChat adapterSingleChat;
+    private String event;
 
-    public static FragmentChatRoom newInstance(int roomId, int userId) {
+    public static FragmentChatRoom newInstance(int roomId, int userId, String username, String avatarUrl) {
         FragmentChatRoom fragment = new FragmentChatRoom();
         Bundle args = new Bundle();
         args.putInt("roomId", roomId);
         args.putInt("userId", userId);
+        args.putString("username", username);
+        args.putString("avatarUrl", avatarUrl);
         fragment.setArguments(args);
         return fragment;
     }
@@ -81,14 +87,19 @@ public class FragmentChatRoom extends Fragment implements MultiSelector {
         if (getArguments() != null) {
             roomId = getArguments().getInt("roomId");
             userId = getArguments().getInt("userId");
+            userName = getArguments().getString("username");
+            avatarUrl = getArguments().getString("avatarUrl");
         }
         if (getActivity() != null) {
             softInputAssist = new SoftInputAssist(getActivity());
         }
+        adapterSingleChat = new AdapterSingleChat(getContext());
+        setRoom();
         setRecycler();
-        setAuthorId();
         setBackground();
         initListeners();
+        setAuthorId();
+        setSendCommand();
         if (roomId != 0) {
             getMessages();
         }
@@ -97,32 +108,36 @@ public class FragmentChatRoom extends Fragment implements MultiSelector {
         return b.getRoot();
     }
 
+    private void setSendCommand() {
+        if (roomId == 0)
+            event = "newRoom";
+        else
+            event = "createMessage";
+
+    }
+
+    private void setRoom() {
+        b.username.setText(userName);
+        Picasso.get().load(avatarUrl).placeholder(R.drawable.ic_logo_crm).into(b.contactImage);
+    }
+
     private void setAuthorId() {
         adapterSingleChat.setAuthorId(accountPreferences.getAuthorId());
     }
 
     private void getMessages() {
-        Call<ResponseChatRoom> messagesRooms = Common.getApi().getMessageRoom(accountPreferences.getToken(), roomId, 1, 10);
-        messagesRooms.enqueue(new Callback<ResponseChatRoom>() {
+        Call<ResponseRoomMessages> messagesRooms = Common.getApi().getMessageRoom(accountPreferences.getToken(), roomId, 1, 10);
+        messagesRooms.enqueue(new Callback<ResponseRoomMessages>() {
             @Override
-            public void onResponse(Call<ResponseChatRoom> call, Response<ResponseChatRoom> response) {
+            public void onResponse(Call<ResponseRoomMessages> call, Response<ResponseRoomMessages> response) {
                 if (response.isSuccessful()) {
-                    for (int i = 0; i <response.body().getData().size(); i++) {
-                        String chatData = response.body().getData().get(i).getChatData();
-                        DataMessageTarget dateMessage = new DataMessageTarget();
-                        dateMessage.setText(chatData);
-                        dateMessage.setType(DATE);
-                        listMessagesWithDate.add(dateMessage);
-                        listMessagesWithDate.addAll(response.body().getData().get(i).getMessages());
-                        i++;
-                    }
-                    Log.e(TAG, "onResponse: list Size" + listMessagesWithDate.size());
-                    adapterSingleChat.setMessages(listMessagesWithDate);
+                    adapterSingleChat.setMessages(response.body().getData());
+                    Log.e(TAG, "onResponse: " + "Done");
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseChatRoom> call, Throwable t) {
+            public void onFailure(Call<ResponseRoomMessages> call, Throwable t) {
 
             }
         });
@@ -135,8 +150,12 @@ public class FragmentChatRoom extends Fragment implements MultiSelector {
                 getActivity().onBackPressed();
             }
         });
-        b.sendMessage.setOnClickListener(view -> sendMessage());
+        b.sendMessage.setOnClickListener(view -> {
+            sendMessage();
+            b.input.setText("");
 
+
+        });
         b.recordVoice.setOnClickListener(view -> Toast.makeText(getContext(), "Send Voice", Toast.LENGTH_SHORT).show());
         b.input.addTextChangedListener(new TextWatcher() {
             @Override
@@ -161,16 +180,17 @@ public class FragmentChatRoom extends Fragment implements MultiSelector {
 
             }
         });
+        if (roomId == 0) return;
 
-//        b.recChatScreen.addOnLayoutChangeListener((view, i, i1, i2, i3, i4, i5, i6, i7) -> {
-//            if (isSet) {
-//                b.recChatScreen.smoothScrollToPosition(adapterSingleChat.getItemCount() - 1);
-//            } else {
-//                b.recChatScreen.scrollToPosition(adapterSingleChat.getItemCount() - 1);
-//                isSet = true;
-//            }
-//        });
-    }
+                b.recChatScreen.addOnLayoutChangeListener((view, i, i1, i2, i3, i4, i5, i6, i7) -> {
+                    if (isSet) {
+                        b.recChatScreen.smoothScrollToPosition(1);
+                    } else {
+                        b.recChatScreen.scrollToPosition(1);
+                        isSet = true;
+                    }
+                });
+            }
 
 
     @Override
@@ -200,9 +220,8 @@ public class FragmentChatRoom extends Fragment implements MultiSelector {
 
     private void setRecycler() {
         adapterSingleChat = new AdapterSingleChat(getContext());
-        b.recChatScreen.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        b.recChatScreen.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, true));
         b.recChatScreen.setAdapter(adapterSingleChat);
-        adapterSingleChat.setActivity(getActivity());
         registerForContextMenu(b.recChatScreen);
     }
 
@@ -224,19 +243,27 @@ public class FragmentChatRoom extends Fragment implements MultiSelector {
         DataMessageTarget newMessageData = new DataMessageTarget();
         newMessageData.setRoomId(roomId);
         newMessageData.setType(STRING);
+        newMessageData.setAuthorId(accountPreferences.getAuthorId());
+        Calendar cal = Calendar.getInstance();
+        Date date = cal.getTime();
+        newMessageData.setCreatedAt(date.toString());
         newMessageData.setText(b.input.getText().toString());
         newMessageData.setFriendId(userId);
         newMessageData.setStatus(MESSAGE_SENT);
         newMessageData.setLocalId(UUID.randomUUID().toString());
         RequestNewMessage newMessage = new RequestNewMessage();
-        newMessage.setEvent("createMessage");
+        newMessage.setEvent(event);
         newMessage.setData(newMessageData);
         String s = new Gson().toJson(newMessage);
-
         webSocket.sendMessage(s);
 
+        onNewMessage(newMessageData);
+    }
+
+    private void onNewMessage(DataMessageTarget newMessage) {
         if (adapterSingleChat != null) {
-            ((NewMessage) adapterSingleChat).onNewMessage(newMessageData);
+            ((NewMessage) adapterSingleChat).onNewMessage(newMessage);
+            adapterSingleChat.notifyDataSetChanged();
         }
     }
 
@@ -248,5 +275,20 @@ public class FragmentChatRoom extends Fragment implements MultiSelector {
     @Override
     public void selectedUserList(ArrayList<DataProjectUsers> selected) {
         Log.e(TAG, "selectedUserList: " + selected.size());
+    }
+
+    @Override
+    public void userStatus(boolean isActive) {
+
+    }
+
+    @Override
+    public void newMessage(DataMessageTarget messageTarget) {
+        onNewMessage(messageTarget);
+        Log.e(TAG, "newMessage: " + messageTarget.getText());
+
+        b.recChatScreen.smoothScrollToPosition(1);
+
+
     }
 }

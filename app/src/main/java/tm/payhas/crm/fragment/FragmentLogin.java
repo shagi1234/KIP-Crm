@@ -21,7 +21,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tm.payhas.crm.R;
 import tm.payhas.crm.activity.ActivityMain;
-import tm.payhas.crm.api.data.response.ResponseSignIn;
+import tm.payhas.crm.api.response.ResponseSignIn;
 import tm.payhas.crm.databinding.FragmentLoginBinding;
 import tm.payhas.crm.helpers.Common;
 import tm.payhas.crm.helpers.StaticMethods;

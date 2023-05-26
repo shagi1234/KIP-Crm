@@ -106,8 +106,10 @@ public class AdapterChatContact extends RecyclerView.Adapter<AdapterChatContact.
                 hideSoftKeyboard(activity);
                 int id = privateUser1.getId();
                 int roomId = privateUser1.getMessageRoom().getRoomId();
+                String userName = privateUser1.getPersonalData().getName();
+                String avatarUrl = privateUser1.getAvatar();
                 Log.e("Adapter", "setInfo: " + roomId);
-                Common.addFragment(mainFragmentManager, R.id.main_content, FragmentChatRoom.newInstance(roomId, id));
+                Common.addFragment(mainFragmentManager, R.id.main_content, FragmentChatRoom.newInstance(roomId, id, userName, avatarUrl));
                 new Handler().postDelayed(() -> contactChatMain.setEnabled(true), 200);
             });
         }

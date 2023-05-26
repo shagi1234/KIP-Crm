@@ -223,7 +223,9 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
 
         public void bind(DataMessageTarget messageTarget) {
             msgSent.setText(messageTarget.getText());
-            time.setText(normalTime(messageTarget.getCreatedAt()));
+            if (messageTarget.getCreatedAt()!=null){
+                time.setText(normalTime(messageTarget.getCreatedAt()));
+            }
             switch (messageTarget.getStatus()) {
                 case MESSAGE_UN_SEND:
                 case MESSAGE_SENT:

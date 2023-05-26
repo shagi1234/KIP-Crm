@@ -99,12 +99,11 @@ public class Common {
 
     public static String normalTime(String dateGiven) {
 
-        String initialStringDate = dateGiven;
         Locale us = new Locale("US");
         String time = "null";
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", us);
         try {
-            Date date = format.parse(initialStringDate);
+            Date date = format.parse(dateGiven);
             String stringDate = new SimpleDateFormat("yyyy/MM/dd", us).format(date);
             String stringTime = new SimpleDateFormat("HH:mm", us).format(date);
             String finalDateTime = stringDate.concat(" ").concat(stringTime);

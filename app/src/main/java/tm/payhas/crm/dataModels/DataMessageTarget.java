@@ -3,10 +3,10 @@ package tm.payhas.crm.dataModels;
 import tm.payhas.crm.api.data.dto.DtoUserInfo;
 
 public class DataMessageTarget {
-    private int roomId;
+    private Integer roomId = null;
     private Integer id = null;
     private String localId;
-    private String type;
+    private String type = "";
     private String text;
     private Integer forwardId = null;
     private Integer answerId = null;
@@ -19,11 +19,11 @@ public class DataMessageTarget {
     private String deletedAt;
     private DtoUserInfo author;
 
-    public int getRoomId() {
+    public Integer getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(int roomId) {
+    public void setRoomId(Integer roomId) {
         this.roomId = roomId;
     }
 

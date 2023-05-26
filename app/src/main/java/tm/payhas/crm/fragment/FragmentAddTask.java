@@ -16,6 +16,7 @@ import static tm.payhas.crm.statics.StaticConstants.PENDING;
 import static tm.payhas.crm.statics.StaticConstants.PRIMARY;
 import static tm.payhas.crm.statics.StaticConstants.REVIEW;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -23,11 +24,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,8 +45,7 @@ import tm.payhas.crm.preference.AccountPreferences;
 public class FragmentAddTask extends Fragment implements AddTask {
     private tm.payhas.crm.databinding.FragmentAddTaskBinding b;
     private AccountPreferences accountPreferences;
-    private String status;
-    private String importancy;
+    private String importancy = NOT_IMPORTANT;
     private int projectId = 0;
     private ArrayList<Integer> selectedObserverList = new ArrayList<>();
 
@@ -63,7 +64,6 @@ public class FragmentAddTask extends Fragment implements AddTask {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         b = tm.payhas.crm.databinding.FragmentAddTaskBinding.inflate(inflater);
         setUpSpinners();
         initListeners();
@@ -95,6 +95,22 @@ public class FragmentAddTask extends Fragment implements AddTask {
 
 
     private void initListeners() {
+        b.timeEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openDialog(b.timeEnd);
+
+
+            }
+
+        });
+
+        b.timeReminder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openDialog(b.timeReminder);
+            }
+        });
         b.vTaskProjects.setOnClickListener(view -> {
             b.vTaskProjects.setEnabled(false);
             addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(PROJECTS));
@@ -134,7 +150,6 @@ public class FragmentAddTask extends Fragment implements AddTask {
                         break;
 
                 }
-                toSend = status;
             }
 
             @Override
@@ -170,14 +185,16 @@ public class FragmentAddTask extends Fragment implements AddTask {
 
             }
         });
-        b.timeReminder.setOnClickListener(view -> Toast.makeText(getContext(), "CLicked", Toast.LENGTH_SHORT).show());
-        b.timeEnd.setOnClickListener(view -> Toast.makeText(getContext(), "CLicked", Toast.LENGTH_SHORT).show());
-        b.btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createTask();
-            }
-        });
+        b.btnSave.setOnClickListener(view -> createTask());
+    }
+
+    private void openDialog(TextView dateSet) {
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (datePicker, year1, month1, day1) -> dateSet.setText(String.valueOf(day1) + "/" + String.valueOf(month1 + 1) + "/" + String.valueOf(year1)), year, month, day);
+        datePickerDialog.show();
     }
 
     private void createTask() {
@@ -190,6 +207,7 @@ public class FragmentAddTask extends Fragment implements AddTask {
         String info = b.infoInput.getText().toString();
         RequestCreateTask requestCreateTask = new RequestCreateTask();
         requestCreateTask.setObserverUsers(selectedObserverList);
+        requestCreateTask.setResponsibleUsers(selectedObserverList);
         requestCreateTask.setName(name);
         requestCreateTask.setName(info);
         requestCreateTask.setRemindAt(remindAt);
@@ -198,9 +216,9 @@ public class FragmentAddTask extends Fragment implements AddTask {
         requestCreateTask.setFinishesAt("2023-03-30");
         requestCreateTask.setProjectId(projectId);
         requestCreateTask.setPriority(importancy);
-        requestCreateTask.setDescription("slfjaskhfuagudjahfywjhdajkugduyfajsfus");
-        requestCreateTask.setStatus(status);
-        requestCreateTask.setAuthorId(1);
+        requestCreateTask.setStatus(IN_PROCESS);
+        requestCreateTask.setDescription(b.infoInput.getText().toString());
+        requestCreateTask.setAuthorId(accountPreferences.getAuthorId());
 
 
         Call<ResponseTasks> call = Common.getApi().createTask(accountPreferences.getToken(), requestCreateTask);
@@ -230,4 +248,6 @@ public class FragmentAddTask extends Fragment implements AddTask {
     public void selectedObserverList(ArrayList<Integer> userList) {
         selectedObserverList = userList;
     }
+
+
 }

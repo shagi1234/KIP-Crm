@@ -28,8 +28,6 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.UUID;
 
 import retrofit2.Call;
@@ -61,7 +59,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     private String avatarUrl;
     private AccountPreferences accountPreferences;
     private AdapterSingleChat adapterSingleChat;
-    private String event;
+    private String event = "createMessage";
 
     public static FragmentChatRoom newInstance(int roomId, int userId, String username, String avatarUrl) {
         FragmentChatRoom fragment = new FragmentChatRoom();
@@ -99,21 +97,12 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         setBackground();
         initListeners();
         setAuthorId();
-        setSendCommand();
         if (roomId != 0) {
             getMessages();
         }
         Log.e(TAG, "onCreateView: roomId" + roomId);
         Log.e(TAG, "onCreateView: userId" + userId);
         return b.getRoot();
-    }
-
-    private void setSendCommand() {
-        if (roomId == 0)
-            event = "newRoom";
-        else
-            event = "createMessage";
-
     }
 
     private void setRoom() {
@@ -126,7 +115,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     }
 
     private void getMessages() {
-        Call<ResponseRoomMessages> messagesRooms = Common.getApi().getMessageRoom(accountPreferences.getToken(), roomId, 1, 10);
+        Call<ResponseRoomMessages> messagesRooms = Common.getApi().getMessageRoom(accountPreferences.getToken(), roomId, 1, 50);
         messagesRooms.enqueue(new Callback<ResponseRoomMessages>() {
             @Override
             public void onResponse(Call<ResponseRoomMessages> call, Response<ResponseRoomMessages> response) {
@@ -182,15 +171,15 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         });
         if (roomId == 0) return;
 
-                b.recChatScreen.addOnLayoutChangeListener((view, i, i1, i2, i3, i4, i5, i6, i7) -> {
-                    if (isSet) {
-                        b.recChatScreen.smoothScrollToPosition(1);
-                    } else {
-                        b.recChatScreen.scrollToPosition(1);
-                        isSet = true;
-                    }
-                });
+        b.recChatScreen.addOnLayoutChangeListener((view, i, i1, i2, i3, i4, i5, i6, i7) -> {
+            if (isSet) {
+                b.recChatScreen.smoothScrollToPosition(1);
+            } else {
+                b.recChatScreen.scrollToPosition(1);
+                isSet = true;
             }
+        });
+    }
 
 
     @Override
@@ -244,9 +233,6 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         newMessageData.setRoomId(roomId);
         newMessageData.setType(STRING);
         newMessageData.setAuthorId(accountPreferences.getAuthorId());
-        Calendar cal = Calendar.getInstance();
-        Date date = cal.getTime();
-        newMessageData.setCreatedAt(date.toString());
         newMessageData.setText(b.input.getText().toString());
         newMessageData.setFriendId(userId);
         newMessageData.setStatus(MESSAGE_SENT);
@@ -256,7 +242,6 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         newMessage.setData(newMessageData);
         String s = new Gson().toJson(newMessage);
         webSocket.sendMessage(s);
-
         onNewMessage(newMessageData);
     }
 
@@ -286,9 +271,6 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     public void newMessage(DataMessageTarget messageTarget) {
         onNewMessage(messageTarget);
         Log.e(TAG, "newMessage: " + messageTarget.getText());
-
         b.recChatScreen.smoothScrollToPosition(1);
-
-
     }
 }

@@ -264,7 +264,12 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
 
     @Override
     public void userStatus(boolean isActive) {
-
+        if (isActive)
+            b.userStatus.setText("Online");
+        else
+            b.userStatus.setText("Offline");
+        // for now else must be changed
+        Log.e(TAG, "userStatus: "+"Status changed" );
     }
 
     @Override

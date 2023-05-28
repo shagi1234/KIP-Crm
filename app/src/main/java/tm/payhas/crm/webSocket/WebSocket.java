@@ -2,6 +2,9 @@ package tm.payhas.crm.webSocket;
 
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.api.network.Network.BASE_URL_SOCKET;
+import static tm.payhas.crm.statics.StaticConstants.MESSAGE_STATUS;
+import static tm.payhas.crm.statics.StaticConstants.RECEIVED_NEW_MESSAGE;
+import static tm.payhas.crm.statics.StaticConstants.USER_STATUS;
 
 import android.app.Activity;
 import android.content.Context;
@@ -23,6 +26,7 @@ import java.util.ArrayList;
 
 import dev.gustavoavila.websocketclient.WebSocketClient;
 import tm.payhas.crm.dataModels.DataMessageTarget;
+import tm.payhas.crm.dataModels.DataUserStatus;
 import tm.payhas.crm.fragment.FragmentChatRoom;
 import tm.payhas.crm.interfaces.ChatRoomInterface;
 import tm.payhas.crm.interfaces.MessageCallBack;
@@ -83,14 +87,33 @@ public class WebSocket {
                     DataMessageTarget newMessage = new Gson().fromJson(String.valueOf(receivedMessage), DataMessageTarget.class);
 
                     Log.e(TAG, "DATA Message: " + receivedMessage);
+                    switch (event) {
+                        case RECEIVED_NEW_MESSAGE:
+                            activity.runOnUiThread(() -> {
+                                Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
+                                if (chatRoom instanceof ChatRoomInterface) {
+                                    ((ChatRoomInterface) chatRoom).newMessage(newMessage);
+                                }
 
-                    activity.runOnUiThread(() -> {
-                        Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
-                        if (chatRoom instanceof ChatRoomInterface) {
-                            ((ChatRoomInterface) chatRoom).newMessage(newMessage);
-                        }
+                            });
+                            break;
+                        case USER_STATUS:
+                            boolean status;
+                            JSONObject statusInfo = messageJson.getJSONObject("data");
+                            DataUserStatus statusUser = new Gson().fromJson(String.valueOf(statusInfo), DataUserStatus.class);
+                            status = statusUser.isActive();
+                            activity.runOnUiThread(() -> {
+                                Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
+                                if (chatRoom instanceof ChatRoomInterface) {
+                                    ((ChatRoomInterface) chatRoom).userStatus(status);
+                                }
 
-                    });
+                            });
+                            break;
+
+                        case MESSAGE_STATUS:
+                            break;
+                    }
 
 
                 } catch (JSONException e) {

@@ -13,6 +13,7 @@ import tm.payhas.crm.api.data.dto.subClassesUserInfo.DtoWorkBook;
 
 public class DtoUserInfo {
     private String lastActivity;
+    private boolean isActive;
     private DtoPersonalData personalData;
     private String avatar;
     private String gender;
@@ -40,6 +41,14 @@ public class DtoUserInfo {
     private DtoToken token;
     private DataMessageRoom messageRoom;
     private int id;
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
 
     public int getId() {
         return id;

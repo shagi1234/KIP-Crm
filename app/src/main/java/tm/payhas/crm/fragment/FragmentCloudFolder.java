@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 import tm.payhas.crm.R;
 import tm.payhas.crm.adapters.AdapterCloud;
+import tm.payhas.crm.dataModels.DataAttachment;
 import tm.payhas.crm.dataModels.DataMessageTarget;
 import tm.payhas.crm.dataModels.DataProjectUsers;
 import tm.payhas.crm.databinding.FragmentCloudFolderBinding;
@@ -189,4 +190,10 @@ public class FragmentCloudFolder extends Fragment implements ChatRoomInterface {
     public void newMessage(DataMessageTarget messageTarget) {
 
     }
+
+    @Override
+    public void newImageImageUrl(DataAttachment attachment) {
+
+    }
+
 }

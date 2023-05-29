@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment;
 
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -77,8 +76,6 @@ public class WebSocket {
             @Override
             public void onTextReceived(String emit) {
                 Log.e(TAG, "onTextReceived: " + emit);
-                JSONObject dataObj;
-                JSONArray dataArr;
                 try {
 
                     JSONObject messageJson = new JSONObject(emit);
@@ -102,6 +99,7 @@ public class WebSocket {
                             JSONObject statusInfo = messageJson.getJSONObject("data");
                             DataUserStatus statusUser = new Gson().fromJson(String.valueOf(statusInfo), DataUserStatus.class);
                             status = statusUser.isActive();
+
                             activity.runOnUiThread(() -> {
                                 Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
                                 if (chatRoom instanceof ChatRoomInterface) {
@@ -110,8 +108,17 @@ public class WebSocket {
 
                             });
                             break;
+//// message.yn awtory baryar
+                        {
+                            event:
+                            "messageStatus", chanel:"messageStatus", data:
+                            {...message, friendId:payload.friendId
+                            }
+                        }
 
                         case MESSAGE_STATUS:
+                            JSONObject statusMessage = messageJson.getJSONObject("data");
+                            DataMessageTarget messageStatus = new Gson().fromJson(String.valueOf(statusMessage), DataMessageTarget.class);
                             break;
                     }
 
@@ -155,9 +162,12 @@ public class WebSocket {
         webSocketClient.connect();
     }
 
-
     public void sendMessage(String s) {
         webSocketClient.send(s);
         Log.e(TAG, "sendMessage: " + s);
+    }
+
+    public void setUserStatus(EmmitUserStatus s) {
+        webSocketClient.send(new Gson().toJson(s));
     }
 }

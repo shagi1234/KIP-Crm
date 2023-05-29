@@ -1,5 +1,6 @@
 package tm.payhas.crm.adapters;
 
+import static tm.payhas.crm.api.network.Network.BASE_URL;
 import static tm.payhas.crm.helpers.Common.normalTime;
 import static tm.payhas.crm.statics.StaticConstants.DATE;
 import static tm.payhas.crm.statics.StaticConstants.FILE;
@@ -29,13 +30,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.squareup.picasso.Picasso;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import tm.payhas.crm.R;
 import tm.payhas.crm.dataModels.DataMessageTarget;
@@ -46,6 +43,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
     private Context context;
     private Activity activity;
     private Integer authorId = 0;
+    private Integer currentMessageId = 0;
 
 
     public AdapterSingleChat(Context context) {
@@ -62,6 +60,10 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
     public void setMessages(ArrayList<DataMessageTarget> messages) {
         this.messages = messages;
         notifyDataSetChanged();
+    }
+
+    public void setMessageStatus(Integer messageId) {
+        this.currentMessageId = messageId;
     }
 
     public void addMessages(DataMessageTarget message) {
@@ -164,7 +166,6 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         DataMessageTarget oneMessage = messages.get(position);
-        Log.e("NEW_MESSAGE_ADAPTER", "onBindViewHolder: " + oneMessage.getText());
 
         switch (oneMessage.getType()) {
             case STRING:
@@ -223,9 +224,10 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
 
         public void bind(DataMessageTarget messageTarget) {
             msgSent.setText(messageTarget.getText());
-            if (messageTarget.getCreatedAt()!=null){
+            if (messageTarget.getCreatedAt() != null) {
                 time.setText(normalTime(messageTarget.getCreatedAt()));
             }
+
             switch (messageTarget.getStatus()) {
                 case MESSAGE_UN_SEND:
                 case MESSAGE_SENT:
@@ -426,9 +428,10 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
         }
 
         public void bind(DataMessageTarget oneMessage) {
-            Glide.with(context).load(oneMessage.getAttachment().getFileUrl()).placeholder(R.color.primary).into(image);
+            Picasso.get().load(BASE_URL + "/" + oneMessage.getAttachment().getFileUrl()).placeholder(R.color.primary).into(image);
             imageSentTime.setText(normalTime(oneMessage.getCreatedAt()));
-            imageSentSize.setText(oneMessage.getAttachment().getSize());
+            Integer size = Integer.parseInt(oneMessage.getAttachment().getSize());
+            imageSentSize.setText(String.valueOf(size / 1000) + "KB");
         }
     }
 

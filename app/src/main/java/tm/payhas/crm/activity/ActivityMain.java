@@ -5,6 +5,8 @@ import static tm.payhas.crm.helpers.Common.hideAdd;
 import static tm.payhas.crm.helpers.Common.menuBar;
 import static tm.payhas.crm.helpers.StaticMethods.initSystemUIViewListeners;
 import static tm.payhas.crm.helpers.StaticMethods.transparentStatusAndNavigation;
+import static tm.payhas.crm.statics.StaticConstants.USER_STATUS;
+import static tm.payhas.crm.statics.StaticConstants.USER_STATUS_CHANNEL;
 
 import android.os.Bundle;
 import android.widget.FrameLayout;
@@ -15,10 +17,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import tm.payhas.crm.R;
+import tm.payhas.crm.dataModels.DataUserStatus;
 import tm.payhas.crm.fragment.FragmentFlow;
 import tm.payhas.crm.fragment.FragmentHome;
 import tm.payhas.crm.fragment.FragmentMessages;
 import tm.payhas.crm.helpers.SoftInputAssist;
+import tm.payhas.crm.preference.AccountPreferences;
+import tm.payhas.crm.webSocket.EmmitUserStatus;
 import tm.payhas.crm.webSocket.WebSocket;
 
 public class ActivityMain extends AppCompatActivity {
@@ -27,6 +32,7 @@ public class ActivityMain extends AppCompatActivity {
     private FrameLayout root;
     private SoftInputAssist softInputAssist;
     public static WebSocket webSocket;
+    private AccountPreferences ac;
 
     @Override
     protected void onStart() {
@@ -39,7 +45,7 @@ public class ActivityMain extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         webSocket = new WebSocket(getApplicationContext(), this);
-
+        ac = new AccountPreferences(this);
         root = findViewById(R.id.main_content);
         transparentStatusAndNavigation(this);
         ActivityLoginRegister.mainFragmentManager = getSupportFragmentManager();
@@ -47,6 +53,8 @@ public class ActivityMain extends AppCompatActivity {
         softInputAssist = new SoftInputAssist(this);
         setContent();
     }
+
+
 
     private void setContent() {
         addFragment(mainFragmentManager, R.id.main_content, FragmentFlow.newInstance());

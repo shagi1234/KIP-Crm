@@ -98,22 +98,17 @@ public class Common {
     }
 
     public static String normalTime(String dateGiven) {
-
-        Locale us = new Locale("US");
-        String time = "null";
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", us);
+        Log.e("Date", "normalTime: " + dateGiven);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         try {
             Date date = format.parse(dateGiven);
-            String stringDate = new SimpleDateFormat("yyyy/MM/dd", us).format(date);
-            String stringTime = new SimpleDateFormat("HH:mm", us).format(date);
-            String finalDateTime = stringDate.concat(" ").concat(stringTime);
-            time = finalDateTime;
-            Log.i("Date_and_Time", "" + finalDateTime);
+            String stringDate = new SimpleDateFormat("yyyy/MM/dd").format(date);
+            String stringTime = new SimpleDateFormat("HH:mm").format(date);
+            return stringTime;
         } catch (ParseException e) {
             e.printStackTrace();
+            return "";
         }
-        return time;
-
     }
 
     public static String normalDate(String dateGiven) {

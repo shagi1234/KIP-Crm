@@ -1,6 +1,8 @@
 package tm.payhas.crm.adapters;
 
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
+import static tm.payhas.crm.api.network.Network.BASE_URL;
+import static tm.payhas.crm.helpers.Common.normalTime;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 
 import android.app.Activity;
@@ -16,8 +18,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -72,6 +74,7 @@ public class AdapterChatContact extends RecyclerView.Adapter<AdapterChatContact.
         private TextView contactChat;
         private TextView contactChatTime;
         private TextView contactChatCount;
+        private RoundedImageView onlineIndicator;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -81,25 +84,29 @@ public class AdapterChatContact extends RecyclerView.Adapter<AdapterChatContact.
             contactChatTime = itemView.findViewById(R.id.contact_time);
             contactName = itemView.findViewById(R.id.contact_name);
             contactChatCount = itemView.findViewById(R.id.contact_chat_count);
+            onlineIndicator = itemView.findViewById(R.id.online_indicator);
         }
 
         public void bind() {
             setInfo();
             StaticMethods.setBackgroundDrawable(context, contactChatCount, R.color.primary, 0, 50, false, 0);
-
         }
 
         private void setInfo() {
             DtoUserInfo privateUser = privateUserList.get(getAdapterPosition());
+            if (privateUser.isActive())
+                onlineIndicator.setVisibility(View.VISIBLE);
+            else onlineIndicator.setVisibility(View.GONE);
+
             contactName.setText(privateUser.getPersonalData().getName());
-            contactChatTime.setText(privateUser.getLastActivity());
+            contactChatTime.setText(normalTime(privateUser.getLastActivity()));
             contactChat.setText(privateUser.getMessageRoom().getText());
             if (privateUser.getMessageRoom().getRoom().getCount().getMessages() == 0) {
                 contactChatCount.setVisibility(View.GONE);
             } else {
                 contactChatCount.setText(String.valueOf(privateUser.getMessageRoom().getRoom().getCount().getMessages()));
             }
-            Glide.with(context).load(privateUser.getAvatar()).placeholder(R.color.primary).into(contactImage);
+            Picasso.get().load(BASE_URL + "/" + privateUser.getAvatar()).placeholder(R.color.primary).into(contactImage);
             contactChatMain.setOnClickListener(view -> {
                 DtoUserInfo privateUser1 = privateUserList.get(getAdapterPosition());
                 contactChatMain.setEnabled(false);
@@ -108,8 +115,10 @@ public class AdapterChatContact extends RecyclerView.Adapter<AdapterChatContact.
                 int roomId = privateUser1.getMessageRoom().getRoomId();
                 String userName = privateUser1.getPersonalData().getName();
                 String avatarUrl = privateUser1.getAvatar();
+                String lastActivity = privateUser1.getLastActivity();
+                boolean isActive = privateUser1.isActive();
                 Log.e("Adapter", "setInfo: " + roomId);
-                Common.addFragment(mainFragmentManager, R.id.main_content, FragmentChatRoom.newInstance(roomId, id, userName, avatarUrl));
+                Common.addFragment(mainFragmentManager, R.id.main_content, FragmentChatRoom.newInstance(roomId, id, userName, avatarUrl, lastActivity, isActive));
                 new Handler().postDelayed(() -> contactChatMain.setEnabled(true), 200);
             });
         }

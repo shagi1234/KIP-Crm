@@ -63,5 +63,8 @@ dependencies {
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.8'
 
+    //Slider
+    implementation 'com.r0adkll:slidableactivity:2.1.0'
+
 
 }

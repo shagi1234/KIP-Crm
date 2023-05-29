@@ -32,6 +32,7 @@
         <com.makeramen.roundedimageview.RoundedImageView
             app:riv_corner_radius="6dp"
             android:id="@+id/image"
+            android:scaleType="centerCrop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/sent_msg_bg"

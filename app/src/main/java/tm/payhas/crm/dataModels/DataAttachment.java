@@ -8,13 +8,6 @@ public class DataAttachment {
     private String fileUrl;
     private String fileName;
 
-    public DataAttachment(String type, String duration, String size, String fileUrl, String fileName) {
-        this.type = type;
-        this.duration = duration;
-        this.size = size;
-        this.fileUrl = fileUrl;
-        this.fileName = fileName;
-    }
 
     public String getType() {
         return type;

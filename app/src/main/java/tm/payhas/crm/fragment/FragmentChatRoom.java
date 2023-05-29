@@ -1,10 +1,16 @@
 package tm.payhas.crm.fragment;
 
+import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.activity.ActivityMain.webSocket;
+import static tm.payhas.crm.helpers.Common.addFragment;
+import static tm.payhas.crm.helpers.Common.normalTime;
 import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGE_SENT;
+import static tm.payhas.crm.statics.StaticConstants.PHOTO;
 import static tm.payhas.crm.statics.StaticConstants.STRING;
+import static tm.payhas.crm.statics.StaticConstants.USER_STATUS;
+import static tm.payhas.crm.statics.StaticConstants.USER_STATUS_CHANNEL;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,8 +43,10 @@ import tm.payhas.crm.R;
 import tm.payhas.crm.adapters.AdapterSingleChat;
 import tm.payhas.crm.api.request.RequestNewMessage;
 import tm.payhas.crm.api.response.ResponseRoomMessages;
+import tm.payhas.crm.dataModels.DataAttachment;
 import tm.payhas.crm.dataModels.DataMessageTarget;
 import tm.payhas.crm.dataModels.DataProjectUsers;
+import tm.payhas.crm.dataModels.DataUserStatus;
 import tm.payhas.crm.databinding.FragmentChatRoomBinding;
 import tm.payhas.crm.helpers.Common;
 import tm.payhas.crm.helpers.SoftInputAssist;
@@ -46,6 +54,7 @@ import tm.payhas.crm.interfaces.ChatRoomInterface;
 import tm.payhas.crm.interfaces.NewMessage;
 import tm.payhas.crm.model.ModelFile;
 import tm.payhas.crm.preference.AccountPreferences;
+import tm.payhas.crm.webSocket.EmmitUserStatus;
 
 public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     private FragmentChatRoomBinding b;
@@ -57,17 +66,21 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     private int userId;
     private String userName;
     private String avatarUrl;
+    private String lastActivity;
+    private boolean isActive;
     private AccountPreferences accountPreferences;
     private AdapterSingleChat adapterSingleChat;
     private String event = "createMessage";
 
-    public static FragmentChatRoom newInstance(int roomId, int userId, String username, String avatarUrl) {
+    public static FragmentChatRoom newInstance(int roomId, int userId, String username, String avatarUrl, String lastActivity, boolean isActive) {
         FragmentChatRoom fragment = new FragmentChatRoom();
         Bundle args = new Bundle();
         args.putInt("roomId", roomId);
         args.putInt("userId", userId);
         args.putString("username", username);
         args.putString("avatarUrl", avatarUrl);
+        args.putString("lastActivity", lastActivity);
+        args.putBoolean("isActive", isActive);
         fragment.setArguments(args);
         return fragment;
     }
@@ -87,6 +100,8 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
             userId = getArguments().getInt("userId");
             userName = getArguments().getString("username");
             avatarUrl = getArguments().getString("avatarUrl");
+            lastActivity = getArguments().getString("lastActivity");
+            isActive = getArguments().getBoolean("isActive");
         }
         if (getActivity() != null) {
             softInputAssist = new SoftInputAssist(getActivity());
@@ -97,6 +112,8 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         setBackground();
         initListeners();
         setAuthorId();
+        setUserStatus();
+        setUserOnline();
         if (roomId != 0) {
             getMessages();
         }
@@ -105,9 +122,16 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         return b.getRoot();
     }
 
+    private void setUserStatus() {
+        if (isActive)
+            b.userStatus.setText("Online");
+        else
+            b.userStatus.setText(normalTime(lastActivity));
+    }
+
     private void setRoom() {
         b.username.setText(userName);
-        Picasso.get().load(avatarUrl).placeholder(R.drawable.ic_logo_crm).into(b.contactImage);
+        Picasso.get().load(avatarUrl).placeholder(R.color.primary).into(b.contactImage);
     }
 
     private void setAuthorId() {
@@ -133,6 +157,11 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     }
 
     private void initListeners() {
+        b.attach.setOnClickListener(view -> {
+            b.attach.setEnabled(false);
+            addFragment(mainFragmentManager, R.id.main_content, FragmentOpenGallery.newInstance(1));
+            new Handler().postDelayed(() -> b.attach.setEnabled(true), 200);
+        });
         b.back.setOnClickListener(view -> {
             b.back.setEnabled(false);
             if (getActivity() != null) {
@@ -142,8 +171,6 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         b.sendMessage.setOnClickListener(view -> {
             sendMessage();
             b.input.setText("");
-
-
         });
         b.recordVoice.setOnClickListener(view -> Toast.makeText(getContext(), "Send Voice", Toast.LENGTH_SHORT).show());
         b.input.addTextChangedListener(new TextWatcher() {
@@ -263,19 +290,51 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     }
 
     @Override
+    public void messageStatus(Integer messageId) {
+        adapterSingleChat
+    }
+
+    @Override
     public void userStatus(boolean isActive) {
         if (isActive)
             b.userStatus.setText("Online");
         else
             b.userStatus.setText("Offline");
         // for now else must be changed
-        Log.e(TAG, "userStatus: "+"Status changed" );
+        Log.e(TAG, "userStatus: " + "Status changed");
     }
 
     @Override
     public void newMessage(DataMessageTarget messageTarget) {
-        onNewMessage(messageTarget);
-        Log.e(TAG, "newMessage: " + messageTarget.getText());
         b.recChatScreen.smoothScrollToPosition(1);
+    }
+
+    @Override
+    public void newImageImageUrl(DataAttachment attachment) {
+        DataMessageTarget newMessageData = new DataMessageTarget();
+        newMessageData.setRoomId(roomId);
+        newMessageData.setType(PHOTO);
+        newMessageData.setAttachment(attachment);
+        newMessageData.setAuthorId(accountPreferences.getAuthorId());
+        newMessageData.setFriendId(userId);
+        newMessageData.setStatus(MESSAGE_SENT);
+        newMessageData.setLocalId(UUID.randomUUID().toString());
+        RequestNewMessage newMessage = new RequestNewMessage();
+        newMessage.setEvent(event);
+        newMessage.setData(newMessageData);
+        String s = new Gson().toJson(newMessage);
+        webSocket.sendMessage(s);
+        onNewMessage(newMessageData);
+
+    }
+
+    private void setUserOnline() {
+        EmmitUserStatus emitUserStatus = new EmmitUserStatus();
+        emitUserStatus.setChannel(USER_STATUS_CHANNEL);
+        emitUserStatus.setEvent(USER_STATUS);
+        DataUserStatus userStatus = new DataUserStatus();
+        userStatus.setActive(true);
+        userStatus.setUserId(accountPreferences.getAuthorId());
+        webSocket.setUserStatus(emitUserStatus);
     }
 }

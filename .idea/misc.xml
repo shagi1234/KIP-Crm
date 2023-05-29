@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable-v24/ic_chat_selectable.xml" value="0.121" />
+        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable-v24/ic_check.xml" value="0.1875" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable-v24/ic_document_selectable.xml" value="0.121" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable-v24/ic_home_selectable.xml" value="0.121" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable-v24/ic_profile_selectable.xml" value="0.121" />
@@ -38,10 +39,12 @@
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_contacts.xml" value="0.25" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_flow.xml" value="0.25" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_group_chat.xml" value="0.2359375" />
+        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_groups.xml" value="0.1" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_home.xml" value="0.25" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_login.xml" value="0.2359375" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_main.xml" value="0.25" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_messages.xml" value="0.152" />
+        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_open_gallery.xml" value="0.10884353741496598" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_profile.xml" value="0.2" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_project_tasks.xml" value="0.25" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_projects.xml" value="0.25" />
@@ -56,6 +59,7 @@
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_date.xml" value="0.24895833333333334" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_file_received.xml" value="0.536" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_file_sent.xml" value="0.25" />
+        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_media.xml" value="0.10989583333333333" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_message_received.xml" value="0.264" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_projects.xml" value="0.25" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_received_image.xml" value="0.21978021978021978" />

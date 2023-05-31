@@ -12,8 +12,6 @@ public interface ChatRoomInterface {
 
     void selectedUserList(ArrayList<DataProjectUsers> selected);
 
-    void messageStatus(Integer messageId);
-
     void userStatus(boolean isActive);
 
     void newMessage(DataMessageTarget messageTarget);

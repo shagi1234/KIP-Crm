@@ -290,11 +290,6 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     }
 
     @Override
-    public void messageStatus(Integer messageId) {
-        adapterSingleChat
-    }
-
-    @Override
     public void userStatus(boolean isActive) {
         if (isActive)
             b.userStatus.setText("Online");
@@ -307,6 +302,8 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     @Override
     public void newMessage(DataMessageTarget messageTarget) {
         b.recChatScreen.smoothScrollToPosition(1);
+        Log.e(TAG, "newMessage: "+"status received");
+        onNewMessage(messageTarget);
     }
 
     @Override

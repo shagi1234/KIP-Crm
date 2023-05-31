@@ -206,7 +206,20 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onNewMessage(DataMessageTarget dataMessageTarget) {
+        Log.e("Message Recieved", "onNewMessage: ");
+//        boolean toAdd = true;
+//        for (int i = 0; i < messages.size(); i++) {
+//            if (dataMessageTarget.getId() == messages.get(i).getId()) {
+//                messages.get(i).setStatus(dataMessageTarget.getStatus());
+//                notifyDataSetChanged();
+//                Log.e("StatusReceived", "onNewMessage: " + dataMessageTarget.getId());
+//                toAdd = false;
+//            }
+//        }
         messages.add(0, dataMessageTarget);
+//        if (toAdd) {
+//
+//        }
         notifyDataSetChanged();
     }
 

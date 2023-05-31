@@ -76,50 +76,40 @@ public class WebSocket {
             @Override
             public void onTextReceived(String emit) {
                 Log.e(TAG, "onTextReceived: " + emit);
+                Log.e(TAG, "onTextReceived: "+"statusReceived");
                 try {
-
+                    Log.e(TAG, "onTextReceived: "+"2324");
                     JSONObject messageJson = new JSONObject(emit);
                     String event = messageJson.getString("event");
+                    String channel = messageJson.getString("chanel");
+                    Log.e(TAG, "onTextReceived: "+event);
                     JSONObject receivedMessage = messageJson.getJSONObject("data");
                     DataMessageTarget newMessage = new Gson().fromJson(String.valueOf(receivedMessage), DataMessageTarget.class);
-
-                    Log.e(TAG, "DATA Message: " + receivedMessage);
+                    if (channel.equals("messageStatus")){
+                        Log.e(TAG, "onTextReceived: "+"ststs" );
+                    }
                     switch (event) {
+                        case MESSAGE_STATUS:
+                            Log.e(TAG, "onTextReceived: "+"StatusReceived" );
                         case RECEIVED_NEW_MESSAGE:
+                            Log.e(TAG, "onTextReceived: "+"MessageReceived" );
                             activity.runOnUiThread(() -> {
                                 Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
                                 if (chatRoom instanceof ChatRoomInterface) {
                                     ((ChatRoomInterface) chatRoom).newMessage(newMessage);
                                 }
-
                             });
-                            break;
                         case USER_STATUS:
                             boolean status;
                             JSONObject statusInfo = messageJson.getJSONObject("data");
                             DataUserStatus statusUser = new Gson().fromJson(String.valueOf(statusInfo), DataUserStatus.class);
                             status = statusUser.isActive();
-
                             activity.runOnUiThread(() -> {
                                 Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
                                 if (chatRoom instanceof ChatRoomInterface) {
                                     ((ChatRoomInterface) chatRoom).userStatus(status);
                                 }
-
                             });
-                            break;
-//// message.yn awtory baryar
-                        {
-                            event:
-                            "messageStatus", chanel:"messageStatus", data:
-                            {...message, friendId:payload.friendId
-                            }
-                        }
-
-                        case MESSAGE_STATUS:
-                            JSONObject statusMessage = messageJson.getJSONObject("data");
-                            DataMessageTarget messageStatus = new Gson().fromJson(String.valueOf(statusMessage), DataMessageTarget.class);
-                            break;
                     }
 
 

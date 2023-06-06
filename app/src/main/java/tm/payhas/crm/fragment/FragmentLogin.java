@@ -99,7 +99,6 @@ public class FragmentLogin extends Fragment {
                     accountPreferences.setPrefAvatarUrl(response.body().getData().getAvatar());
                     accountPreferences.setIsLoggedIn();
                     accountPreferences.setPrefAuthorId(response.body().getData().getId());
-
                     if (getActivity() == null) return;
                     getActivity().finish();
                     Intent intent = new Intent(getContext(), ActivityMain.class);

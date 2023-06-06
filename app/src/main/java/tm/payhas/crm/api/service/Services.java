@@ -2,20 +2,25 @@ package tm.payhas.crm.api.service;
 
 import com.google.gson.JsonObject;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
+import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import tm.payhas.crm.api.response.ResponseRoomMessages;
-import tm.payhas.crm.api.response.ResponseSignIn;
 import tm.payhas.crm.api.request.RequestCreateTask;
 import tm.payhas.crm.api.request.RequestUserTasks;
+import tm.payhas.crm.api.response.ResponseManyFiles;
 import tm.payhas.crm.api.response.ResponseProjects;
+import tm.payhas.crm.api.response.ResponseRoomMessages;
+import tm.payhas.crm.api.response.ResponseSignIn;
 import tm.payhas.crm.api.response.ResponseTasks;
 import tm.payhas.crm.api.response.ResponseUserGroup;
 
@@ -42,5 +47,9 @@ public interface Services {
     @GET("chat/room/messages/mobile/{id}")
     Call<ResponseRoomMessages> getMessageRoom(@Header("Authorization") String token, @Path("id") int id, @Query("page") int page, @Query("limit") int limit);
 
+    @Headers({"Accept: multipart/form-data"})
+    @Multipart
+    @POST("single/upload/messages")
+    Call<ResponseManyFiles> uploadFiles(@Part MultipartBody.Part fileUrl);
 
 }

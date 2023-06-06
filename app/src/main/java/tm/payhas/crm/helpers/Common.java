@@ -98,7 +98,6 @@ public class Common {
     }
 
     public static String normalTime(String dateGiven) {
-        Log.e("Date", "normalTime: " + dateGiven);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         try {
             Date date = format.parse(dateGiven);

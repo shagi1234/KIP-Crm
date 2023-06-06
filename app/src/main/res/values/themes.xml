@@ -24,4 +24,9 @@
             @color/white
         </item>
     </style>
+
+    <style name="PopupMenu" parent="@style/Widget.AppCompat.PopupMenu">
+        <item name="android:dropDownHorizontalOffset">-4dp</item>
+        <item name="android:dropDownVerticalOffset">4dp</item>
+    </style>
 </resources>

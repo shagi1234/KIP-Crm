@@ -2,6 +2,7 @@ package tm.payhas.crm.fragment;
 
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.activity.ActivityMain.webSocket;
+import static tm.payhas.crm.api.network.Network.BASE_URL;
 import static tm.payhas.crm.helpers.Common.addFragment;
 import static tm.payhas.crm.helpers.Common.normalTime;
 import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
@@ -49,6 +50,7 @@ import tm.payhas.crm.dataModels.DataProjectUsers;
 import tm.payhas.crm.dataModels.DataUserStatus;
 import tm.payhas.crm.databinding.FragmentChatRoomBinding;
 import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.helpers.SelectedMedia;
 import tm.payhas.crm.helpers.SoftInputAssist;
 import tm.payhas.crm.interfaces.ChatRoomInterface;
 import tm.payhas.crm.interfaces.NewMessage;
@@ -71,6 +73,8 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     private AccountPreferences accountPreferences;
     private AdapterSingleChat adapterSingleChat;
     private String event = "createMessage";
+    private boolean toReply = false;
+    private int replyMessageId = 0;
 
     public static FragmentChatRoom newInstance(int roomId, int userId, String username, String avatarUrl, String lastActivity, boolean isActive) {
         FragmentChatRoom fragment = new FragmentChatRoom();
@@ -131,7 +135,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
 
     private void setRoom() {
         b.username.setText(userName);
-        Picasso.get().load(avatarUrl).placeholder(R.color.primary).into(b.contactImage);
+        Picasso.get().load(BASE_URL + "/" + avatarUrl).placeholder(R.color.primary).into(b.contactImage);
     }
 
     private void setAuthorId() {
@@ -157,8 +161,14 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     }
 
     private void initListeners() {
+        b.cancelReply.setOnClickListener(view -> {
+            b.replyLayout.setVisibility(View.GONE);
+            toReply = false;
+            replyMessageId = 0;
+        });
         b.attach.setOnClickListener(view -> {
             b.attach.setEnabled(false);
+            SelectedMedia.getArrayList().clear();
             addFragment(mainFragmentManager, R.id.main_content, FragmentOpenGallery.newInstance(1));
             new Handler().postDelayed(() -> b.attach.setEnabled(true), 200);
         });
@@ -169,7 +179,13 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
             }
         });
         b.sendMessage.setOnClickListener(view -> {
-            sendMessage();
+            if (toReply) {
+                sendMessage(replyMessageId);
+                b.replyLayout.setVisibility(View.GONE);
+                replyMessageId = 0;
+                toReply = false;
+            } else
+                sendMessage(0);
             b.input.setText("");
         });
         b.recordVoice.setOnClickListener(view -> Toast.makeText(getContext(), "Send Voice", Toast.LENGTH_SHORT).show());
@@ -245,7 +261,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater menuInflater = getActivity().getMenuInflater();
-        menuInflater.inflate(R.menu.context_menu, menu);
+        menuInflater.inflate(R.menu.message_menu, menu);
     }
 
     @Override
@@ -255,21 +271,40 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     }
 
 
-    private void sendMessage() {
-        DataMessageTarget newMessageData = new DataMessageTarget();
-        newMessageData.setRoomId(roomId);
-        newMessageData.setType(STRING);
-        newMessageData.setAuthorId(accountPreferences.getAuthorId());
-        newMessageData.setText(b.input.getText().toString());
-        newMessageData.setFriendId(userId);
-        newMessageData.setStatus(MESSAGE_SENT);
-        newMessageData.setLocalId(UUID.randomUUID().toString());
-        RequestNewMessage newMessage = new RequestNewMessage();
-        newMessage.setEvent(event);
-        newMessage.setData(newMessageData);
-        String s = new Gson().toJson(newMessage);
-        webSocket.sendMessage(s);
-        onNewMessage(newMessageData);
+    private void sendMessage(int replyId) {
+        if (replyId == 0) {
+            DataMessageTarget newMessageData = new DataMessageTarget();
+            newMessageData.setRoomId(roomId);
+            newMessageData.setType(STRING);
+            newMessageData.setAuthorId(accountPreferences.getAuthorId());
+            newMessageData.setText(b.input.getText().toString());
+            newMessageData.setFriendId(userId);
+            newMessageData.setStatus(MESSAGE_SENT);
+            newMessageData.setLocalId(UUID.randomUUID().toString());
+            RequestNewMessage newMessage = new RequestNewMessage();
+            newMessage.setEvent(event);
+            newMessage.setData(newMessageData);
+            String s = new Gson().toJson(newMessage);
+            webSocket.sendMessage(s);
+            onNewMessage(newMessageData);
+        } else {
+            DataMessageTarget newMessageData = new DataMessageTarget();
+            newMessageData.setRoomId(roomId);
+            newMessageData.setType(STRING);
+            newMessageData.setAuthorId(accountPreferences.getAuthorId());
+            newMessageData.setText(b.input.getText().toString());
+            newMessageData.setFriendId(userId);
+            newMessageData.setStatus(MESSAGE_SENT);
+            newMessageData.setAnswerId(replyId);
+            newMessageData.setLocalId(UUID.randomUUID().toString());
+            RequestNewMessage newMessage = new RequestNewMessage();
+            newMessage.setEvent(event);
+            newMessage.setData(newMessageData);
+            String s = new Gson().toJson(newMessage);
+            webSocket.sendMessage(s);
+            onNewMessage(newMessageData);
+        }
+
     }
 
     private void onNewMessage(DataMessageTarget newMessage) {
@@ -302,28 +337,40 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     @Override
     public void newMessage(DataMessageTarget messageTarget) {
         b.recChatScreen.smoothScrollToPosition(1);
-        Log.e(TAG, "newMessage: "+"status received");
+        Log.e(TAG, "newMessage: " + "status received");
         onNewMessage(messageTarget);
     }
 
     @Override
-    public void newImageImageUrl(DataAttachment attachment) {
+    public void newImageImageUrl(String imageUrl) {
         DataMessageTarget newMessageData = new DataMessageTarget();
         newMessageData.setRoomId(roomId);
         newMessageData.setType(PHOTO);
-        newMessageData.setAttachment(attachment);
         newMessageData.setAuthorId(accountPreferences.getAuthorId());
         newMessageData.setFriendId(userId);
         newMessageData.setStatus(MESSAGE_SENT);
         newMessageData.setLocalId(UUID.randomUUID().toString());
         RequestNewMessage newMessage = new RequestNewMessage();
+        DataAttachment dataAttachment = new DataAttachment();
+        dataAttachment.setFileUrl(imageUrl);
+        newMessageData.setAttachment(dataAttachment);
         newMessage.setEvent(event);
         newMessage.setData(newMessageData);
         String s = new Gson().toJson(newMessage);
         webSocket.sendMessage(s);
         onNewMessage(newMessageData);
+    }
+
+    @Override
+    public void newReplyMessage(int messageId, DataMessageTarget messageTarget) {
+        b.replyLayout.setVisibility(View.VISIBLE);
+        toReply = true;
+        replyMessageId = messageId;
+        b.replyUserName.setText(messageTarget.getAuthor().getPersonalData().getName());
+        b.replyText.setText(messageTarget.getText());
 
     }
+
 
     private void setUserOnline() {
         EmmitUserStatus emitUserStatus = new EmmitUserStatus();

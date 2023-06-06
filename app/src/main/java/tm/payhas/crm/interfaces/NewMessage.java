@@ -4,4 +4,6 @@ import tm.payhas.crm.dataModels.DataMessageTarget;
 
 public interface NewMessage {
     void onNewMessage(DataMessageTarget dataMessageTarget);
+
+    void onMenuSelected(Integer i,Integer messageId, DataMessageTarget messageTarget);
 }

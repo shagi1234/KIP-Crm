@@ -98,7 +98,5 @@ public class FragmentMessages extends Fragment {
     private void setupTabIcons() {
         b.tabLayout.getTabAt(0).setIcon(R.drawable.ic_profile_selectable);
         b.tabLayout.getTabAt(1).setIcon(R.drawable.ic_group);
-
-
     }
 }

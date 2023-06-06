@@ -5,8 +5,8 @@ public class StaticConstants {
     //Message Statuses
     public static final String MESSAGE_UN_SEND = "status0";
     public static final String MESSAGE_SENT = "status1";
-    public static final String MESSAGE_DELIVERED = "status3";
-    public static final String MESSAGE_READ = "status4";
+    public static final String MESSAGE_DELIVERED = "status2";
+    public static final String MESSAGE_READ = "status3";
     //Message Type
     public static final String STRING = "type0";
     public static final String PHOTO = "type1";

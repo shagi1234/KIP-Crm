@@ -18,6 +18,27 @@ public class DataMessageTarget {
     private String updatedAt;
     private String deletedAt;
     private DtoUserInfo author;
+    private DataMessageTarget answering;
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setForwardId(Integer forwardId) {
+        this.forwardId = forwardId;
+    }
+
+    public void setAnswerId(Integer answerId) {
+        this.answerId = answerId;
+    }
+
+    public DataMessageTarget getAnswering() {
+        return answering;
+    }
+
+    public void setAnswering(DataMessageTarget answering) {
+        this.answering = answering;
+    }
 
     public Integer getRoomId() {
         return roomId;
@@ -27,7 +48,7 @@ public class DataMessageTarget {
         this.roomId = roomId;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -67,7 +88,7 @@ public class DataMessageTarget {
         this.forwardId = forwardId;
     }
 
-    public int getAnswerId() {
+    public Integer getAnswerId() {
         return answerId;
     }
 

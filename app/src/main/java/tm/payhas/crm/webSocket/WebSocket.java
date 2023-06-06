@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -76,29 +77,37 @@ public class WebSocket {
             @Override
             public void onTextReceived(String emit) {
                 Log.e(TAG, "onTextReceived: " + emit);
-                Log.e(TAG, "onTextReceived: "+"statusReceived");
                 try {
-                    Log.e(TAG, "onTextReceived: "+"2324");
                     JSONObject messageJson = new JSONObject(emit);
                     String event = messageJson.getString("event");
-                    String channel = messageJson.getString("chanel");
-                    Log.e(TAG, "onTextReceived: "+event);
-                    JSONObject receivedMessage = messageJson.getJSONObject("data");
-                    DataMessageTarget newMessage = new Gson().fromJson(String.valueOf(receivedMessage), DataMessageTarget.class);
-                    if (channel.equals("messageStatus")){
-                        Log.e(TAG, "onTextReceived: "+"ststs" );
-                    }
+
                     switch (event) {
                         case MESSAGE_STATUS:
-                            Log.e(TAG, "onTextReceived: "+"StatusReceived" );
+                            JSONArray receivedArray = messageJson.getJSONArray("data");
+                            ArrayList<DataMessageTarget> list = new ArrayList<>();
+                            for (int i = 0; i < receivedArray.length(); i++) {
+                                DataMessageTarget newMessage = new Gson().fromJson(String.valueOf(receivedArray.get(i)), DataMessageTarget.class);
+                                activity.runOnUiThread(() -> {
+                                    Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
+                                    if (chatRoom instanceof ChatRoomInterface) {
+                                        ((ChatRoomInterface) chatRoom).newMessage(newMessage);
+                                    }
+                                });
+                                list.add(newMessage);
+                            }
+                            Log.e(TAG, "onTextReceived: " + list.size());
+                            break;
                         case RECEIVED_NEW_MESSAGE:
-                            Log.e(TAG, "onTextReceived: "+"MessageReceived" );
+                            JSONObject receivedMessage = messageJson.getJSONObject("data");
+                            DataMessageTarget newMessage = new Gson().fromJson(String.valueOf(receivedMessage), DataMessageTarget.class);
+                            Log.e(TAG, "onTextReceived: " + "MessageReceived");
                             activity.runOnUiThread(() -> {
                                 Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
                                 if (chatRoom instanceof ChatRoomInterface) {
                                     ((ChatRoomInterface) chatRoom).newMessage(newMessage);
                                 }
                             });
+                            break;
                         case USER_STATUS:
                             boolean status;
                             JSONObject statusInfo = messageJson.getJSONObject("data");
@@ -110,6 +119,7 @@ public class WebSocket {
                                     ((ChatRoomInterface) chatRoom).userStatus(status);
                                 }
                             });
+                            break;
                     }
 
 

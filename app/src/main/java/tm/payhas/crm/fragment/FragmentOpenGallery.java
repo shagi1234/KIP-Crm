@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,15 +25,25 @@ import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrInterface;
 import com.r0adkll.slidr.model.SlidrPosition;
 
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import tm.payhas.crm.R;
 import tm.payhas.crm.activity.ActivityMain;
 import tm.payhas.crm.adapters.AdapterMedia;
 import tm.payhas.crm.adapters.AdapterSingleChat;
-import tm.payhas.crm.dataModels.DataAttachment;
+import tm.payhas.crm.api.response.ResponseManyFiles;
 import tm.payhas.crm.dataModels.MediaLocal;
 import tm.payhas.crm.databinding.FragmentOpenGalleryBinding;
+import tm.payhas.crm.helpers.Common;
 import tm.payhas.crm.helpers.SelectedMedia;
 import tm.payhas.crm.helpers.StaticMethods;
 import tm.payhas.crm.interfaces.ChatRoomInterface;
@@ -59,7 +70,7 @@ public class FragmentOpenGallery extends Fragment implements OnBackPressedFragme
     @Override
     public void onResume() {
         super.onResume();
-        if (slidrInterface == null && getView() != null)
+        if (slidrInterface == null && getView()!= null)
             slidrInterface = Slidr.replace(getView().findViewById(R.id.slider_layout), new SlidrConfig.Builder().position(SlidrPosition.LEFT).build());
 
         StaticMethods.setPadding(b.mainGalleryLay, 0, StaticMethods.statusBarHeight, 0, StaticMethods.navigationBarHeight);
@@ -115,12 +126,10 @@ public class FragmentOpenGallery extends Fragment implements OnBackPressedFragme
         StaticMethods.setBackgroundDrawable(getContext(), b.edtTitle, R.color.white, 0, 10, false, 0);
         b.btnNext.setOnClickListener(v -> {
             b.btnNext.setEnabled(false);
+            SelectedMedia.getArrayList().addAll(media);
             new Handler().postDelayed(() -> b.btnNext.setEnabled(true), 200);
-            DataAttachment attachment = new DataAttachment();
             MediaLocal mediaLocal = SelectedMedia.getArrayList().get(0);
-            attachment.setFileUrl(mediaLocal.getPath());
-            attachment.setFileName("");
-            onNewMessage(attachment);
+            onNewMessage(mediaLocal);
             StaticMethods.hideSoftKeyboard(getActivity());
             getActivity().onBackPressed();
         });
@@ -167,10 +176,41 @@ public class FragmentOpenGallery extends Fragment implements OnBackPressedFragme
         return false;
     }
 
-    private void onNewMessage(DataAttachment attachment) {
-        Fragment fragment = ActivityMain.mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
-        if (fragment instanceof ChatRoomInterface) {
-            ((ChatRoomInterface) fragment).newImageImageUrl(attachment);
+    private void onNewMessage(MediaLocal mediaLocal) {
+        uploadFiles(mediaLocal);
+    }
+
+    private void uploadFiles(MediaLocal mediaLocal) {
+        MultipartBody.Part fileToUpload = null;
+        RequestBody requestFile =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"),
+                        new File(mediaLocal.getPath())
+                );
+        try {
+            fileToUpload = MultipartBody.Part.createFormData("fileUrl", URLEncoder.encode(mediaLocal.getPath(), "utf-8"), requestFile);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
+        RequestBody fileUrl = RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(fileToUpload));
+
+        Call<ResponseManyFiles> upload = Common.getApi().uploadFiles(fileToUpload);
+        upload.enqueue(new Callback<ResponseManyFiles>() {
+            @Override
+            public void onResponse(Call<ResponseManyFiles> call, Response<ResponseManyFiles> response) {
+                if (response.isSuccessful()) {
+                    Fragment chatRoom = ActivityMain.mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
+
+                    if (chatRoom instanceof ChatRoomInterface) {
+                        ((ChatRoomInterface) chatRoom).newImageImageUrl(response.body().getData().getUrl());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseManyFiles> call, Throwable t) {
+                Log.e(TAG, "onFailure: " + t.getMessage());
+            }
+        });
     }
 }

@@ -32,7 +32,7 @@
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_add_task.xml" value="0.2" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_chat.xml" value="0.176" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_chat_container.xml" value="0.264" />
-        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_chat_room.xml" value="0.25" />
+        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_chat_room.xml" value="0.2" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_cloud.xml" value="0.25" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_cloud_file.xml" value="0.25" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_cloud_folder.xml" value="0.264" />
@@ -60,6 +60,7 @@
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_file_received.xml" value="0.536" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_file_sent.xml" value="0.25" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_media.xml" value="0.10989583333333333" />
+        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_menu.xml" value="0.25" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_message_received.xml" value="0.264" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_projects.xml" value="0.25" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_received_image.xml" value="0.21978021978021978" />
@@ -67,8 +68,9 @@
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_received_voice_message.xml" value="0.24895833333333334" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_reply_file.xml" value="0.264" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_reply_recieved.xml" value="0.264" />
+        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_reply_sent.xml" value="0.264" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_sent_image.xml" value="0.2" />
-        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_sent_message.xml" value="0.15503875968992248" />
+        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_sent_message.xml" value="0.264" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_spinner.xml" value="0.10208333333333333" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_spinner_rv.xml" value="0.264" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_tasks.xml" value="0.264" />
@@ -80,6 +82,7 @@
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/menu/cloud_menu.xml" value="0.25" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/menu/context_menu.xml" value="0.20512820512820512" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/menu/menu_project_tasks.xml" value="0.25" />
+        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/menu/message_menu.xml" value="0.25" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1685" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/mipmap-xhdpi/ic_splash_var_three.xml" value="0.1685" />
       </map>

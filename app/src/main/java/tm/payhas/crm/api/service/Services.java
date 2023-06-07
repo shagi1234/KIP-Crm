@@ -3,8 +3,8 @@ package tm.payhas.crm.api.service;
 import com.google.gson.JsonObject;
 
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -18,6 +18,7 @@ import retrofit2.http.Query;
 import tm.payhas.crm.api.request.RequestCreateTask;
 import tm.payhas.crm.api.request.RequestUserTasks;
 import tm.payhas.crm.api.response.ResponseManyFiles;
+import tm.payhas.crm.api.response.ResponseOneMessage;
 import tm.payhas.crm.api.response.ResponseProjects;
 import tm.payhas.crm.api.response.ResponseRoomMessages;
 import tm.payhas.crm.api.response.ResponseSignIn;
@@ -51,5 +52,9 @@ public interface Services {
     @Multipart
     @POST("single/upload/messages")
     Call<ResponseManyFiles> uploadFiles(@Part MultipartBody.Part fileUrl);
+
+    @POST("/chat/message/remove/{id}")
+    Call<ResponseOneMessage> removeMessage(@Header("Authorization") String token, @Path("id") int id);
+
 
 }

@@ -40,19 +40,19 @@ public class ChatMenu {
                 case R.id.copy:
                     selectedMenu = 1;
                     if (adapterSingleChat != null) {
-                        ((NewMessage) adapterSingleChat).onMenuSelected(1, messageId,messageTarget);
+                        ((NewMessage) adapterSingleChat).onMenuSelected(view, 1, messageId, messageTarget);
                     }
                     return true;
                 case R.id.delete:
                     selectedMenu = 2;
                     if (adapterSingleChat != null) {
-                        ((NewMessage) adapterSingleChat).onMenuSelected(2, messageId,messageTarget);
+                        ((NewMessage) adapterSingleChat).onMenuSelected(view, 2, messageId, messageTarget);
                     }
                     return true;
                 case R.id.reply:
                     selectedMenu = 3;
                     if (adapterSingleChat != null) {
-                        ((NewMessage) adapterSingleChat).onMenuSelected(3, messageId,messageTarget);
+                        ((NewMessage) adapterSingleChat).onMenuSelected(view, 3, messageId, messageTarget);
                     }
                     return true;
             }

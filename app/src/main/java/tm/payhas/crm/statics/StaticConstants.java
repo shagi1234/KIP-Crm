@@ -32,6 +32,7 @@ public class StaticConstants {
     public static final String CHANNEL_MESSAGES = "messages"; // to get Room messages
     public static final String MESSAGES_RECEIVED = "receiveYourMessage"; // emit to receive message
     public static final String USER_STATUS_CHANNEL = "userStatusChannel"; // emit to receive message
+    public static final String REMOVE_MESSAGE = "removeMessage"; // to remove message
 
 }
 

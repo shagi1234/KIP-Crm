@@ -4,6 +4,7 @@ import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.api.network.Network.BASE_URL_SOCKET;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGE_STATUS;
 import static tm.payhas.crm.statics.StaticConstants.RECEIVED_NEW_MESSAGE;
+import static tm.payhas.crm.statics.StaticConstants.REMOVE_MESSAGE;
 import static tm.payhas.crm.statics.StaticConstants.USER_STATUS;
 
 import android.app.Activity;
@@ -25,11 +26,13 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import dev.gustavoavila.websocketclient.WebSocketClient;
+import tm.payhas.crm.adapters.AdapterSingleChat;
 import tm.payhas.crm.dataModels.DataMessageTarget;
 import tm.payhas.crm.dataModels.DataUserStatus;
 import tm.payhas.crm.fragment.FragmentChatRoom;
 import tm.payhas.crm.interfaces.ChatRoomInterface;
 import tm.payhas.crm.interfaces.MessageCallBack;
+import tm.payhas.crm.interfaces.NewMessage;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class WebSocket {
@@ -45,6 +48,7 @@ public class WebSocket {
     public static ArrayList<Integer> ids;
     private Handler handler = new Handler();
     public MessageCallBack call;
+    private AdapterSingleChat adapterSingleChat;
 
     public WebSocket(Context context, Activity activity) {
         this.context = context;
@@ -53,6 +57,7 @@ public class WebSocket {
         ids = new ArrayList<>();
         notificationManagerCompat = NotificationManagerCompat.from(context);
         accountPreferences = AccountPreferences.newInstance(context);
+        adapterSingleChat = new AdapterSingleChat(context);
     }
 
     public void createWebSocketClient() {
@@ -120,6 +125,20 @@ public class WebSocket {
                                 }
                             });
                             break;
+
+                        case REMOVE_MESSAGE:
+                            Log.e(TAG, "onTextReceived: " + "delete Received");
+                            JSONObject removeInfo = messageJson.getJSONObject("data");
+                            DataMessageTarget remove = new Gson().fromJson(String.valueOf(removeInfo), DataMessageTarget.class);
+
+                            Log.e(TAG, "onTextReceived: " + String.valueOf(removeInfo));
+                            if (adapterSingleChat != null) {
+                                ((NewMessage) adapterSingleChat).deleteMessage(remove);
+                                adapterSingleChat.notifyDataSetChanged();
+                            }
+                            break;
+
+
                     }
 
 

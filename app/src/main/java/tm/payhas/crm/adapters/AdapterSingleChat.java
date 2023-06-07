@@ -36,12 +36,18 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import tm.payhas.crm.R;
+import tm.payhas.crm.api.response.ResponseOneMessage;
 import tm.payhas.crm.dataModels.DataMessageTarget;
 import tm.payhas.crm.fragment.FragmentChatRoom;
 import tm.payhas.crm.helpers.ChatMenu;
+import tm.payhas.crm.helpers.Common;
 import tm.payhas.crm.interfaces.ChatRoomInterface;
 import tm.payhas.crm.interfaces.NewMessage;
+import tm.payhas.crm.preference.AccountPreferences;
 
 public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessage {
     private ArrayList<DataMessageTarget> messages = new ArrayList<>();
@@ -51,10 +57,12 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
     private Integer currentMessageId = 0;
     private int selectedMenu;
     private String TAG = "AdapterSingleChat";
+    private AccountPreferences accountPreferences;
 
 
     public AdapterSingleChat(Context context) {
         this.context = context;
+        accountPreferences = new AccountPreferences(context);
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -246,14 +254,42 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
         } else {
         }
     }
+
     @Override
-    public void onMenuSelected(Integer i, Integer messageId, DataMessageTarget messageTarget) {
+    public void deleteMessage(DataMessageTarget dataMessageTarget) {
+        Log.e(TAG, "deleteMessage: " + "deleteReceived");
+        Log.e(TAG, "deleteMessage: " + dataMessageTarget.getId());
+        for (int i = 0; i < messages.size(); i++) {
+            if (dataMessageTarget.getId() == messages.get(i).getId()){
+                Log.e(TAG, "deleteMessage: "+"deleteeee");
+            }
+        }
+//        messages.remove(messagePositionToRemove);
+//        notifyItemRemoved(messagePositionToRemove);
+//        notifyItemRangeChanged(messagePositionToRemove, messages.size() - messagePositionToRemove);
+
+    }
+
+    @Override
+    public void onMenuSelected(View view, Integer i, Integer messageId, DataMessageTarget messageTarget) {
         switch (i) {
             case 1:
                 Toast.makeText(context, "Copy " + messageId, Toast.LENGTH_SHORT).show();
                 break;
             case 2:
-                Toast.makeText(context, "Delete " + messageId, Toast.LENGTH_SHORT).show();
+                final int i1 = 0;
+                Call<ResponseOneMessage> call = Common.getApi().removeMessage(accountPreferences.getToken(), messageId);
+                call.enqueue(new Callback<ResponseOneMessage>() {
+                    @Override
+                    public void onResponse(Call<ResponseOneMessage> call, Response<ResponseOneMessage> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseOneMessage> call, Throwable t) {
+                        Log.e(TAG, "onFailure: " + t.getMessage());
+                    }
+                });
                 break;
             case 3:
                 Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());

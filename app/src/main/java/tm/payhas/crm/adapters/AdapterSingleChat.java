@@ -259,14 +259,16 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
     public void deleteMessage(DataMessageTarget dataMessageTarget) {
         Log.e(TAG, "deleteMessage: " + "deleteReceived");
         Log.e(TAG, "deleteMessage: " + dataMessageTarget.getId());
+        Log.e(TAG, "deleteMessage: " + messages.size());
         for (int i = 0; i < messages.size(); i++) {
-            if (dataMessageTarget.getId() == messages.get(i).getId()){
-                Log.e(TAG, "deleteMessage: "+"deleteeee");
+            if (dataMessageTarget.getId() == messages.get(i).getId()) {
+                Log.e(TAG, "deleteMessage: " + "deleteeee");
+                messages.remove(i);
+                notifyItemRemoved(i);
+                notifyItemRangeChanged(i, messages.size() - i);
             }
         }
-//        messages.remove(messagePositionToRemove);
-//        notifyItemRemoved(messagePositionToRemove);
-//        notifyItemRangeChanged(messagePositionToRemove, messages.size() - messagePositionToRemove);
+
 
     }
 
@@ -277,8 +279,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
                 Toast.makeText(context, "Copy " + messageId, Toast.LENGTH_SHORT).show();
                 break;
             case 2:
-                final int i1 = 0;
-                Call<ResponseOneMessage> call = Common.getApi().removeMessage(accountPreferences.getToken(), messageId);
+                Call<ResponseOneMessage> call = Common.getApi().removeMessage(accountPreferences.getToken(), messageTarget.getId());
                 call.enqueue(new Callback<ResponseOneMessage>() {
                     @Override
                     public void onResponse(Call<ResponseOneMessage> call, Response<ResponseOneMessage> response) {

@@ -32,7 +32,6 @@ import tm.payhas.crm.dataModels.DataUserStatus;
 import tm.payhas.crm.fragment.FragmentChatRoom;
 import tm.payhas.crm.interfaces.ChatRoomInterface;
 import tm.payhas.crm.interfaces.MessageCallBack;
-import tm.payhas.crm.interfaces.NewMessage;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class WebSocket {
@@ -130,12 +129,12 @@ public class WebSocket {
                             Log.e(TAG, "onTextReceived: " + "delete Received");
                             JSONObject removeInfo = messageJson.getJSONObject("data");
                             DataMessageTarget remove = new Gson().fromJson(String.valueOf(removeInfo), DataMessageTarget.class);
-
-                            Log.e(TAG, "onTextReceived: " + String.valueOf(removeInfo));
-                            if (adapterSingleChat != null) {
-                                ((NewMessage) adapterSingleChat).deleteMessage(remove);
-                                adapterSingleChat.notifyDataSetChanged();
-                            }
+                            activity.runOnUiThread(() -> {
+                                Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
+                                if (chatRoom instanceof ChatRoomInterface) {
+                                    ((ChatRoomInterface) chatRoom).deleteMessage(remove);
+                                }
+                            });
                             break;
 
 

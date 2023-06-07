@@ -362,6 +362,14 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     }
 
     @Override
+    public void deleteMessage(DataMessageTarget messageTarget) {
+        if (adapterSingleChat != null) {
+            ((NewMessage) adapterSingleChat).deleteMessage(messageTarget);
+            adapterSingleChat.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     public void newReplyMessage(int messageId, DataMessageTarget messageTarget) {
         b.replyLayout.setVisibility(View.VISIBLE);
         toReply = true;

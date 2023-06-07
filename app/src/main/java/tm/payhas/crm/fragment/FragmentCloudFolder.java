@@ -24,13 +24,10 @@ import java.util.ArrayList;
 
 import tm.payhas.crm.R;
 import tm.payhas.crm.adapters.AdapterCloud;
-import tm.payhas.crm.dataModels.DataMessageTarget;
-import tm.payhas.crm.dataModels.DataProjectUsers;
 import tm.payhas.crm.databinding.FragmentCloudFolderBinding;
-import tm.payhas.crm.interfaces.ChatRoomInterface;
 import tm.payhas.crm.model.ModelFile;
 
-public class FragmentCloudFolder extends Fragment implements ChatRoomInterface {
+public class FragmentCloudFolder extends Fragment {
     private FragmentCloudFolderBinding b;
     private AdapterCloud adapterCloudFolder;
     private ArrayList<ModelFile> files = new ArrayList<>();
@@ -165,39 +162,6 @@ public class FragmentCloudFolder extends Fragment implements ChatRoomInterface {
 
     private void setBackground() {
         setBackgroundDrawable(getContext(), b.searchBox, R.color.color_transparent, R.color.primary, 6, false, 1);
-    }
-
-
-    @Override
-    public void multiSelectedArray(ArrayList<ModelFile> selected) {
-        int selectedSize = selected.size();
-        b.deleteCount.setText(String.valueOf(selectedSize));
-        selectedArray.addAll(selected);
-    }
-
-    @Override
-    public void selectedUserList(ArrayList<DataProjectUsers> selected) {
-
-    }
-
-    @Override
-    public void userStatus(boolean isActive) {
-
-    }
-
-    @Override
-    public void newMessage(DataMessageTarget messageTarget) {
-
-    }
-
-    @Override
-    public void newImageImageUrl(String imageUrl) {
-
-    }
-
-    @Override
-    public void newReplyMessage(int replyId, DataMessageTarget messageTarget) {
-
     }
 
 

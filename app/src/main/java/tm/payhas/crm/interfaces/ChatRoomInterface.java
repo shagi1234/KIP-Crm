@@ -17,6 +17,8 @@ public interface ChatRoomInterface {
 
     void newImageImageUrl(String imageUrl);
 
+    void deleteMessage(DataMessageTarget messageTarget);
+
     void newReplyMessage(int messageId, DataMessageTarget messageTarget);
 
 }

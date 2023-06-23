@@ -30,6 +30,12 @@
         <item>Завершенo</item>
     </string-array>
 
+    <string-array name="reminder_type">
+        <item>Ответственные</item>
+        <item>Наблюдатели</item>
+        <item>Автор</item>
+    </string-array>
+
     <string-array name="dashboard_type">
         <item>Tazelik</item>
         <item>Bayramcylyk</item>

@@ -5,6 +5,7 @@ import static tm.payhas.crm.helpers.Common.addFragment;
 import static tm.payhas.crm.helpers.Common.getApi;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.statics.StaticConstants.IN_PROCESS;
+import static tm.payhas.crm.statics.StaticConstants.NOT_STARTED;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -67,7 +68,7 @@ public class FragmentTasks extends Fragment {
 
     private void getTasks() {
         ArrayList<String> statuses = new ArrayList<>();
-        statuses.add(IN_PROCESS);
+        statuses.add(NOT_STARTED);
         RequestUserTasks requestUserTasks = new RequestUserTasks();
         requestUserTasks.setLimit(10);
         requestUserTasks.setPage(1);
@@ -93,7 +94,7 @@ public class FragmentTasks extends Fragment {
     private void initListeners() {
         b.favAdd.setOnClickListener(view -> {
             b.favAdd.setEnabled(false);
-            addFragment(mainFragmentManager, R.id.secondary_content, FragmentAddTask.newInstance());
+            addFragment(mainFragmentManager, R.id.main_content, FragmentAddTask.newInstance());
             new Handler().postDelayed(() -> b.favAdd.setEnabled(true), 200);
         });
     }

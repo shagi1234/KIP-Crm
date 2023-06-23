@@ -7,10 +7,11 @@ import tm.payhas.crm.dataModels.DataAttachment;
 public class RequestCreateTask {
 
     private String name;
+    private int executorId;
     private String description;
     private Integer authorId = null;
     private String priority;
-    private String status;
+    private String status = "notStarted";
     private Integer projectId;
     private String reminderType;
     private ArrayList<String> remindAt;
@@ -18,8 +19,17 @@ public class RequestCreateTask {
     private String finishesAt;
     private ArrayList<Integer> responsibleUsers;
     private ArrayList<Integer> observerUsers;
-    private DataAttachment files;
+    private ArrayList<DataAttachment> files;
     private int id;
+
+
+    public int getExecutorId() {
+        return executorId;
+    }
+
+    public void setExecutorId(int executorId) {
+        this.executorId = executorId;
+    }
 
     public Integer getProjectId() {
         return projectId;
@@ -121,13 +131,6 @@ public class RequestCreateTask {
         this.observerUsers = observerUsers;
     }
 
-    public DataAttachment getFiles() {
-        return files;
-    }
-
-    public void setFiles(DataAttachment files) {
-        this.files = files;
-    }
 
     public int getId() {
         return id;

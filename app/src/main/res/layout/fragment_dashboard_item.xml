@@ -52,7 +52,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_bold"
-                        android:text="Aman Atyew"
+                        android:text=""
                         android:textColor="@color/tab_text_color"
                         android:textSize="12sp" />
 
@@ -61,7 +61,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Duyn Onlin bla"
+                        android:text=""
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -92,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/inter_bold"
-                    android:text="Bu gun Aynabatyn doglan guni"
+                    android:text=""
                     android:textColor="@color/dashboard_news_title"
                     android:textSize="16sp" />
 
@@ -102,7 +102,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/inter_regular"
-                    android:text="Bu gun Aynabatyn doglan guni boldy, gyzykly boldy bet boldy yananay gorrayda"
+                    android:text=""
                     android:textColor="@color/dashboard_news_details"
                     android:textSize="18sp" />
 
@@ -141,7 +141,8 @@
                             android:paddingVertical="12.5dp"
                             android:paddingStart="10dp"
                             android:textColor="@color/text_color"
-                            android:textSize="12sp" />
+                            android:textSize="12sp"
+                            tools:ignore="NestedWeights" />
 
                         <ImageView
                             android:id="@+id/send_comment"
@@ -154,42 +155,6 @@
 
 
                 </LinearLayout>
-
-                <!--            <FrameLayout-->
-                <!--                android:id="@+id/see_all"-->
-                <!--                android:layout_width="wrap_content"-->
-                <!--                android:layout_height="wrap_content"-->
-                <!--                android:background="@drawable/ripple"-->
-                <!--                android:clickable="true"-->
-                <!--                android:focusable="true">-->
-
-                <!--                <LinearLayout-->
-                <!--                    android:layout_width="wrap_content"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:background="@drawable/comment_input_bg"-->
-
-                <!--                    android:orientation="horizontal">-->
-
-                <!--                    <TextView-->
-                <!--                        android:layout_width="wrap_content"-->
-                <!--                        android:layout_height="wrap_content"-->
-                <!--                        android:layout_gravity="center"-->
-                <!--                        android:layout_marginStart="10dp"-->
-                <!--                        android:fontFamily="@font/inter_bold"-->
-                <!--                        android:text="Hemmesini Gorkez"-->
-                <!--                        android:textColor="@color/tab_text_color"-->
-                <!--                        android:textSize="12sp" />-->
-
-                <!--                    <ImageView-->
-                <!--                        android:layout_width="34dp"-->
-                <!--                        android:layout_height="34dp"-->
-                <!--                        android:layout_marginHorizontal="10dp"-->
-                <!--                        android:layout_marginVertical="5dp"-->
-                <!--                        android:background="@drawable/ripple"-->
-                <!--                        android:src="@drawable/ic_see_all" />-->
-                <!--                </LinearLayout>-->
-
-                <!--            </FrameLayout>-->
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_comments"

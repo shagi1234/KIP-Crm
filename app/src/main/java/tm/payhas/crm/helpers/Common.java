@@ -150,6 +150,24 @@ public class Common {
         return dateTaken;
     }
 
+    public static Date anormalDate(String dateGiven) {
+        String initialStringDate = dateGiven;
+        Locale us = new Locale("US");
+        Date dateTaken = null;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", us);
+        try {
+            Date date = format.parse(initialStringDate);
+            String stringDate = new SimpleDateFormat("yyyy/MM/dd", us).format(date);
+            String stringTime = new SimpleDateFormat("HH:mm", us).format(date);
+            String finalDateTime = stringDate.concat(" ").concat(stringTime);
+            dateTaken = date;
+            Log.i("Date_and_Time", "" + finalDateTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return dateTaken;
+    }
+
     public static void showDialog(Activity activity, Context context, int roomId, View view) {
         final BottomSheetDialog dialog = new BottomSheetDialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

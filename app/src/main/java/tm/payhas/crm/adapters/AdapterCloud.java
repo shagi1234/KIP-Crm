@@ -141,7 +141,7 @@ public class AdapterCloud extends RecyclerView.Adapter<AdapterCloud.ViewHolder> 
                 if (type == CLOUD_TYPE_FOLDER)
                     main.setOnClickListener(view -> {
                         main.setEnabled(false);
-                        addFragment(mainFragmentManager, R.id.secondary_content, FragmentCloudFile.newInstance(oneFolder.getFileUrl()));
+                        addFragment(mainFragmentManager, R.id.main_content, FragmentCloudFile.newInstance(oneFolder.getFileUrl()));
                         new Handler().postDelayed(() -> main.setEnabled(true), 200);
                     });
             }
@@ -182,12 +182,6 @@ public class AdapterCloud extends RecyclerView.Adapter<AdapterCloud.ViewHolder> 
         private void setFileInfo(DataFolder oneFolder) {
             folder.setImageResource(R.drawable.ic_documenyt_file);
             fileName.setText(oneFolder.getFileName());
-            main.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                }
-            });
 
         }
     }

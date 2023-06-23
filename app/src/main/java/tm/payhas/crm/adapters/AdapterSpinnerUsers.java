@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import tm.payhas.crm.R;
 import tm.payhas.crm.api.data.dto.DtoUserInfo;
 import tm.payhas.crm.fragment.FragmentAddProject;
+import tm.payhas.crm.fragment.FragmentAddTask;
+import tm.payhas.crm.interfaces.AddTask;
 import tm.payhas.crm.interfaces.HelperAddProject;
 
 public class AdapterSpinnerUsers extends RecyclerView.Adapter<AdapterSpinnerUsers.ViewHolder> {
@@ -138,8 +140,12 @@ public class AdapterSpinnerUsers extends RecyclerView.Adapter<AdapterSpinnerUser
                 exUs = executorUserId;
                 activity.onBackPressed();
                 Fragment addProject = mainFragmentManager.findFragmentByTag(FragmentAddProject.class.getSimpleName());
+                Fragment addTask = mainFragmentManager.findFragmentByTag(FragmentAddTask.class.getSimpleName());
                 if (addProject instanceof HelperAddProject) {
                     ((HelperAddProject) addProject).getExecutorUser(oneUSer);
+                }
+                if (addTask instanceof AddTask) {
+                    ((AddTask) addTask).setExecutor(oneUSer);
                 }
             });
         }

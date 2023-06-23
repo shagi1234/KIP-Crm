@@ -24,6 +24,8 @@ public class StaticConstants {
     public static String MEDIUM = "medium";
     public static String HIGH = "high";
     public static String NOT_IMPORTANT = "neotlozhnyy";
+
+
     //Events
     public static final String SENT_NEW_MESSAGE = "createMessage"; // sent new message
     public static final String USER_STATUS = "userStatus"; // user Status

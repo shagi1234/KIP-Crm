@@ -1,7 +1,9 @@
 package tm.payhas.crm.fragment;
 
+import static tm.payhas.crm.helpers.Common.anormalDate;
 import static tm.payhas.crm.helpers.Common.normalDate;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
+import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +14,9 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,7 +70,7 @@ public class FragmentOneProject extends Fragment {
         super.onResume();
         new Handler().postDelayed(() -> setPadding(b.main,
                 0,
-                50,
+                statusBarHeight,
                 0,
                 0), 50);
     }
@@ -79,7 +84,7 @@ public class FragmentOneProject extends Fragment {
         b.rvProjectTasks.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         b.rvProjectTasks.setAdapter(adapterTasks);
 
-        adapterSelectedUsers = new AdapterSelectedUsers(getContext(),2);
+        adapterSelectedUsers = new AdapterSelectedUsers(getContext(), 1);
         b.rvMembers.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         b.rvMembers.setAdapter(adapterSelectedUsers);
     }
@@ -104,7 +109,7 @@ public class FragmentOneProject extends Fragment {
 
             @Override
             public void onFailure(Call<ResponseOneProject> call, Throwable t) {
-                Log.e("Erororor", "onFailure: "+t.getMessage());
+                Log.e("Erororor", "onFailure: " + t.getMessage());
             }
         });
     }

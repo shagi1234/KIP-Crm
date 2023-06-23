@@ -4,10 +4,8 @@ import static tm.payhas.crm.activity.ActivityLoginRegister.mainFragmentManager;
 import static tm.payhas.crm.api.network.Network.BASE_PHOTO;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
-import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -44,15 +42,6 @@ public class FragmentMessages extends Fragment {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        new Handler().postDelayed(() -> setPadding(b.titleBarChat,
-                0,
-                30,
-                0,
-                0), 100);
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,

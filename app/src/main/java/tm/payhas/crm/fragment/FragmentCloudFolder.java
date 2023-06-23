@@ -193,16 +193,6 @@ public class FragmentCloudFolder extends Fragment implements DataFileSelectedLis
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        new Handler().postDelayed(() -> setPadding(b.swiper,
-                0,
-                50,
-                0,
-                0), 100);
-    }
-
     private void setRecycler() {
         if (getActivity() != null && getContext() != null)
             adapterCloudFolder = new AdapterCloud(getContext(), getActivity(), CLOUD_TYPE_FOLDER);

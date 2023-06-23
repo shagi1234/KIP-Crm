@@ -157,15 +157,6 @@ public class FragmentHome extends Fragment {
         b.rvBirthdays.setAdapter(adapterBirthday);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        new Handler().postDelayed(() -> setPadding(b.swiper,
-                0,
-                50,
-                0,
-                0), 100);
-    }
 
     private void setRecyclerNews() {
         adapterNews = new AdapterNews(getContext());

@@ -66,6 +66,10 @@ public interface Services {
     Call<ResponseUsersList> getAllUsers();
 
 
+    @GET("projects/participants/{id}")
+    Call<ResponseUsersList> getProjectsUserList(@Path("id") int id);
+
+
     @GET("projects/{id}")
     Call<ResponseOneProject> getOneProject(@Header("Authorization") String token, @Path("id") int id, @Query("page") int page, @Query("limit") int limit);
 

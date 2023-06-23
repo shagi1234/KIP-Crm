@@ -35,15 +35,6 @@ public class FragmentProjectTasks extends Fragment {
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        new Handler().postDelayed(() -> setPadding(b.mainContent,
-                0,
-                50,
-                0,
-                0), 100);
-    }
 
     @Override
     public void onHiddenChanged(boolean hidden) {

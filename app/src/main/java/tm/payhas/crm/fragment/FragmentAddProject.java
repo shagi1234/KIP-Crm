@@ -117,12 +117,12 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
         });
         b.clickableMember.setOnClickListener(view -> {
             b.clickableMember.setEnabled(false);
-            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.PROJECT_MEMBERS));
+            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.PROJECT_MEMBERS,0));
             new Handler().postDelayed(() -> b.clickableMember.setEnabled(true), 200);
         });
         b.clickableExecutor.setOnClickListener(view -> {
             b.clickableExecutor.setEnabled(false);
-            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.PROJECT_EXECUTOR));
+            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.PROJECT_EXECUTOR,0));
             new Handler().postDelayed(() -> b.clickableExecutor.setEnabled(true), 200);
         });
         b.projectStartTime.setOnClickListener(view -> openDialog(b.projectStartTime));

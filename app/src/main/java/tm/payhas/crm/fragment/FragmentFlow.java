@@ -3,9 +3,12 @@ package tm.payhas.crm.fragment;
 import static tm.payhas.crm.activity.ActivityLoginRegister.mainFragmentManager;
 import static tm.payhas.crm.helpers.Common.menuBar;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
+import static tm.payhas.crm.helpers.StaticMethods.setPadding;
+import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +39,11 @@ public class FragmentFlow extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        new Handler().postDelayed(() -> setPadding(b.secondaryContent,
+                0,
+                statusBarHeight,
+                0,
+                0), 100);
     }
 
     @Override

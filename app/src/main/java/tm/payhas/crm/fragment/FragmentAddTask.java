@@ -5,6 +5,7 @@ import static tm.payhas.crm.fragment.FragmentSpinner.OBSERVERS;
 import static tm.payhas.crm.fragment.FragmentSpinner.PROJECTS;
 import static tm.payhas.crm.fragment.FragmentSpinner.RESPONSIBLE;
 import static tm.payhas.crm.helpers.Common.addFragment;
+import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import static tm.payhas.crm.statics.StaticConstants.FINISHED;
 import static tm.payhas.crm.statics.StaticConstants.HIGH;
@@ -65,10 +66,17 @@ public class FragmentAddTask extends Fragment implements AddTask {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         b = tm.payhas.crm.databinding.FragmentAddTaskBinding.inflate(inflater);
+        hideSoftKeyboard(getActivity());
         setUpSpinners();
         initListeners();
         accountPreferences = new AccountPreferences(getContext());
         return b.getRoot();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        hideSoftKeyboard(getActivity());
     }
 
     private void setUpSpinners() {
@@ -95,22 +103,9 @@ public class FragmentAddTask extends Fragment implements AddTask {
 
 
     private void initListeners() {
-        b.timeEnd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openDialog(b.timeEnd);
+        b.timeEnd.setOnClickListener(view -> openDialog(b.timeEnd));
 
-
-            }
-
-        });
-
-        b.timeReminder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openDialog(b.timeReminder);
-            }
-        });
+        b.timeReminder.setOnClickListener(view -> openDialog(b.timeReminder));
         b.vTaskProjects.setOnClickListener(view -> {
             b.vTaskProjects.setEnabled(false);
             addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(PROJECTS));

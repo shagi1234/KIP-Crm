@@ -2,23 +2,26 @@ package tm.payhas.crm.interfaces;
 
 import java.util.ArrayList;
 
+import tm.payhas.crm.dataModels.DataFile;
+import tm.payhas.crm.dataModels.DataFolder;
 import tm.payhas.crm.dataModels.DataMessageTarget;
-import tm.payhas.crm.dataModels.DataProjectUsers;
 import tm.payhas.crm.model.ModelFile;
 
 public interface ChatRoomInterface {
-    void multiSelectedArray(ArrayList<ModelFile> selected);
 
-    void selectedUserList(ArrayList<DataProjectUsers> selected);
+
+    void onMessageStatus(DataMessageTarget messageTarget);
 
     void userStatus(boolean isActive);
 
     void newMessage(DataMessageTarget messageTarget);
 
-    void newImageImageUrl(String imageUrl);
+    void newImageImageUrl(DataFile dataFile);
 
     void deleteMessage(DataMessageTarget messageTarget);
 
-    void newReplyMessage(int messageId, DataMessageTarget messageTarget);
+    void newReplyMessage(DataMessageTarget messageTarget);
+
+    void onMessageReceived(DataMessageTarget messageTarget);
 
 }

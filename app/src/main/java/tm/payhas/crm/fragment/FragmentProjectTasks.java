@@ -1,6 +1,7 @@
 package tm.payhas.crm.fragment;
 
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
+import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 
 import android.os.Bundle;
@@ -44,21 +45,28 @@ public class FragmentProjectTasks extends Fragment {
                 0), 100);
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        hideSoftKeyboard(getActivity());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         b = FragmentProjectTasksBinding.inflate(inflater);
+        hideSoftKeyboard(getActivity());
         setViewPager();
         setupTabIcons();
         return b.getRoot();
     }
 
+
     private void setViewPager() {
         adapterViewPager = new AdapterViewPager(mainFragmentManager);
-        adapterViewPager.addFragment(new FragmentTasks(), getResources().getString(R.string.friends));
-        adapterViewPager.addFragment(new FragmentProjects(), getResources().getString(R.string.group));
+        adapterViewPager.addFragment(new FragmentTasks(), "задачи");
+        adapterViewPager.addFragment(new FragmentProjects(), "Проекты");
         b.tabsProjectTasks.setupWithViewPager(b.vpProjectTasks);
         b.vpProjectTasks.setAdapter(adapterViewPager);
     }

@@ -1,16 +1,15 @@
 package tm.payhas.crm.api.response;
 
-import tm.payhas.crm.api.Response;
-import tm.payhas.crm.dataModels.DataFile;
+import tm.payhas.crm.dataModels.DataManyFiles;
 
-public class ResponseManyFiles extends Response {
-    private DataFile data;
+public class ResponseManyFiles {
+    private DataManyFiles data;
 
-    public DataFile getData() {
+    public DataManyFiles getData() {
         return data;
     }
 
-    public void setData(DataFile data) {
+    public void setData(DataManyFiles data) {
         this.data = data;
     }
 }

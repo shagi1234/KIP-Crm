@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true"
+    tools:context=".fragment.FragmentAddProject">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/main_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginVertical="1.5dp"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/ripple"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_arrow_left"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginVertical="12sp"
+                    android:text="New Project"
+                    android:textColor="@color/text_color"
+                    android:textSize="16sp" />
+
+            </FrameLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="6dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="Укажите имя задача"
+                            android:textColor="@color/text_color"
+                            android:textSize="12sp" />
+
+                        <EditText
+                            android:id="@+id/edt_name_project"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/edt_bg"
+                            android:fontFamily="@font/inter_regular"
+                            android:hint="Write..."
+                            android:maxLines="1"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="15.5dp"
+                            android:textColor="@color/text_color"
+                            android:textColorHint="@color/edt_hint"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="6dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="File"
+                            android:textColor="@color/text_color"
+                            android:textSize="12sp" />
+
+                        <EditText
+                            android:id="@+id/attach_file_project"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/edt_bg"
+                            android:clickable="true"
+                            android:drawableEnd="@drawable/ic_documenyt_file"
+                            android:focusable="false"
+                            android:fontFamily="@font/inter_regular"
+                            android:hint="----------"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="15.5dp"
+                            android:textColor="@color/text_color"
+                            android:textColorHint="@color/edt_hint"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="6dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="Description"
+                            android:textColor="@color/text_color"
+                            android:textSize="12sp" />
+
+                        <EditText
+                            android:id="@+id/description_project"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/edt_bg"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="top"
+                            android:hint="Input"
+                            android:minHeight="110dp"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="15.5dp"
+                            android:textColor="@color/text_color"
+                            android:textColorHint="@color/edt_hint"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="6dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="Status"
+                            android:textColor="@color/text_color"
+                            android:textSize="12sp" />
+
+                        <LinearLayout
+
+                            android:layout_width="match_parent"
+                            android:layout_height="46dp"
+                            android:background="@drawable/edt_bg"
+                            android:orientation="horizontal">
+
+                            <Spinner
+                                android:id="@+id/spinner_task_status"
+                                android:layout_width="0dp"
+                                android:layout_height="46dp"
+                                android:layout_weight="1"
+                                android:clickable="true"
+                                android:dropDownWidth="match_parent"
+                                android:focusable="true"
+                                android:fontFamily="@font/inter_regular"
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="15.5dp"
+                                android:textColor="@color/text_color"
+                                android:textColorHint="@color/edt_hint"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:id="@+id/select_members"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="20dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="6dp"
+                                android:fontFamily="@font/inter_regular"
+                                android:text="Участники проекта"
+                                android:textColor="@color/text_color"
+                                android:textSize="12sp" />
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/members_project"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:background="@drawable/edt_bg" />
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:id="@+id/clickable_member"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </FrameLayout>
+
+
+
+
+
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:id="@+id/select_executor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="20dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="6dp"
+                                android:fontFamily="@font/inter_regular"
+                                android:text="Executor"
+                                android:textColor="@color/text_color"
+                                android:textSize="12sp" />
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/executor_project"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:background="@drawable/edt_bg" />
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:id="@+id/clickable_executor"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </FrameLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="20dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="6dp"
+                                android:fontFamily="@font/inter_regular"
+                                android:text="Дата начала"
+                                android:textColor="@color/text_color"
+                                android:textSize="12sp" />
+
+                            <EditText
+                                android:id="@+id/project_start_time"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/edt_bg"
+                                android:clickable="true"
+                                android:drawableEnd="@drawable/ic_calendar"
+                                android:drawablePadding="10dp"
+                                android:focusable="false"
+                                android:fontFamily="@font/inter_regular"
+                                android:hint="__/__/____"
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="15.5dp"
+                                android:textColor="@color/text_color"
+                                android:textColorHint="@color/edt_hint"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginBottom="20dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="6dp"
+                                android:fontFamily="@font/inter_regular"
+                                android:text="Дата завершения"
+                                android:textColor="@color/text_color"
+                                android:textSize="12sp" />
+
+                            <EditText
+                                android:id="@+id/project_end_time"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/edt_bg"
+                                android:clickable="true"
+                                android:drawableEnd="@drawable/ic_calendar"
+                                android:drawablePadding="10dp"
+                                android:focusable="false"
+                                android:fontFamily="@font/inter_regular"
+                                android:hint="__/__/____"
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="15.5dp"
+                                android:textColor="@color/text_color"
+                                android:textColorHint="@color/edt_hint"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="14sp">
+
+                        <TextView
+                            android:id="@+id/btn_login"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@drawable/sent_msg_bg"
+                            android:backgroundTint="@color/primary"
+                            android:fontFamily="@font/poppins_regular"
+                            android:gravity="center_horizontal"
+                            android:maxLines="1"
+                            android:paddingVertical="14.5dp"
+                            android:text="Yatda Saklamak"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <FrameLayout
+                            android:id="@+id/btn_save"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/ripple"
+                            android:clickable="true"
+                            android:focusable="true" />
+
+                    </FrameLayout>
+
+                </LinearLayout>
+            </ScrollView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+</FrameLayout>

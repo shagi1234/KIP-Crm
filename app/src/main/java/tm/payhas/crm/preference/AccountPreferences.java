@@ -26,7 +26,10 @@ public class AccountPreferences {
     private static final String PREF_BIRTH_PLACE = "_birthplace";
     private static final String PREF_AVATAR_URL = "_avatar";
     private static final String PREF_AUTHOR_ID = "_authorId";
+    private static final String PREF_PHONE_NUMBER = "_phoneNumber";
     private static final String PREF_CURRENT_PROJECT_ID = "_currentProjectId";
+    private static final String CLOUD_FOLDER_SELECTABLE = "_selectable";
+    private static final String CLOUD_FILE_SELECTABLE = "__selectable";
 
 
     public static AccountPreferences newInstance(Context context) {
@@ -39,6 +42,37 @@ public class AccountPreferences {
     public void setIsLoggedIn() {
         editor.putBoolean(IS_LOGGED_IN, true);
         editor.commit();
+    }
+
+    public void setFolderSelectable(boolean isSelectable) {
+        editor.putBoolean(CLOUD_FOLDER_SELECTABLE, isSelectable);
+        editor.commit();
+    }
+
+    public void setFileSelectable(boolean isSelectable) {
+        editor.putBoolean(CLOUD_FILE_SELECTABLE, isSelectable);
+        editor.commit();
+    }
+
+    public boolean getCloudSelectable() {
+        if (_context == null) return false;
+        return pref.getBoolean(CLOUD_FOLDER_SELECTABLE, false);
+    }
+
+    public boolean getFileSelectable() {
+        if (_context == null) return false;
+        return pref.getBoolean(CLOUD_FILE_SELECTABLE, false);
+    }
+
+
+    public void setPrefPhoneNumber(String phoneNumber) {
+        editor.putString(PREF_PHONE_NUMBER, phoneNumber);
+        editor.commit();
+    }
+
+    public String getPhoneNumber() {
+        if (_context == null) return "";
+        return pref.getString(PREF_PHONE_NUMBER, "");
     }
 
     public void setPrefCurrentProjectId(int projectId) {

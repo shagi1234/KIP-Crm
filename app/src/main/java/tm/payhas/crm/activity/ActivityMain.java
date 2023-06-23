@@ -5,8 +5,6 @@ import static tm.payhas.crm.helpers.Common.hideAdd;
 import static tm.payhas.crm.helpers.Common.menuBar;
 import static tm.payhas.crm.helpers.StaticMethods.initSystemUIViewListeners;
 import static tm.payhas.crm.helpers.StaticMethods.transparentStatusAndNavigation;
-import static tm.payhas.crm.statics.StaticConstants.USER_STATUS;
-import static tm.payhas.crm.statics.StaticConstants.USER_STATUS_CHANNEL;
 
 import android.os.Bundle;
 import android.widget.FrameLayout;
@@ -17,13 +15,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import tm.payhas.crm.R;
-import tm.payhas.crm.dataModels.DataUserStatus;
+import tm.payhas.crm.fragment.FragmentCloudFile;
+import tm.payhas.crm.fragment.FragmentCloudFolder;
 import tm.payhas.crm.fragment.FragmentFlow;
 import tm.payhas.crm.fragment.FragmentHome;
 import tm.payhas.crm.fragment.FragmentMessages;
 import tm.payhas.crm.helpers.SoftInputAssist;
+import tm.payhas.crm.interfaces.DataFileSelectedListener;
 import tm.payhas.crm.preference.AccountPreferences;
-import tm.payhas.crm.webSocket.EmmitUserStatus;
 import tm.payhas.crm.webSocket.WebSocket;
 
 public class ActivityMain extends AppCompatActivity {
@@ -52,12 +51,13 @@ public class ActivityMain extends AppCompatActivity {
         mainFragmentManager = getSupportFragmentManager();
         softInputAssist = new SoftInputAssist(this);
         setContent();
+
     }
 
 
-
     private void setContent() {
-        addFragment(mainFragmentManager, R.id.main_content, FragmentFlow.newInstance());
+        if (mainFragmentManager.findFragmentByTag(FragmentFlow.class.getSimpleName()) == null)
+            addFragment(mainFragmentManager, R.id.main_content, FragmentFlow.newInstance());
     }
 
     @Override
@@ -82,9 +82,32 @@ public class ActivityMain extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Fragment home = mainFragmentManager.findFragmentByTag(FragmentHome.class.getSimpleName());
+        Fragment cloudFolder = mainFragmentManager.findFragmentByTag(FragmentCloudFolder.class.getSimpleName());
+        Fragment cloudFile = mainFragmentManager.findFragmentByTag(FragmentCloudFile.class.getSimpleName());
         Fragment messages = mainFragmentManager.findFragmentByTag(FragmentMessages.class.getSimpleName());
 
         if (mainFragmentManager.getBackStackEntryCount() == 1) {
+            assert cloudFolder != null;
+            if (cloudFolder.isVisible()) {
+                if (ac.getCloudSelectable()) {
+                    if (cloudFolder instanceof DataFileSelectedListener) {
+                        ((DataFileSelectedListener) cloudFolder).setUnSelectable();
+                    }
+                    return;
+                }
+            }
+            assert cloudFile != null;
+            if (cloudFile.isVisible()) {
+                if (ac.getFileSelectable()) {
+                    if (cloudFile instanceof DataFileSelectedListener) {
+                        ((DataFileSelectedListener) cloudFile).setUnSelectable();
+                    }
+
+                }
+                return;
+
+
+            }
             if (home != null && home.isVisible()) {
                 finish();
             } else {

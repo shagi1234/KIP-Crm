@@ -1,13 +1,18 @@
 package tm.payhas.crm.fragment;
 
 import static tm.payhas.crm.adapters.AdapterCloud.CLOUD_TYPE_FILE;
+import static tm.payhas.crm.helpers.StaticMethods.getPath;
+import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,23 +21,48 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.gson.JsonObject;
+
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import tm.payhas.crm.R;
 import tm.payhas.crm.adapters.AdapterCloud;
+import tm.payhas.crm.api.response.ResponseDataFolder;
+import tm.payhas.crm.api.response.ResponseDeleteFile;
+import tm.payhas.crm.api.response.ResponseSingleFile;
+import tm.payhas.crm.dataModels.DataFolder;
 import tm.payhas.crm.databinding.FragmentCloudFileBinding;
+import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.interfaces.DataFileSelectedListener;
+import tm.payhas.crm.preference.AccountPreferences;
 
-public class FragmentCloudFile extends Fragment {
+public class FragmentCloudFile extends Fragment implements DataFileSelectedListener {
     private FragmentCloudFileBinding b;
     private AdapterCloud adapterCloudFolder;
+    private String fileUrl;
+    private ArrayList<DataFolder> selectedArray = new ArrayList<>();
+    private AccountPreferences ac;
+    private static int REQUEST_CODE = 1;
 
-    public static FragmentCloudFile newInstance() {
+    public static FragmentCloudFile newInstance(String fileUrl) {
         FragmentCloudFile fragment = new FragmentCloudFile();
         Bundle args = new Bundle();
+        args.putString("fileUrl", fileUrl);
         fragment.setArguments(args);
         return fragment;
     }
@@ -41,17 +71,48 @@ public class FragmentCloudFile extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            fileUrl = getArguments().getString("fileUrl");
+            Log.e("TAG", "onCreate: " + fileUrl);
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        hideSoftKeyboard(getActivity());
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         b = FragmentCloudFileBinding.inflate(inflater);
+        hideSoftKeyboard(getActivity());
+        ac = new AccountPreferences(getContext());
+        getFolderFiles();
         setRecycler();
         setBackground();
         initListeners();
         return b.getRoot();
+    }
+
+    private void getFolderFiles() {
+        Call<ResponseDataFolder> call = Common.getApi().getFolderFiles(fileUrl);
+        call.enqueue(new Callback<ResponseDataFolder>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseDataFolder> call, @NonNull Response<ResponseDataFolder> response) {
+                if (response.isSuccessful()) {
+                    assert response.body() != null;
+                    b.linearProgressBar.setVisibility(View.GONE);
+                    b.recCloudFile.setAlpha(1);
+                    adapterCloudFolder.setAll(response.body().getData());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseDataFolder> call, @NonNull Throwable t) {
+
+            }
+        });
     }
 
     @Override
@@ -66,6 +127,23 @@ public class FragmentCloudFile extends Fragment {
 
     @SuppressLint("RestrictedApi")
     private void initListeners() {
+        b.deleteCommit.setOnClickListener(view -> {
+            b.deleteCommit.setEnabled(true);
+            b.linearProgressBar.setVisibility(View.VISIBLE);
+            b.recCloudFile.setAlpha(0.5f);
+            removeFile();
+            getFolderFiles();
+            b.deleteCommit.setVisibility(View.GONE);
+            b.searchBox.setVisibility(View.VISIBLE);
+            adapterCloudFolder.setSelectable(false);
+            ac.setFolderSelectable(false);
+            new Handler().postDelayed(() -> b.deleteCommit.setEnabled(true), 200);
+        });
+        b.back.setOnClickListener(view -> {
+            if (getActivity() != null) {
+                getActivity().onBackPressed();
+            }
+        });
         if (getContext() != null) {
             MenuBuilder menuBuilder = new MenuBuilder(getContext());
             MenuInflater menuInflater = new MenuInflater(getContext());
@@ -77,6 +155,7 @@ public class FragmentCloudFile extends Fragment {
                 popupHelper.setForceShowIcon(true);
                 popupHelper.show();
                 menuBuilder.setCallback(new MenuBuilder.Callback() {
+                    @SuppressLint("NonConstantResourceId")
                     @Override
                     public boolean onMenuItemSelected(@NonNull MenuBuilder menu, @NonNull MenuItem item) {
                         switch (item.getItemId()) {
@@ -87,13 +166,16 @@ public class FragmentCloudFile extends Fragment {
                                 Toast.makeText(getContext(), "Download", Toast.LENGTH_SHORT).show();
                                 return true;
                             case R.id.add:
-                                Toast.makeText(getContext(), "Add", Toast.LENGTH_SHORT).show();
+                                pickFileFromInternalStorage();
                                 return true;
                             case R.id.share:
                                 Toast.makeText(getContext(), "Share", Toast.LENGTH_SHORT).show();
                                 return true;
                             case R.id.delete:
-                                Toast.makeText(getContext(), "Delete", Toast.LENGTH_SHORT).show();
+                                adapterCloudFolder.setSelectable(true);
+                                b.searchBox.setVisibility(View.GONE);
+                                b.deleteCommit.setVisibility(View.VISIBLE);
+                                ac.setFileSelectable(true);
                                 return true;
                             default:
                                 return false;
@@ -112,6 +194,28 @@ public class FragmentCloudFile extends Fragment {
         }
     }
 
+    private void removeFile() {
+        for (int i = 0; i < selectedArray.size(); i++) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("fileUrl", selectedArray.get(i).getFileUrl());
+            Call<ResponseDeleteFile> call = Common.getApi().removeFile(jsonObject);
+            call.enqueue(new Callback<ResponseDeleteFile>() {
+                @Override
+                public void onResponse(Call<ResponseDeleteFile> call, Response<ResponseDeleteFile> response) {
+                    if (response.isSuccessful()) {
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseDeleteFile> call, Throwable t) {
+
+                }
+            });
+        }
+        selectedArray.clear();
+
+    }
+
     private void setRecycler() {
         if (getActivity() != null && getContext() != null)
             adapterCloudFolder = new AdapterCloud(getContext(), getActivity(), CLOUD_TYPE_FILE);
@@ -122,4 +226,96 @@ public class FragmentCloudFile extends Fragment {
     private void setBackground() {
         setBackgroundDrawable(getContext(), b.searchBox, R.color.color_transparent, R.color.primary, 6, false, 1);
     }
+
+    @Override
+    public void multiSelectedArray(ArrayList<DataFolder> selected) {
+        b.deleteCount.setText(String.valueOf(selected.size()));
+        selectedArray = selected;
+    }
+
+    @Override
+    public void setUnSelectable() {
+        adapterCloudFolder.setSelectable(false);
+        b.searchBox.setVisibility(View.VISIBLE);
+        b.deleteCommit.setVisibility(View.GONE);
+        b.deleteCount.setText("0");
+        selectedArray.clear();
+        ac.setFileSelectable(false);
+    }
+
+
+    private void pickFileFromInternalStorage() {
+        b.linearProgressBar.setVisibility(View.VISIBLE);
+
+        String[] mimeTypes = {"application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
+                "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .ppt & .pptx
+                "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xls & .xlsx
+                "text/plain", "application/pdf", "application/zip"};
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if (data != null && data.getData() != null) {
+                Uri fileUri = data.getData();
+                String filePath = getPath(getContext(), fileUri);
+                File file = new File(filePath);
+                uploadFile(file);
+            }
+        }
+    }
+
+
+    private void uploadFile(File file) {
+
+        List<MultipartBody.Part> list = new ArrayList<>();
+
+
+        MultipartBody.Part fileToUpload = null;
+
+        RequestBody requestFile =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"),
+                        file
+                );
+
+        try {
+            fileToUpload = MultipartBody.Part.createFormData("fileUrl", URLEncoder.encode(file.getPath(), "utf-8"), requestFile);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        RequestBody directoryUrl = RequestBody.create(MediaType.parse("multipart/form-data"), fileUrl);
+        RequestBody originalFileName = RequestBody.create(MediaType.parse("multipart/form-data"), file.getName());
+
+        Log.e("File_URL", "uploadFile: " + fileUrl);
+
+        Call<ResponseSingleFile> upload = Common.getApi().uploadFileToCLoud(originalFileName, directoryUrl, fileToUpload);
+        upload.enqueue(new Callback<ResponseSingleFile>() {
+            @Override
+            public void onResponse
+                    (@NonNull Call<ResponseSingleFile> call, @NonNull Response<ResponseSingleFile> response) {
+                if (response.isSuccessful()) {
+                    b.linearProgressBar.setVisibility(View.GONE);
+                    b.main.setClickable(true);
+                    getFolderFiles();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseSingleFile> call, Throwable t) {
+                Log.e("TAG", "onFailure: " + t.getMessage());
+            }
+        });
+
+    }
+
+
 }

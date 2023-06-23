@@ -30,4 +30,9 @@
         <item>Завершенo</item>
     </string-array>
 
+    <string-array name="dashboard_type">
+        <item>Tazelik</item>
+        <item>Bayramcylyk</item>
+    </string-array>
+
 </resources>

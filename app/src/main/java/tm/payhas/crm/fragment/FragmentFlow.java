@@ -2,6 +2,7 @@ package tm.payhas.crm.fragment;
 
 import static tm.payhas.crm.activity.ActivityLoginRegister.mainFragmentManager;
 import static tm.payhas.crm.helpers.Common.menuBar;
+import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -42,9 +43,15 @@ public class FragmentFlow extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         b = FragmentFlowBinding.inflate(inflater);
+        hideSoftKeyboard(getActivity());
         setContent();
         initListeners();
         return b.getRoot();
+    }
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        hideSoftKeyboard(getActivity());
     }
 
     private void setContent() {

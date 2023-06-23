@@ -1,6 +1,9 @@
 package tm.payhas.crm.adapters;
 
+import static android.content.Context.CLIPBOARD_SERVICE;
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
+import static tm.payhas.crm.activity.ActivityMain.webSocket;
+import static tm.payhas.crm.adapters.AdapterChatContact.GROUP;
 import static tm.payhas.crm.api.network.Network.BASE_PHOTO;
 import static tm.payhas.crm.api.network.Network.BASE_URL;
 import static tm.payhas.crm.helpers.Common.normalTime;
@@ -8,14 +11,18 @@ import static tm.payhas.crm.statics.StaticConstants.DATE;
 import static tm.payhas.crm.statics.StaticConstants.FILE;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGE_DELIVERED;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGE_READ;
+import static tm.payhas.crm.statics.StaticConstants.MESSAGE_RECEIVE;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGE_SENT;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGE_UN_SEND;
 import static tm.payhas.crm.statics.StaticConstants.PHOTO;
+import static tm.payhas.crm.statics.StaticConstants.RECEIVED_MESSAGE;
 import static tm.payhas.crm.statics.StaticConstants.STRING;
 import static tm.payhas.crm.statics.StaticConstants.VOICE;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
@@ -23,24 +30,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tm.payhas.crm.R;
+import tm.payhas.crm.api.request.RequestReceivedMessage;
 import tm.payhas.crm.api.response.ResponseOneMessage;
+import tm.payhas.crm.dataModels.DataMessageReceived;
 import tm.payhas.crm.dataModels.DataMessageTarget;
 import tm.payhas.crm.fragment.FragmentChatRoom;
 import tm.payhas.crm.helpers.ChatMenu;
@@ -54,14 +65,18 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
     private Context context;
     private Activity activity;
     private Integer authorId = 0;
+    private Integer roomId = 0;
     private Integer currentMessageId = 0;
     private int selectedMenu;
     private String TAG = "AdapterSingleChat";
     private AccountPreferences accountPreferences;
+    private int type;
 
 
-    public AdapterSingleChat(Context context) {
+    public AdapterSingleChat(Context context, Integer roomId, int type) {
+        this.roomId = roomId;
         this.context = context;
+        this.type = type;
         accountPreferences = new AccountPreferences(context);
     }
 
@@ -195,9 +210,9 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
                     }
                 } else {
                     if (oneMessage.getAnswerId() == null) {
-                        ((ReceivedMessageViewHolder) holder).bind(oneMessage);
+                        ((ReceivedMessageViewHolder) holder).bind(oneMessage, type);
                     } else {
-                        ((ReceivedReplyViewHolder) holder).bind(oneMessage);
+                        ((ReceivedReplyViewHolder) holder).bind(oneMessage, type);
                     }
                 }
                 break;
@@ -205,20 +220,19 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
                 if (oneMessage.getAuthorId() == authorId)
                     ((SenderVoiceViewHolder) holder).bind(oneMessage);
                 else
-                    ((ReceivedVoiceViewHolder) holder).bind(oneMessage);
+                    ((ReceivedVoiceViewHolder) holder).bind(oneMessage, type);
                 break;
             case PHOTO:
                 if (oneMessage.getAuthorId() == authorId)
                     ((SendImageViewHolder) holder).bind(oneMessage);
                 else
-
-                    ((ReceivedImageViewHolder) holder).bind(oneMessage);
+                    ((ReceivedImageViewHolder) holder).bind(oneMessage, type);
                 break;
             case FILE:
                 if (oneMessage.getAuthorId() == authorId)
                     ((SenderFileViewHolder) holder).bind(oneMessage);
                 else
-                    ((ReceivedFileViewHolder) holder).bind(oneMessage);
+                    ((ReceivedFileViewHolder) holder).bind(oneMessage, type);
                 break;
             case DATE:
                 ((DateViewHolder) holder).bind(oneMessage);
@@ -231,52 +245,59 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
         return messages.size();
     }
 
+    @Override
+    public void onMessageStatus(DataMessageTarget messageTarget) {
+        for (int i = 0; i < messages.size(); i++) {
+            if (messageTarget.getLocalId().equals(messages.get(i).getLocalId())) {
+                messages.get(i).setStatus(messageTarget.getStatus());
+                messages.get(i).setId(messageTarget.getId());
+                notifyDataSetChanged();
+            }
+        }
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     @Override
-    public void onNewMessage(DataMessageTarget dataMessageTarget) {
-        Log.e("Message Recieved", "onNewMessage: " + dataMessageTarget.getId());
-
-        if (dataMessageTarget.getType().equals(STRING)) {
-            boolean toAdd = true;
-            for (int i = 0; i < messages.size(); i++) {
-                if (dataMessageTarget.getId() == messages.get(i).getId()) {
-                    messages.get(i).setStatus(dataMessageTarget.getStatus());
-                    notifyDataSetChanged();
-                    Log.e("StatusReceived", "onNewMessage: " + dataMessageTarget.getId());
-                    toAdd = false;
-                }
-            }
-
-            if (toAdd) {
-                messages.add(0, dataMessageTarget);
-            }
-            notifyDataSetChanged();
-        } else {
+    public void onNewMessage(int type, DataMessageTarget dataMessageTarget) {
+        if (type == RECEIVED_MESSAGE) {
+            int receivedMessageId = 0;
+            receivedMessageId = dataMessageTarget.getId();
+            DataMessageReceived received = new DataMessageReceived();
+            received.setMessageId(receivedMessageId);
+            RequestReceivedMessage receivedMessage = new RequestReceivedMessage();
+            receivedMessage.setData(received);
+            receivedMessage.setEvent(MESSAGE_RECEIVE);
+            String s = new Gson().toJson(receivedMessage);
+            webSocket.sendMessage(s);
         }
+        if (Objects.equals(dataMessageTarget.getRoomId(), roomId)) {
+            messages.add(0, dataMessageTarget);
+            notifyDataSetChanged();
+        }
+
     }
 
     @Override
     public void deleteMessage(DataMessageTarget dataMessageTarget) {
-        Log.e(TAG, "deleteMessage: " + "deleteReceived");
-        Log.e(TAG, "deleteMessage: " + dataMessageTarget.getId());
-        Log.e(TAG, "deleteMessage: " + messages.size());
+        int toDelete = 0;
         for (int i = 0; i < messages.size(); i++) {
-            if (dataMessageTarget.getId() == messages.get(i).getId()) {
-                Log.e(TAG, "deleteMessage: " + "deleteeee");
-                messages.remove(i);
-                notifyItemRemoved(i);
-                notifyItemRangeChanged(i, messages.size() - i);
+            if (Objects.equals(dataMessageTarget.getLocalId(), messages.get(i).getLocalId())) {
+                toDelete = i;
+                messages.remove(toDelete);
+
             }
         }
 
-
+        notifyItemRemoved(toDelete);
     }
 
     @Override
     public void onMenuSelected(View view, Integer i, Integer messageId, DataMessageTarget messageTarget) {
         switch (i) {
             case 1:
-                Toast.makeText(context, "Copy " + messageId, Toast.LENGTH_SHORT).show();
+                ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("label", messageTarget.getText());
+                clipboard.setPrimaryClip(clip);
                 break;
             case 2:
                 Call<ResponseOneMessage> call = Common.getApi().removeMessage(accountPreferences.getToken(), messageTarget.getId());
@@ -295,11 +316,22 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
             case 3:
                 Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
                 if (chatRoom instanceof ChatRoomInterface) {
-                    ((ChatRoomInterface) chatRoom).newReplyMessage(messageId, messageTarget);
+                    ((ChatRoomInterface) chatRoom).newReplyMessage(messageTarget);
                 }
                 break;
             case 0:
                 break;
+        }
+    }
+
+
+    @Override
+    public void onReceiveYourMessage(DataMessageTarget messageTarget) {
+        for (int i = 0; i < messages.size(); i++) {
+            if (messageTarget.getLocalId().equals(messages.get(i).getLocalId())) {
+                messages.get(i).setStatus(messageTarget.getStatus());
+                notifyDataSetChanged();
+            }
         }
     }
 
@@ -324,24 +356,24 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
             msgSent.setOnLongClickListener(view -> {
                 menu.createPopUpMenu(msgSent, messageTarget.getId(), messageTarget);
                 int i = menu.getSelectedMenu();
-
                 return true;
             });
             if (messageTarget.getCreatedAt() != null) {
                 time.setText(normalTime(messageTarget.getCreatedAt()));
             }
-
-            switch (messageTarget.getStatus()) {
-                case MESSAGE_UN_SEND:
-                case MESSAGE_SENT:
-                    status.setImageResource(R.drawable.ic_msg_indicator_sent);
-                    break;
-                case MESSAGE_DELIVERED:
-                    status.setImageResource(R.drawable.ic_message_received);
-                    break;
-                case MESSAGE_READ:
-                    status.setImageResource(R.drawable.ic_msg_indicator_read);
-                    break;
+            if (messageTarget.getStatus() != null && !messageTarget.getStatus().isEmpty()) {
+                switch (messageTarget.getStatus()) {
+                    case MESSAGE_UN_SEND:
+                    case MESSAGE_SENT:
+                        status.setImageResource(R.drawable.ic_msg_indicator_sent);
+                        break;
+                    case MESSAGE_DELIVERED:
+                        status.setImageResource(R.drawable.ic_message_received);
+                        break;
+                    case MESSAGE_READ:
+                        status.setImageResource(R.drawable.ic_msg_indicator_read);
+                        break;
+                }
             }
         }
     }
@@ -383,7 +415,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
                 replyImage.setVisibility(View.VISIBLE);
                 line.setVisibility(View.GONE);
                 userReplyText.setText("Photo");
-                Picasso.get().load(BASE_PHOTO + messageTarget.getAnswering().getAttachment().getFileUrl()).into(replyImage);
+                Picasso.get().load(BASE_PHOTO + messageTarget.getAnswering().getAttachment().getFileUrl()).placeholder(R.color.primary).into(replyImage);
             } else if (messageTarget.getAnswering().getType().equals(FILE)) {
                 replyImage.setVisibility(View.VISIBLE);
                 line.setVisibility(View.GONE);
@@ -392,17 +424,19 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
             }
 
 
-            switch (messageTarget.getStatus()) {
-                case MESSAGE_UN_SEND:
-                case MESSAGE_SENT:
-                    status.setImageResource(R.drawable.ic_msg_indicator_sent);
-                    break;
-                case MESSAGE_DELIVERED:
-                    status.setImageResource(R.drawable.ic_message_received);
-                    break;
-                case MESSAGE_READ:
-                    status.setImageResource(R.drawable.ic_msg_indicator_read);
-                    break;
+            if (messageTarget.getStatus() != null && !messageTarget.getStatus().isEmpty()) {
+                switch (messageTarget.getStatus()) {
+                    case MESSAGE_UN_SEND:
+                    case MESSAGE_SENT:
+                        status.setImageResource(R.drawable.ic_msg_indicator_sent);
+                        break;
+                    case MESSAGE_DELIVERED:
+                        status.setImageResource(R.drawable.ic_message_received);
+                        break;
+                    case MESSAGE_READ:
+                        status.setImageResource(R.drawable.ic_msg_indicator_read);
+                        break;
+                }
             }
         }
     }
@@ -412,6 +446,9 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
         private final TextView msgReceived;
         private final TextView time;
         private ChatMenu menu;
+        private final LinearLayout senderGroupLayout;
+        private final RoundedImageView senderGroupAvatar;
+        private final TextView senderGroupName;
 
 
         public ReceivedMessageViewHolder(View itemView) {
@@ -419,11 +456,21 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
             msgReceived = itemView.findViewById(R.id.message_received);
             time = itemView.findViewById(R.id.message_time);
             menu = new ChatMenu(itemView.getContext());
+            senderGroupLayout = itemView.findViewById(R.id.layout_sender_group);
+            senderGroupAvatar = itemView.findViewById(R.id.group_sender_avatar);
+            senderGroupName = itemView.findViewById(R.id.name_sender_group);
         }
 
 
         @RequiresApi(api = Build.VERSION_CODES.Q)
-        public void bind(DataMessageTarget messageTarget) {
+        public void bind(DataMessageTarget messageTarget, int type) {
+            if (type == GROUP) {
+                senderGroupLayout.setVisibility(View.VISIBLE);
+                Picasso.get().load(BASE_PHOTO + messageTarget.getAuthor().getAvatar()).placeholder(R.color.primary).into(senderGroupAvatar);
+                senderGroupName.setText(messageTarget.getAuthor().getPersonalData().getName() + "  " + messageTarget.getAuthor().getPersonalData().getSurname());
+            } else {
+                senderGroupLayout.setVisibility(View.GONE);
+            }
             msgReceived.setText(messageTarget.getText());
             msgReceived.setOnLongClickListener(view -> {
                 menu.createPopUpMenu(msgReceived, messageTarget.getId(), messageTarget);
@@ -440,6 +487,9 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
         private final TextView replyUserText;
         private final TextView text;
         private final ChatMenu menu;
+        private final LinearLayout senderGroupLayout;
+        private final RoundedImageView senderGroupAvatar;
+        private final TextView senderGroupName;
 
         public ReceivedReplyViewHolder(View itemView) {
             super(itemView);
@@ -448,11 +498,21 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
             replyUserText = itemView.findViewById(R.id.user_reply_text);
             text = itemView.findViewById(R.id.reply_text);
             menu = new ChatMenu(itemView.getContext());
+            senderGroupLayout = itemView.findViewById(R.id.layout_sender_group);
+            senderGroupAvatar = itemView.findViewById(R.id.group_sender_avatar);
+            senderGroupName = itemView.findViewById(R.id.name_sender_group);
         }
 
 
         @RequiresApi(api = Build.VERSION_CODES.Q)
-        public void bind(DataMessageTarget messageTarget) {
+        public void bind(DataMessageTarget messageTarget, int type) {
+            if (type == GROUP) {
+                senderGroupLayout.setVisibility(View.VISIBLE);
+                Picasso.get().load(BASE_PHOTO + messageTarget.getAuthor().getAvatar()).placeholder(R.color.primary).into(senderGroupAvatar);
+                senderGroupName.setText(messageTarget.getAuthor().getPersonalData().getName() + "  " + messageTarget.getAuthor().getPersonalData().getSurname());
+            } else {
+                senderGroupLayout.setVisibility(View.GONE);
+            }
             text.setText(messageTarget.getText());
             time.setText(normalTime(messageTarget.getCreatedAt()));
             userName.setText(messageTarget.getAnswering().getAuthor().getPersonalData().getName());
@@ -486,17 +546,19 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
                 menu.createPopUpMenu(itemView, oneMessage.getId(), oneMessage);
                 return true;
             });
-            switch (oneMessage.getStatus()) {
-                case MESSAGE_UN_SEND:
-                case MESSAGE_SENT:
-                    status.setImageResource(R.drawable.ic_msg_indicator_sent);
-                    break;
-                case MESSAGE_DELIVERED:
-                    status.setImageResource(R.drawable.ic_message_received);
-                    break;
-                case MESSAGE_READ:
-                    status.setImageResource(R.drawable.ic_msg_indicator_read);
-                    break;
+            if (oneMessage.getStatus() != null && !oneMessage.getStatus().isEmpty()) {
+                switch (oneMessage.getStatus()) {
+                    case MESSAGE_UN_SEND:
+                    case MESSAGE_SENT:
+                        status.setImageResource(R.drawable.ic_msg_indicator_sent);
+                        break;
+                    case MESSAGE_DELIVERED:
+                        status.setImageResource(R.drawable.ic_message_received);
+                        break;
+                    case MESSAGE_READ:
+                        status.setImageResource(R.drawable.ic_msg_indicator_read);
+                        break;
+                }
             }
         }
     }
@@ -505,16 +567,29 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
         private final TextView voiceInformation;
         private final TextView time;
         private final ChatMenu menu;
+        private final LinearLayout senderGroupLayout;
+        private final RoundedImageView senderGroupAvatar;
+        private final TextView senderGroupName;
 
         public ReceivedVoiceViewHolder(View itemView) {
             super(itemView);
             voiceInformation = itemView.findViewById(R.id.voice_message_info);
             time = itemView.findViewById(R.id.message_time);
             menu = new ChatMenu(itemView.getContext());
+            senderGroupLayout = itemView.findViewById(R.id.layout_sender_group);
+            senderGroupAvatar = itemView.findViewById(R.id.group_sender_avatar);
+            senderGroupName = itemView.findViewById(R.id.name_sender_group);
         }
 
         @RequiresApi(api = Build.VERSION_CODES.Q)
-        public void bind(DataMessageTarget oneMessage) {
+        public void bind(DataMessageTarget oneMessage, int type) {
+            if (type == GROUP) {
+                senderGroupLayout.setVisibility(View.VISIBLE);
+                Picasso.get().load(BASE_PHOTO + oneMessage.getAuthor().getAvatar()).placeholder(R.color.primary).into(senderGroupAvatar);
+                senderGroupName.setText(oneMessage.getAuthor().getPersonalData().getName() + "  " + oneMessage.getAuthor().getPersonalData().getSurname());
+            } else {
+                senderGroupLayout.setVisibility(View.GONE);
+            }
             itemView.setOnLongClickListener(view -> {
                 menu.createPopUpMenu(itemView, oneMessage.getId(), oneMessage);
                 return true;
@@ -549,17 +624,19 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
             fileName.setText(oneMessage.getAttachment().getFileName());
             fileInformation.setText(oneMessage.getAttachment().getDuration() + "," + oneMessage.getAttachment().getSize());
             time.setText(normalTime(oneMessage.getCreatedAt()));
-            switch (oneMessage.getStatus()) {
-                case MESSAGE_UN_SEND:
-                case MESSAGE_SENT:
-                    status.setImageResource(R.drawable.ic_msg_indicator_sent);
-                    break;
-                case MESSAGE_DELIVERED:
-                    status.setImageResource(R.drawable.ic_message_received);
-                    break;
-                case MESSAGE_READ:
-                    status.setImageResource(R.drawable.ic_msg_indicator_read);
-                    break;
+            if (oneMessage.getStatus() != null && !oneMessage.getStatus().isEmpty()) {
+                switch (oneMessage.getStatus()) {
+                    case MESSAGE_UN_SEND:
+                    case MESSAGE_SENT:
+                        status.setImageResource(R.drawable.ic_msg_indicator_sent);
+                        break;
+                    case MESSAGE_DELIVERED:
+                        status.setImageResource(R.drawable.ic_message_received);
+                        break;
+                    case MESSAGE_READ:
+                        status.setImageResource(R.drawable.ic_msg_indicator_read);
+                        break;
+                }
             }
         }
 
@@ -570,6 +647,9 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
         private final TextView time;
         private final TextView fileInformation;
         private final ChatMenu menu;
+        private final LinearLayout senderGroupLayout;
+        private final RoundedImageView senderGroupAvatar;
+        private final TextView senderGroupName;
 
         public ReceivedFileViewHolder(View itemView) {
             super(itemView);
@@ -577,10 +657,20 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
             time = itemView.findViewById(R.id.message_time);
             fileInformation = itemView.findViewById(R.id.file_msg_rec_info);
             menu = new ChatMenu(itemView.getContext());
+            senderGroupLayout = itemView.findViewById(R.id.layout_sender_group);
+            senderGroupAvatar = itemView.findViewById(R.id.group_sender_avatar);
+            senderGroupName = itemView.findViewById(R.id.name_sender_group);
         }
 
         @RequiresApi(api = Build.VERSION_CODES.Q)
-        public void bind(DataMessageTarget oneMessage) {
+        public void bind(DataMessageTarget oneMessage, int type) {
+            if (type == GROUP) {
+                senderGroupLayout.setVisibility(View.VISIBLE);
+                Picasso.get().load(BASE_PHOTO + oneMessage.getAuthor().getAvatar()).placeholder(R.color.primary).into(senderGroupAvatar);
+                senderGroupName.setText(oneMessage.getAuthor().getPersonalData().getName() + "  " + oneMessage.getAuthor().getPersonalData().getSurname());
+            } else {
+                senderGroupLayout.setVisibility(View.GONE);
+            }
             itemView.setOnLongClickListener(view -> {
                 menu.createPopUpMenu(itemView, oneMessage.getId(), oneMessage);
                 return true;
@@ -589,7 +679,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
                 if (oneMessage.getAttachment().getFileName() != null) {
                     fileName.setText(oneMessage.getAttachment().getFileName());
                 }
-                if (oneMessage.getAttachment().getSize() != null) {
+                if (oneMessage.getAttachment().getSize() == 0) {
                     fileInformation.setText(oneMessage.getAttachment().getSize());
                 }
                 if (oneMessage.getCreatedAt() != null)
@@ -623,18 +713,22 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
             });
             Picasso.get().load(BASE_URL + "/" + oneMessage.getAttachment().getFileUrl()).placeholder(R.color.primary).into(image);
             imageSentTime.setText(normalTime(oneMessage.getCreatedAt()));
-            imageSentSize.setText(oneMessage.getAttachment().getSize());
-            switch (oneMessage.getStatus()) {
-                case MESSAGE_UN_SEND:
-                case MESSAGE_SENT:
-                    status.setImageResource(R.drawable.ic_msg_indicator_sent);
-                    break;
-                case MESSAGE_DELIVERED:
-                    status.setImageResource(R.drawable.ic_message_received);
-                    break;
-                case MESSAGE_READ:
-                    status.setImageResource(R.drawable.ic_msg_indicator_read);
-                    break;
+            if (oneMessage.getAttachment().getSize() != 0) {
+                imageSentSize.setText(String.valueOf(oneMessage.getAttachment().getSize() / 1000) + "KB");
+            }
+            if (oneMessage.getStatus() != null && !oneMessage.getStatus().isEmpty()) {
+                switch (oneMessage.getStatus()) {
+                    case MESSAGE_UN_SEND:
+                    case MESSAGE_SENT:
+                        status.setImageResource(R.drawable.ic_msg_indicator_sent);
+                        break;
+                    case MESSAGE_DELIVERED:
+                        status.setImageResource(R.drawable.ic_message_received);
+                        break;
+                    case MESSAGE_READ:
+                        status.setImageResource(R.drawable.ic_msg_indicator_read);
+                        break;
+                }
             }
 
         }
@@ -645,6 +739,9 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
         private final TextView imageSentTime;
         private final TextView imageSentSize;
         private final ChatMenu menu;
+        private final LinearLayout senderGroupLayout;
+        private final RoundedImageView senderGroupAvatar;
+        private final TextView senderGroupName;
 
         public ReceivedImageViewHolder(View itemView) {
             super(itemView);
@@ -652,23 +749,33 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
             imageSentTime = itemView.findViewById(R.id.img_sent_time);
             imageSentSize = itemView.findViewById(R.id.img_size);
             menu = new ChatMenu(itemView.getContext());
+            senderGroupLayout = itemView.findViewById(R.id.layout_sender_group);
+            senderGroupAvatar = itemView.findViewById(R.id.group_sender_avatar);
+            senderGroupName = itemView.findViewById(R.id.name_sender_group);
         }
 
         @RequiresApi(api = Build.VERSION_CODES.Q)
         @SuppressLint("SetTextI18n")
-        public void bind(DataMessageTarget oneMessage) {
+        public void bind(DataMessageTarget oneMessage, int type) {
+            if (type == GROUP) {
+                senderGroupLayout.setVisibility(View.VISIBLE);
+                Picasso.get().load(BASE_PHOTO + oneMessage.getAuthor().getAvatar()).placeholder(R.color.primary).into(senderGroupAvatar);
+                senderGroupName.setText(oneMessage.getAuthor().getPersonalData().getName() + "  " + oneMessage.getAuthor().getPersonalData().getSurname());
+            } else {
+                senderGroupLayout.setVisibility(View.GONE);
+            }
             itemView.setOnLongClickListener(view -> {
                 menu.createPopUpMenu(itemView, oneMessage.getId(), oneMessage);
                 return true;
             });
             Picasso.get().load(BASE_URL + "/" + oneMessage.getAttachment().getFileUrl()).placeholder(R.color.primary).into(image);
             imageSentTime.setText(normalTime(oneMessage.getCreatedAt()));
-            int size = Integer.parseInt(oneMessage.getAttachment().getSize());
+            int size = oneMessage.getAttachment().getSize();
             imageSentSize.setText(String.valueOf(size / 1000) + "KB");
         }
     }
 
-    private class DateViewHolder extends RecyclerView.ViewHolder {
+    private static class DateViewHolder extends RecyclerView.ViewHolder {
         private final TextView date;
 
         public DateViewHolder(View itemView) {

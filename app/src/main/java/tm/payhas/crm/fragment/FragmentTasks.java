@@ -50,6 +50,7 @@ public class FragmentTasks extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         b = FragmentTasksBinding.inflate(inflater);
+        hideSoftKeyboard(getActivity());
         accountPreferences = new AccountPreferences(getContext());
         adapterTasks = new AdapterTasks(getContext());
         setRecycler();
@@ -77,7 +78,6 @@ public class FragmentTasks extends Fragment {
             public void onResponse(Call<ResponseTasks> call, Response<ResponseTasks> response) {
                 if (response.code() == 200) {
                     adapterTasks.setTasks(response.body().getData().getTasks());
-                    Toast.makeText(getContext(), "Responseee", Toast.LENGTH_SHORT).show();
                     Log.e("Size", "onResponse: " + response.body().getData().getTasks().size());
                 }
 

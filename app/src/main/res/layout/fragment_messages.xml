@@ -41,11 +41,14 @@
                 android:textColor="@color/black"
                 android:textSize="24sp" />
 
-            <ImageView
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/my_avatar"
                 android:layout_width="40dp"
-                android:layout_height="match_parent"
+                android:layout_height="40dp"
                 android:padding="2.67dp"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_profile_circle"
+                app:riv_oval="true"
                 tools:ignore="ContentDescription" />
 
         </LinearLayout>

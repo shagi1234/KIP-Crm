@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragment.FragmentOpenGallery">
@@ -126,6 +127,18 @@
                     android:textColor="@color/text_color" />
 
             </FrameLayout>
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/linear_progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginVertical="2dp"
+                android:layout_marginTop="1dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:indicatorColor="@color/primary"
+                app:trackColor="@color/color_transparent"
+                app:trackThickness="3dp" />
 
             <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:id="@+id/container_profile_id"

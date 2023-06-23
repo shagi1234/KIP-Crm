@@ -52,10 +52,17 @@ public class FragmentContacts extends Fragment {
                              Bundle savedInstanceState) {
         b = FragmentContactsBinding.inflate(inflater);
         accountPreferences = new AccountPreferences(getContext());
+        hideSoftKeyboard(getActivity());
         getPrivateContacts();
         setRecycler();
         initListeners();
         return b.getRoot();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        hideSoftKeyboard(getActivity());
     }
 
     private void getPrivateContacts() {
@@ -64,8 +71,7 @@ public class FragmentContacts extends Fragment {
             @Override
             public void onResponse(Call<ResponseUserGroup> call, Response<ResponseUserGroup> response) {
                 if (response.isSuccessful()) {
-                    privateUsers = response.body().getData().getUsersPrivate();
-                    adapterChatContact.setPrivateUserList(privateUsers);
+                    adapterChatContact.setPrivateUserList(response.body().getData().getUsersPrivate());
                 }
             }
 
@@ -83,7 +89,7 @@ public class FragmentContacts extends Fragment {
     }
 
     private void setRecycler() {
-        adapterChatContact = new AdapterChatContact(getContext());
+        adapterChatContact = new AdapterChatContact(getContext(), AdapterChatContact.PRIVATE);
         adapterChatContact.setActivity(getActivity());
         b.recGroupContact.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         b.recGroupContact.setAdapter(adapterChatContact);

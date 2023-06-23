@@ -1,52 +1,66 @@
 {
   "statusCode": 200,
   "success": true,
-  "data": [
-    {
-      "id": 83,
-      "localId": "d95ee7ff-7f1d-4c05-ab8c-23b57bb40bdf",
-      "text": "",
-      "attachment": {},
-      "type": "type0",
-      "status": "status2",
-      "authorId": 1,
-      "roomId": 5,
-      "createdAt": "2023-06-05T12:29:08.198Z",
-      "updatedAt": "2023-06-05T12:29:08.198Z",
-      "deletedAt": null,
-      "answerId": 32,
-      "forwardId": null,
-      "author": {
-        "id": 1,
-        "personalData": {
-          "name": "Aman",
-          "surname": "Amanow",
-          "birthday": "1991-01-01",
-          "lastname": "Amanowich",
-          "birthPlace": "test string data",
-          "homePhoneNumber": "Домашний номер тел, 99312121211"
-        },
-        "avatar": "image url 1",
-        "lastActivity": "2023-06-05T12:47:56.168Z",
-        "isActive": true
+  "data": {
+    "isExecutor": false,
+    "isAuthor": true,
+    "id": 2,
+    "name": "ghk",
+    "description": "dfufjduzyzicxuyszyzu",
+    "startsAt": "2023-06-22T00:00:00.000Z",
+    "deadline": "2023-06-22T00:00:00.000Z",
+    "authorId": 1,
+    "executorId": 16,
+    "file": {},
+    "createdAt": "2023-06-22T15:07:09.980Z",
+    "updatedAt": "2023-06-22T15:07:09.980Z",
+    "deletedAt": null,
+    "tasks": [],
+    "author": {
+      "id": 1,
+      "personalData": {
+        "name": "Aman",
+        "surname": "Amanow",
+        "birthday": "1991-01-01",
+        "lastname": "Amanowich",
+        "birthPlace": "test string data",
+        "homePhoneNumber": "Домашний номер тел, 99312121211"
       },
-      "forwarding": null,
-      "answering": {
-        "id": 32,
-        "localId": "d84d990333422",
-        "text": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-        "attachment": {
-          "size": null,
-          "type": null,
-          "fileUrl": null,
-          "duration": null,
-          "fileName": null
-        },
-        "type": "type0",
-        "status": "status2",
-        "createdAt": "2023-06-03T07:37:33.812Z",
-        "authorId": 1,
-        "author": {
+      "avatar": "image url 1"
+    },
+    "executor": {
+      "id": 16,
+      "personalData": {
+        "name": "Merdan",
+        "surname": "Gulmanov",
+        "birthday": null,
+        "lastname": "",
+        "birthPlace": "birthPlace string",
+        "homePhoneNumber": null
+      },
+      "avatar": "avatar/84e34e51-511f-4d8b-a123da-0a300d694123.jpg"
+    },
+    "projectParticipants": [
+      {
+        "projectId": 2,
+        "userId": 16,
+        "user": {
+          "id": 16,
+          "personalData": {
+            "name": "Merdan",
+            "surname": "Gulmanov",
+            "birthday": null,
+            "lastname": "",
+            "birthPlace": "birthPlace string",
+            "homePhoneNumber": null
+          },
+          "avatar": "avatar/84e34e51-511f-4d8b-a123da-0a300d694123.jpg"
+        }
+      },
+      {
+        "projectId": 2,
+        "userId": 1,
+        "user": {
           "id": 1,
           "personalData": {
             "name": "Aman",
@@ -56,165 +70,13 @@
             "birthPlace": "test string data",
             "homePhoneNumber": "Домашний номер тел, 99312121211"
           },
-          "avatar": "image url 1",
-          "lastActivity": "2023-06-05T12:47:56.168Z",
-          "isActive": true
+          "avatar": "image url 1"
         }
       }
-    },
-    {
-      "id": 81,
-      "localId": "2b6c6b7d-3caf-48cf-9d53-817a143ca3bf",
-      "text": "",
-      "attachment": {},
-      "type": "type0",
-      "status": "status2",
-      "authorId": 1,
-      "roomId": 5,
-      "createdAt": "2023-06-05T12:24:44.210Z",
-      "updatedAt": "2023-06-05T12:24:44.210Z",
-      "deletedAt": null,
-      "answerId": 70,
-      "forwardId": null,
-      "author": {
-        "id": 1,
-        "personalData": {
-          "name": "Aman",
-          "surname": "Amanow",
-          "birthday": "1991-01-01",
-          "lastname": "Amanowich",
-          "birthPlace": "test string data",
-          "homePhoneNumber": "Домашний номер тел, 99312121211"
-        },
-        "avatar": "image url 1",
-        "lastActivity": "2023-06-05T12:47:56.168Z",
-        "isActive": true
-      },
-      "forwarding": null,
-      "answering": {
-        "id": 70,
-        "localId": "a617c2a374b7",
-        "text": "dewdwe",
-        "attachment": {
-          "size": null,
-          "type": null,
-          "fileUrl": null,
-          "duration": null,
-          "fileName": null
-        },
-        "type": "type0",
-        "status": "status2",
-        "createdAt": "2023-06-03T20:07:40.409Z",
-        "authorId": 1,
-        "author": {
-          "id": 1,
-          "personalData": {
-            "name": "Aman",
-            "surname": "Amanow",
-            "birthday": "1991-01-01",
-            "lastname": "Amanowich",
-            "birthPlace": "test string data",
-            "homePhoneNumber": "Домашний номер тел, 99312121211"
-          },
-          "avatar": "image url 1",
-          "lastActivity": "2023-06-05T12:47:56.168Z",
-          "isActive": true
-        }
-      }
-    },
-    {
-      "id": 80,
-      "localId": "7cceb8af-bee8-43f8-be8b-898777f62be4",
-      "text": "",
-      "attachment": {},
-      "type": "type0",
-      "status": "status2",
-      "authorId": 1,
-      "roomId": 5,
-      "createdAt": "2023-06-05T12:08:34.511Z",
-      "updatedAt": "2023-06-05T12:08:34.511Z",
-      "deletedAt": null,
-      "answerId": 70,
-      "forwardId": null,
-      "author": {
-        "id": 1,
-        "personalData": {
-          "name": "Aman",
-          "surname": "Amanow",
-          "birthday": "1991-01-01",
-          "lastname": "Amanowich",
-          "birthPlace": "test string data",
-          "homePhoneNumber": "Домашний номер тел, 99312121211"
-        },
-        "avatar": "image url 1",
-        "lastActivity": "2023-06-05T12:47:56.168Z",
-        "isActive": true
-      },
-      "forwarding": null,
-      "answering": {
-        "id": 70,
-        "localId": "a617c2a374b7",
-        "text": "dewdwe",
-        "attachment": {
-          "size": null,
-          "type": null,
-          "fileUrl": null,
-          "duration": null,
-          "fileName": null
-        },
-        "type": "type0",
-        "status": "status2",
-        "createdAt": "2023-06-03T20:07:40.409Z",
-        "authorId": 1,
-        "author": {
-          "id": 1,
-          "personalData": {
-            "name": "Aman",
-            "surname": "Amanow",
-            "birthday": "1991-01-01",
-            "lastname": "Amanowich",
-            "birthPlace": "test string data",
-            "homePhoneNumber": "Домашний номер тел, 99312121211"
-          },
-          "avatar": "image url 1",
-          "lastActivity": "2023-06-05T12:47:56.168Z",
-          "isActive": true
-        }
-      }
-    },
-    {
-      "text": "6/5/2023",
-      "type": "type4"
-    },
-    {
-      "id": 70,
-      "localId": "a617c2a374b7",
-      "text": "dewdwe",
-      "attachment": {
-        "size": null,
-        "type": null,
-        "fileUrl": null,
-        "duration": null,
-        "fileName": null
-      },
-      "type": "type0",
-      "status": "status2",
-      "authorId": 1,
-      "roomId": 5,
-      "createdAt": "2023-06-03T20:07:40.409Z",
-      "updatedAt": "2023-06-05T04:10:25.991Z",
-      "deletedAt": null,
-      "answerId": null,
-      "forwardId": null,
-      "author": {
-        "id": 1,
-        "personalData": {
-          "name": "Aman",
-          "surname": "Amanow",
-          "birthday": "1991-01-01",
-          "lastname": "Amanowich",
-          "birthPlace": "test string data",
-          "homePhoneNumber": "Домашний номер тел, 99312121211"
-        },
-        "avatar": "image url 1",
-        "lastActivity": "2023-06-05T12:47:56.168Z",
+    ],
+    "_count": {
+      "projectParticipants": 2,
+      "tasks": 0
+    }
+  }
+}

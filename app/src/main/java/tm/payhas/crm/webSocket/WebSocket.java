@@ -2,7 +2,9 @@ package tm.payhas.crm.webSocket;
 
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.api.network.Network.BASE_URL_SOCKET;
+import static tm.payhas.crm.statics.StaticConstants.MESSAGES_RECEIVED;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGE_STATUS;
+import static tm.payhas.crm.statics.StaticConstants.NEW_ROOM;
 import static tm.payhas.crm.statics.StaticConstants.RECEIVED_NEW_MESSAGE;
 import static tm.payhas.crm.statics.StaticConstants.REMOVE_MESSAGE;
 import static tm.payhas.crm.statics.StaticConstants.USER_STATUS;
@@ -47,7 +49,6 @@ public class WebSocket {
     public static ArrayList<Integer> ids;
     private Handler handler = new Handler();
     public MessageCallBack call;
-    private AdapterSingleChat adapterSingleChat;
 
     public WebSocket(Context context, Activity activity) {
         this.context = context;
@@ -56,7 +57,6 @@ public class WebSocket {
         ids = new ArrayList<>();
         notificationManagerCompat = NotificationManagerCompat.from(context);
         accountPreferences = AccountPreferences.newInstance(context);
-        adapterSingleChat = new AdapterSingleChat(context);
     }
 
     public void createWebSocketClient() {
@@ -94,7 +94,7 @@ public class WebSocket {
                                 activity.runOnUiThread(() -> {
                                     Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
                                     if (chatRoom instanceof ChatRoomInterface) {
-                                        ((ChatRoomInterface) chatRoom).newMessage(newMessage);
+                                        ((ChatRoomInterface) chatRoom).onMessageStatus(newMessage);
                                     }
                                 });
                                 list.add(newMessage);
@@ -136,7 +136,25 @@ public class WebSocket {
                                 }
                             });
                             break;
-
+                        case NEW_ROOM:
+                            JSONObject newRoom = messageJson.getJSONObject("data");
+                            DataMessageTarget firstMessage = new Gson().fromJson(String.valueOf(newRoom), DataMessageTarget.class);
+                            activity.runOnUiThread(() -> {
+                                Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
+                                if (chatRoom instanceof ChatRoomInterface) {
+                                    ((ChatRoomInterface) chatRoom).newMessage(firstMessage);
+                                }
+                            });
+                            break;
+                        case MESSAGES_RECEIVED:
+                            JSONObject messageReceived = messageJson.getJSONObject("data");
+                            DataMessageTarget receive = new Gson().fromJson(String.valueOf(messageReceived),DataMessageTarget.class);
+                            activity.runOnUiThread(() -> {
+                                Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
+                                if (chatRoom instanceof ChatRoomInterface) {
+                                    ((ChatRoomInterface) chatRoom).onMessageReceived(receive);
+                                }
+                            });
 
                     }
 

@@ -42,46 +42,57 @@
                     android:src="@drawable/ic_arrow_left"
                     tools:ignore="ContentDescription" />
 
-                <com.makeramen.roundedimageview.RoundedImageView
-                    android:id="@+id/contact_image"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center"
-                    android:layout_marginVertical="12sp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_logo_crm"
-                    app:riv_oval="true" />
-
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="14dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    tools:ignore="HardcodedText">
+                    android:id="@+id/room_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingEnd="15dp">
 
-                    <TextView
-                        android:id="@+id/username"
-                        android:layout_width="wrap_content"
-                        android:layout_height="17dp"
-                        android:layout_marginBottom="4dp"
-                        android:fontFamily="@font/inter_semibold"
-                        android:maxLines="1"
-                        android:text="Merdan"
-                        android:textColor="@color/text_color"
-                        android:textSize="14sp" />
 
-                    <TextView
-                        android:id="@+id/user_status"
-                        android:layout_width="wrap_content"
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/contact_image"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_marginVertical="12sp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_logo_crm"
+                        app:riv_oval="true" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/inter_regular"
-                        android:maxLines="1"
-                        android:text="Merdan"
-                        android:textColor="@color/text_color"
-                        android:textSize="12sp" />
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="14dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        tools:ignore="HardcodedText">
+
+                        <TextView
+                            android:id="@+id/username"
+                            android:layout_width="wrap_content"
+                            android:layout_height="17dp"
+                            android:layout_marginBottom="4dp"
+                            android:fontFamily="@font/inter_semibold"
+                            android:maxLines="1"
+                            android:text="Merdan"
+                            android:textColor="@color/text_color"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/user_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_regular"
+                            android:maxLines="1"
+                            android:text="Merdan"
+                            android:textColor="@color/text_color"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
                 </LinearLayout>
+
 
                 <!--                <LinearLayout-->
                 <!--                    android:layout_width="wrap_content"-->
@@ -117,10 +128,22 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/linear_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@id/custom_title_bar"
+            android:layout_marginVertical="1dp"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:indicatorColor="@color/primary"
+            app:trackColor="@color/color_transparent"
+            app:trackThickness="3dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/custom_title_bar"
+            android:layout_below="@id/linear_progress_bar"
             android:orientation="vertical">
 
 

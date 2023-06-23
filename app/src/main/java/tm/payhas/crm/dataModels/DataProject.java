@@ -1,6 +1,10 @@
 package tm.payhas.crm.dataModels;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
+
+import tm.payhas.crm.api.data.dto.DtoUserInfo;
 
 public class DataProject {
     private int id;
@@ -8,12 +12,27 @@ public class DataProject {
     private String description;
     private String startsAt;
     private String deadline;
-    private String status;
     private DataAttachment file;
     private String createdAt;
+    private int authorId;
+    private int executorId;
     private String updatedAt;
     private String deletedAt;
-    private ArrayList<DataProjectUsers> projectParticipants;
+    private ArrayList<UserInTask> projectParticipants;
+        private ArrayList<DataTask> tasks;
+    private DtoUserInfo author;
+    private DtoUserInfo executor;
+    @SerializedName("_count")
+    private Count count;
+
+
+    public ArrayList<DataTask> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(ArrayList<DataTask> tasks) {
+        this.tasks = tasks;
+    }
 
     public int getId() {
         return id;
@@ -55,14 +74,6 @@ public class DataProject {
         this.deadline = deadline;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public DataAttachment getFile() {
         return file;
     }
@@ -77,6 +88,22 @@ public class DataProject {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public int getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(int authorId) {
+        this.authorId = authorId;
+    }
+
+    public int getExecutorId() {
+        return executorId;
+    }
+
+    public void setExecutorId(int executorId) {
+        this.executorId = executorId;
     }
 
     public String getUpdatedAt() {
@@ -95,11 +122,94 @@ public class DataProject {
         this.deletedAt = deletedAt;
     }
 
-    public ArrayList<DataProjectUsers> getProjectParticipants() {
+    public ArrayList<UserInTask> getProjectParticipants() {
         return projectParticipants;
     }
 
-    public void setProjectParticipants(ArrayList<DataProjectUsers> projectParticipants) {
+    public void setProjectParticipants(ArrayList<UserInTask> projectParticipants) {
         this.projectParticipants = projectParticipants;
+    }
+
+    //    public ArrayList<DataTask> getTasks() {
+//        return tasks;
+//    }
+//
+//    public void setTasks(ArrayList<DataTask> tasks) {
+//        this.tasks = tasks;
+//    }
+
+    public DtoUserInfo getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(DtoUserInfo author) {
+        this.author = author;
+    }
+
+    public DtoUserInfo getExecutor() {
+        return executor;
+    }
+
+    public void setExecutor(DtoUserInfo executor) {
+        this.executor = executor;
+    }
+
+    public Count getCount() {
+        return count;
+    }
+
+    public void setCount(Count count) {
+        this.count = count;
+    }
+
+    public class Count {
+        private int projectParticipants;
+        private int tasks;
+
+        public int getProjectParticipants() {
+            return projectParticipants;
+        }
+
+        public void setProjectParticipants(int projectParticipants) {
+            this.projectParticipants = projectParticipants;
+        }
+
+        public int getTasks() {
+            return tasks;
+        }
+
+        public void setProjectTasks(int tasks) {
+            this.tasks = tasks;
+        }
+    }
+
+    public class UserInTask {
+        private int projectId;
+        private int userId;
+        private DtoUserInfo user;
+
+        public int getProjectId() {
+            return projectId;
+        }
+
+        public void setProjectId(int projectId) {
+            this.projectId = projectId;
+        }
+
+        public int getUserId() {
+            return userId;
+        }
+
+        public void setUserId(int userId) {
+            this.userId = userId;
+        }
+
+        public DtoUserInfo getUser() {
+            return user;
+        }
+
+        public void setUser(DtoUserInfo user) {
+            this.user = user;
+        }
     }
 }

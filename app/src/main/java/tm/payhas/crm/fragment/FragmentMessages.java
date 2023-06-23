@@ -1,6 +1,8 @@
 package tm.payhas.crm.fragment;
 
 import static tm.payhas.crm.activity.ActivityLoginRegister.mainFragmentManager;
+import static tm.payhas.crm.api.network.Network.BASE_PHOTO;
+import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 
@@ -15,14 +17,18 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.squareup.picasso.Picasso;
+
 import tm.payhas.crm.R;
 import tm.payhas.crm.adapters.AdapterViewPager;
 import tm.payhas.crm.databinding.FragmentMessagesBinding;
+import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentMessages extends Fragment {
     private FragmentMessagesBinding b;
     private AdapterViewPager adapterViewPager = new AdapterViewPager(mainFragmentManager);
-    private Fragment fragmentContacts;
+    private AccountPreferences ac;
+
 
     public static FragmentMessages newInstance() {
         FragmentMessages fragment = new FragmentMessages();
@@ -52,11 +58,28 @@ public class FragmentMessages extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         b = FragmentMessagesBinding.inflate(inflater);
+        hideSoftKeyboard(getActivity());
+        setUpHelpers();
         setBackground();
         setViewPager();
         setupTabIcons();
         initListeners();
+        setPage();
         return b.getRoot();
+    }
+
+    private void setUpHelpers() {
+        ac = new AccountPreferences(getContext());
+    }
+
+    private void setPage() {
+        Picasso.get().load(BASE_PHOTO + ac.getPrefAvatarUrl()).placeholder(R.color.primary).into(b.myAvatar);
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        hideSoftKeyboard(getActivity());
     }
 
 

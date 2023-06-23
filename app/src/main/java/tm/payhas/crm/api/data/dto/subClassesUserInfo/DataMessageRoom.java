@@ -54,6 +54,15 @@ public class DataMessageRoom {
 
         public class Count {
             private int messages;
+            private int participants;
+
+            public int getParticipants() {
+                return participants;
+            }
+
+            public void setParticipants(int participants) {
+                this.participants = participants;
+            }
 
             public int getMessages() {
                 return messages;

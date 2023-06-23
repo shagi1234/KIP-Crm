@@ -1,8 +1,9 @@
 package tm.payhas.crm.fragment;
 
+import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
+import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
-import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,9 +15,12 @@ import androidx.fragment.app.Fragment;
 
 import tm.payhas.crm.R;
 import tm.payhas.crm.databinding.FragmentProfileBinding;
+import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentProfile extends Fragment {
     private FragmentProfileBinding b;
+    private AccountPreferences accountPreferences;
 
 
     public static FragmentProfile newInstance() {
@@ -44,11 +48,34 @@ public class FragmentProfile extends Fragment {
     }
 
     @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        hideSoftKeyboard(getActivity());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         b = FragmentProfileBinding.inflate(inflater);
+        hideSoftKeyboard(getActivity());
+        accountPreferences = new AccountPreferences(getContext());
+        setInfo();
         setBackground();
+        initListeners();
         return b.getRoot();
+    }
+
+    private void setInfo() {
+        b.name.setText(accountPreferences.getUserName() + "  " + accountPreferences.getPrefSurname());
+        b.phoneNumber.setText(accountPreferences.getPhoneNumber());
+    }
+
+    private void initListeners() {
+        b.profileDetails.setOnClickListener(view -> {
+            b.profileDetails.setEnabled(false);
+            Common.addFragment(mainFragmentManager, R.id.main_content, FragmentUserInfo.newInstance(accountPreferences.getAuthorId()));
+            new Handler().postDelayed(() -> b.profileDetails.setEnabled(true), 200);
+        });
     }
 
     private void setBackground() {

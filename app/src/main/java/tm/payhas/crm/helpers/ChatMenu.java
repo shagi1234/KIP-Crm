@@ -20,7 +20,7 @@ public class ChatMenu {
 
     public ChatMenu(Context context) {
         this.context = context;
-        adapterSingleChat = new AdapterSingleChat(context);
+        adapterSingleChat = new AdapterSingleChat(context, 0, 1);
     }
 
 

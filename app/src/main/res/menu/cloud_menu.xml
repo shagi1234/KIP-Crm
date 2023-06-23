@@ -7,6 +7,7 @@
         android:enabled="true"
         android:icon="@drawable/ic_edit"
         android:title="Edit"
+        android:visible="false"
         tools:ignore="HardcodedText" />
     <item
         android:id="@+id/download"
@@ -14,7 +15,7 @@
         android:icon="@drawable/ic_download"
         android:iconTint="@color/edt_hint_color"
         android:title="Download"
-        android:visible="true"
+        android:visible="false"
         tools:ignore="HardcodedText" />
 
     <item
@@ -29,6 +30,7 @@
         android:enabled="true"
         android:icon="@drawable/ic_share"
         android:title="Share"
+        android:visible="false"
         tools:ignore="HardcodedText" />
 
     <item

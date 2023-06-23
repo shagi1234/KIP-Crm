@@ -30,9 +30,18 @@ public class StaticConstants {
     public static final String RECEIVED_NEW_MESSAGE = "newMessage";// new message received
     public static final String MESSAGE_STATUS = "messageStatus";// to message author when new message created
     public static final String CHANNEL_MESSAGES = "messages"; // to get Room messages
+    public static final String MESSAGE_RECEIVE = "receiveMessage";// to receive message
     public static final String MESSAGES_RECEIVED = "receiveYourMessage"; // emit to receive message
     public static final String USER_STATUS_CHANNEL = "userStatusChannel"; // emit to receive message
     public static final String REMOVE_MESSAGE = "removeMessage"; // to remove message
+    public static final String NEW_ROOM = "newRoom"; // to remove message
+
+    //Message Received and Sent
+    public static final int SENT_MESSAGE = 1;
+    public static final int RECEIVED_MESSAGE = 2;
+    // Dashboard enums
+    public static final String NEWS = "news";
+    public static final String HOLIDAYS = "holiday";
 
 }
 

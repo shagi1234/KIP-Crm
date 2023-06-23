@@ -4,18 +4,33 @@ import java.util.ArrayList;
 
 public class DataTask {
     private int id;
+    private String name;
     private String description;
     private String startsAt;
     private String finishesAt;
     private String status;
     private String priority;
-    private String projectId;
+    private int projectId;
     private String reminderType;
     private int authorId;
     private String createdAt;
     private String deletedAt;
-    private ArrayList<DataAttachment> files;
-    private ArrayList<RemindTime> remindAt;
+
+    public int getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public int getId() {
         return id;
@@ -65,13 +80,6 @@ public class DataTask {
         this.priority = priority;
     }
 
-    public String getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
 
     public String getReminderType() {
         return reminderType;
@@ -105,21 +113,7 @@ public class DataTask {
         this.deletedAt = deletedAt;
     }
 
-    public ArrayList<DataAttachment> getFiles() {
-        return files;
-    }
 
-    public void setFiles(ArrayList<DataAttachment> files) {
-        this.files = files;
-    }
-
-    public ArrayList<RemindTime> getRemindAt() {
-        return remindAt;
-    }
-
-    public void setRemindAt(ArrayList<RemindTime> remindAt) {
-        this.remindAt = remindAt;
-    }
 
     public class RemindTime {
         private String remindAt;

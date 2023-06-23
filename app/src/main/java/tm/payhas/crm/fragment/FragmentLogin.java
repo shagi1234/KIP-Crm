@@ -56,9 +56,16 @@ public class FragmentLogin extends Fragment {
                              Bundle savedInstanceState) {
         b = FragmentLoginBinding.inflate(inflater);
         accountPreferences = new AccountPreferences(getContext());
+        hideSoftKeyboard(getActivity());
         setBackground();
         initListeners();
         return b.getRoot();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        hideSoftKeyboard(getActivity());
     }
 
     private void initListeners() {
@@ -97,6 +104,7 @@ public class FragmentLogin extends Fragment {
                     accountPreferences.setPrefBirthPlace(response.body().getData().getPersonalData().getBirthPlace());
                     accountPreferences.setPrefSurname(response.body().getData().getPersonalData().getSurname());
                     accountPreferences.setPrefAvatarUrl(response.body().getData().getAvatar());
+                    accountPreferences.setPrefPhoneNumber(response.body().getData().getMobilePhoneNumber());
                     accountPreferences.setIsLoggedIn();
                     accountPreferences.setPrefAuthorId(response.body().getData().getId());
                     if (getActivity() == null) return;

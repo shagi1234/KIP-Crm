@@ -4,10 +4,18 @@ public class DataAttachment {
 
     private String type;
     private String duration;
-    private String size;
+    private int size;
     private String fileUrl;
     private String fileName;
 
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
 
     public String getType() {
         return type;
@@ -25,13 +33,6 @@ public class DataAttachment {
         this.duration = duration;
     }
 
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
 
     public String getFileUrl() {
         return fileUrl;

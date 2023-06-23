@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="5dp"
+    android:layout_marginVertical="10dp"
     android:background="@drawable/sent_msg_bg"
     android:backgroundTint="@color/tasks_color">
 
@@ -208,7 +208,7 @@
                     tools:ignore="SmallSp" />
 
                 <TextView
-                    android:id="@+id/task_user_count"
+                    android:id="@+id/project_user_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"

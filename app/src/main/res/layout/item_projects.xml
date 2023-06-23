@@ -32,7 +32,7 @@
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/task_name"
+                android:id="@+id/project_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="3dp"
@@ -72,7 +72,7 @@
                     tools:ignore="SmallSp" />
 
                 <TextView
-                    android:id="@+id/task_time_start"
+                    android:id="@+id/project_time_start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
@@ -104,7 +104,7 @@
                     tools:ignore="SmallSp" />
 
                 <TextView
-                    android:id="@+id/task_time_end"
+                    android:id="@+id/project_end_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
@@ -136,7 +136,7 @@
                     tools:ignore="SmallSp" />
 
                 <TextView
-                    android:id="@+id/task_status"
+                    android:id="@+id/project_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
@@ -173,7 +173,7 @@
                     tools:ignore="SmallSp" />
 
                 <TextView
-                    android:id="@+id/task_user_count"
+                    android:id="@+id/project_user_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
@@ -188,5 +188,13 @@
 
         </LinearLayout>
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/clickable_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/ripple"
+        android:clickable="true"
+        android:focusable="true" />
 
 </FrameLayout>

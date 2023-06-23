@@ -12,6 +12,7 @@ import tm.payhas.crm.api.data.dto.subClassesUserInfo.DtoToken;
 import tm.payhas.crm.api.data.dto.subClassesUserInfo.DtoWorkBook;
 
 public class DtoUserInfo {
+    private boolean isSelected = false;
     private String lastActivity;
     private boolean isActive;
     private DtoPersonalData personalData;
@@ -272,5 +273,13 @@ public class DtoUserInfo {
 
     public void setToken(DtoToken token) {
         this.token = token;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }

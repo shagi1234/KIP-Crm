@@ -1,70 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginVertical="10dp"
-    android:gravity="start"
     android:maxWidth="250dp"
-    android:orientation="horizontal">
+    android:orientation="vertical">
+
 
     <LinearLayout
+        android:id="@+id/layout_sender_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/received_msg_bg"
+        android:layout_marginBottom="3dp"
         android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/play_pause_voice_message"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginVertical="8dp"
-            android:layout_marginStart="10dp"
-            android:src="@drawable/ic_play_circle" />
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/group_sender_avatar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerCrop"
+            android:src="@color/primary"
+            app:riv_oval="true" />
 
-        <LinearLayout
-            android:layout_width="200dp"
+        <TextView
+            android:id="@+id/name_sender_group"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginHorizontal="10dp"
-            android:orientation="vertical">
+            android:layout_marginStart="2dp"
+            android:fontFamily="@font/inter_regular"
+            android:text="Aman Amanow"
+            android:textColor="@color/text_color"
+            android:textSize="12sp" />
+    </LinearLayout>
 
-            <com.google.android.material.progressindicator.LinearProgressIndicator
-                style="@style/Widget.MaterialComponents.LinearProgressIndicator"
-                android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/received_msg_bg"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/play_pause_voice_message"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginVertical="8dp"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/ic_play_circle" />
+
+            <LinearLayout
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:progress="70"
-                android:theme="@style/Widget.MaterialComponents.LinearProgressIndicator" />
+                android:layout_marginHorizontal="10dp"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/voice_message_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="6dp"
-                android:fontFamily="@font/inter_regular"
-                android:text="2:45, 103KB"
-                android:textColor="@color/text_color"
-                android:textSize="10sp"
-                tools:ignore="HardcodedText,SmallSp" />
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    style="@style/Widget.MaterialComponents.LinearProgressIndicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:progress="70"
+                    android:theme="@style/Widget.MaterialComponents.LinearProgressIndicator" />
 
+                <TextView
+                    android:id="@+id/voice_message_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="2:45, 103KB"
+                    android:textColor="@color/text_color"
+                    android:textSize="10sp"
+                    tools:ignore="HardcodedText,SmallSp" />
+
+
+            </LinearLayout>
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/message_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="2dp"
+            android:fontFamily="@font/inter_regular"
+            android:text="2:45"
+            android:textColor="@color/chat_time_color"
+            android:textSize="10sp"
+            tools:ignore="HardcodedText,SmallSp" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/message_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginStart="2dp"
-        android:fontFamily="@font/inter_regular"
-        android:text="2:45"
-        android:textColor="@color/chat_time_color"
-        android:textSize="10sp"
-        tools:ignore="HardcodedText,SmallSp" />
 
 </LinearLayout>

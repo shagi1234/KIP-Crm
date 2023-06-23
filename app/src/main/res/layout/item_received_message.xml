@@ -1,36 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginVertical="10dp"
     android:maxWidth="250dp"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/message_received"
+    <LinearLayout
+        android:id="@+id/layout_sender_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/received_msg_bg"
-        android:fontFamily="@font/roboto_flex"
-        android:maxWidth="245dp"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="8dp"
-        android:text="The full passage of standard Lorem Ipsum copy is: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
-        android:textColor="@color/text_color"
-        android:textSize="12sp"
-        tools:ignore="HardcodedText" />
+        android:layout_marginBottom="3dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
 
-    <TextView
-        android:id="@+id/message_time"
-        android:layout_width="wrap_content"
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/group_sender_avatar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerCrop"
+            android:src="@color/primary"
+            app:riv_oval="true" />
+
+        <TextView
+            android:id="@+id/name_sender_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="2dp"
+            android:fontFamily="@font/inter_regular"
+            android:text="Aman Amanow"
+            android:textColor="@color/text_color"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginStart="2dp"
-        android:fontFamily="@font/inter_regular"
-        android:text="2:45"
-        android:textColor="@color/chat_time_color"
-        android:textSize="10sp"
-        tools:ignore="HardcodedText,SmallSp" />
+        android:maxWidth="250dp"
+        android:orientation="horizontal"
+        tools:ignore="UselessParent">
+
+        <TextView
+            android:id="@+id/message_received"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/received_msg_bg"
+            android:fontFamily="@font/roboto_flex"
+            android:maxWidth="245dp"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="8dp"
+            android:text="The full passage of standard Lorem Ipsum copy is: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
+            android:textColor="@color/text_color"
+            android:textSize="12sp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/message_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="2dp"
+            android:fontFamily="@font/inter_regular"
+            android:text="2:45"
+            android:textColor="@color/chat_time_color"
+            android:textSize="10sp"
+            tools:ignore="HardcodedText,SmallSp" />
+    </LinearLayout>
+
 
 </LinearLayout>

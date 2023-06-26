@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -59,6 +60,12 @@ public class FragmentProjects extends Fragment {
     }
 
     private void initListeners() {
+        b.swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getProjects();
+            }
+        });
         b.favAdd.setOnClickListener(view -> {
             b.favAdd.setEnabled(false);
             addFragment(mainFragmentManager, R.id.main_content, FragmentAddProject.newInstance());
@@ -73,12 +80,18 @@ public class FragmentProjects extends Fragment {
             public void onResponse(Call<ResponseProjects> call, Response<ResponseProjects> response) {
                 if (response.isSuccessful() || response.body() != null) {
                     adapterProjects.setProjects(response.body().getData());
+                    b.main.setVisibility(View.VISIBLE);
+                    b.progressBar.setVisibility(View.GONE);
+                    b.swipe.setRefreshing(false);
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseProjects> call, Throwable t) {
                 Log.e(TAG, "onFailure: " + t.getMessage());
+                b.main.setVisibility(View.VISIBLE);
+                b.progressBar.setVisibility(View.GONE);
+                b.swipe.setRefreshing(false);
             }
         });
 

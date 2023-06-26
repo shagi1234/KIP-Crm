@@ -3,6 +3,7 @@ package tm.payhas.crm.fragment;
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.helpers.Common.addFragment;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
+import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
@@ -71,7 +72,7 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
         super.onResume();
         new Handler().postDelayed(() -> setPadding(b.main,
                 0,
-                50,
+                statusBarHeight,
                 0,
                 0), 100);
     }

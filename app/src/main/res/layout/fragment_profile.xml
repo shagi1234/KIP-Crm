@@ -42,7 +42,7 @@
                 android:layout_marginVertical="7dp"
                 android:fontFamily="@font/inter_bold"
                 android:gravity="center"
-                android:text="Profile"
+                android:text="Profil"
                 android:textColor="@color/text_color"
                 android:textSize="24sp"
                 tools:ignore="HardcodedText" />
@@ -174,7 +174,7 @@
                         android:layout_marginStart="20dp"
                         android:layout_weight="1"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Notifications"
+                        android:text="Уведомления"
                         android:textColor="@color/profile_text_color"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -217,7 +217,7 @@
                         android:layout_marginStart="20dp"
                         android:layout_weight="1"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Language"
+                        android:text="Язык"
                         android:textColor="@color/profile_text_color"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -317,7 +317,7 @@
                             android:layout_marginStart="20dp"
                             android:layout_weight="1"
                             android:fontFamily="@font/inter_regular"
-                            android:text="Log Out"
+                            android:text="Выйти"
                             android:textColor="@color/profile_text_color"
                             android:textSize="16sp"
                             android:textStyle="bold" />

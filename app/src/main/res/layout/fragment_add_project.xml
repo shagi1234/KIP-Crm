@@ -97,7 +97,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="6dp"
                             android:fontFamily="@font/inter_regular"
-                            android:text="File"
+                            android:text="Документ"
                             android:textColor="@color/text_color"
                             android:textSize="12sp" />
 
@@ -130,7 +130,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="6dp"
                             android:fontFamily="@font/inter_regular"
-                            android:text="Description"
+                            android:text="Описание задачи"
                             android:textColor="@color/text_color"
                             android:textSize="12sp" />
 
@@ -141,7 +141,7 @@
                             android:background="@drawable/edt_bg"
                             android:fontFamily="@font/inter_regular"
                             android:gravity="top"
-                            android:hint="Input"
+                            android:hint=""
                             android:minHeight="110dp"
                             android:paddingHorizontal="10dp"
                             android:paddingVertical="15.5dp"
@@ -247,7 +247,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="6dp"
                                 android:fontFamily="@font/inter_regular"
-                                android:text="Executor"
+                                android:text="Исполнитель"
                                 android:textColor="@color/text_color"
                                 android:textSize="12sp" />
 
@@ -359,7 +359,7 @@
                             android:gravity="center_horizontal"
                             android:maxLines="1"
                             android:paddingVertical="14.5dp"
-                            android:text="Yatda Saklamak"
+                            android:text="СОХРАНИТЬ"
                             android:textColor="@color/white"
                             android:textSize="16sp"
                             android:textStyle="bold" />

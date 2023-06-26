@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true"
+    tools:context=".fragment.FragmentOneTask">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <FrameLayout
+                android:id="@+id/custom_title_bar"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:background="@color/white">
+
+                <ImageView
+                    android:id="@+id/back"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/ripple"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_arrow_left" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="Обзор"
+                    android:textColor="@color/text_color"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+
+            </FrameLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2.5dp"
+                android:layout_marginBottom="10dp"
+                android:background="#60DCD6D6" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="23dp"
+                android:layout_marginVertical="13sp"
+                android:background="@drawable/boreder_1d">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_tick_cicrcle" />
+
+                    <TextView
+                        android:id="@+id/cancel_task"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/inter_bold"
+                        android:gravity="center"
+                        android:text="Начать"
+                        android:textColor="@color/text_color"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/cancel_task_clicker"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/ripple"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </FrameLayout>
+
+
+            <TextView
+                android:id="@+id/info_task"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/sent_message"
+                android:fontFamily="@font/inter_bold"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="10dp"
+                android:paddingStart="20dp"
+                android:text="ИНФОРМАЦИЯ О ЗАДАЧЕ"
+                android:textColor="@color/text_color"
+                android:textSize="14sp" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="13sp"
+                    android:layout_marginStart="20dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="Описание"
+                    android:textColor="@color/text_color"
+                    android:textSize="20dp" />
+
+                <!--                <com.google.android.material.progressindicator.LinearProgressIndicator-->
+                <!--                    android:id="@+id/linear_progress_bar"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="10dp"-->
+                <!--                    android:layout_marginHorizontal="20dp"-->
+                <!--                    android:progress="70"-->
+                <!--                    app:indicatorColor="@color/primary"-->
+                <!--                    app:trackColor="@color/progress_background"-->
+                <!--                    app:trackThickness="10dp" />-->
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_checkpoint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp" />
+
+
+                <FrameLayout
+                    android:id="@+id/add_check_point"
+                    android:layout_width="164dp"
+                    android:layout_height="35sp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="13sp"
+                    android:background="@drawable/bg_4"
+                    android:backgroundTint="@color/primary">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="5dp"
+                            android:src="@drawable/ic_add_cicle_outlined" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:fontFamily="@font/inter_semibold"
+                            android:text="Добавить чеклист"
+                            android:textColor="@color/white"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <FrameLayout
+                        android:id="@+id/add_checklist_clicker"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/ripple"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13.5dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:paddingHorizontal="20.5dp"
+                android:paddingVertical="10dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_marginVertical="3.5dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="статус"
+                        android:textAllCaps="true"
+                        android:textColor="@color/text_color"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:ignore="SmallSp" />
+
+                    <TextView
+                        android:id="@+id/task_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginVertical="3.5dp"
+                        android:background="@drawable/bg_radius_50"
+                        android:backgroundTint="@color/status_bg_color"
+                        android:fontFamily="@font/inter_regular"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="2.5dp"
+                        android:text="Не начата"
+                        android:textColor="@color/status_color"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:ignore="SmallSp" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_marginVertical="3.5dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="дата начала"
+                        android:textAllCaps="true"
+                        android:textColor="@color/text_color"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:ignore="SmallSp" />
+
+                    <TextView
+                        android:id="@+id/task_time_start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginVertical="3.5dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="25.04.2023"
+                        android:textColor="@color/text_color"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:ignore="SmallSp" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_marginVertical="3.5dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="дата завершения"
+                        android:textAllCaps="true"
+                        android:textColor="@color/text_color"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:ignore="SmallSp" />
+
+                    <TextView
+                        android:id="@+id/task_end_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginVertical="3.5dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="25.04.2023"
+                        android:textColor="@color/text_color"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:ignore="SmallSp" />
+                </FrameLayout>
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_marginVertical="3.5dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="Оставшееся время"
+                        android:textAllCaps="true"
+                        android:textColor="@color/text_color"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:ignore="SmallSp" />
+
+                    <TextView
+                        android:id="@+id/task_remaining_days"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginVertical="3.5dp"
+                        android:background="@drawable/bg_radius_50"
+                        android:backgroundTint="@color/status_bg_color"
+                        android:fontFamily="@font/inter_regular"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="2.5dp"
+                        android:text="0"
+                        android:textColor="@color/status_color"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:ignore="SmallSp" />
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/sent_message">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="10dp"
+                    android:fontFamily="@font/inter_semibold"
+                    android:paddingHorizontal="20dp"
+                    android:text="Соисполнители"
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp" />
+            </FrameLayout>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_responsibles"
+                android:layout_width="match_parent"
+                android:layout_height="83dp"
+                android:background="@color/white" />
+
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/sent_message">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="10dp"
+                    android:fontFamily="@font/inter_semibold"
+                    android:text="Наблюдатели "
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp" />
+            </FrameLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_observers"
+                android:layout_width="match_parent"
+                android:layout_height="83dp"
+                android:background="@color/white" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="20dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="Комментарии"
+                    android:textColor="@color/text_color"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/info_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edt_bg"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="top"
+                    android:hint="Input"
+                    android:minHeight="110dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="15.5dp"
+                    android:textColor="@color/text_color"
+                    android:textColorHint="@color/edt_hint"
+                    android:textSize="12sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <!--                    <FrameLayout-->
+                    <!--                        android:layout_width="50dp"-->
+                    <!--                        android:layout_height="50dp"-->
+                    <!--                        android:layout_marginEnd="56sp"-->
+                    <!--                        android:layout_marginBottom="14sp">-->
+
+                    <!--                        <FrameLayout-->
+                    <!--                            android:id="@+id/btn_attach"-->
+                    <!--                            android:layout_width="match_parent"-->
+                    <!--                            android:layout_height="match_parent"-->
+                    <!--                            android:background="@drawable/ripple"-->
+                    <!--                            android:clickable="true"-->
+                    <!--                            android:focusable="true" >-->
+
+                    <!--                            <ImageView-->
+                    <!--                                android:layout_width="46dp"-->
+                    <!--                                android:layout_height="46dp"-->
+                    <!--                                android:layout_gravity="center"-->
+                    <!--                                android:background="@drawable/bg_radius_10"-->
+                    <!--                                android:padding="13sp"-->
+                    <!--                                android:src="@drawable/ic_attach" />-->
+                    <!--                        </FrameLayout>-->
+
+                    <!--                    </FrameLayout>-->
+
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@drawable/sent_msg_bg"
+                            android:backgroundTint="@color/primary"
+                            android:fontFamily="@font/poppins_regular"
+                            android:gravity="center_horizontal"
+                            android:maxLines="1"
+                            android:paddingVertical="10dp"
+                            android:text="Ugratmak"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <FrameLayout
+                            android:id="@+id/btn_send_comment"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/ripple"
+                            android:clickable="true"
+                            android:focusable="true" />
+
+                    </FrameLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_comments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp" />
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+</FrameLayout>

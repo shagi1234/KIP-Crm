@@ -4,7 +4,6 @@ import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.helpers.Common.addFragment;
 import static tm.payhas.crm.helpers.Common.getApi;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
-import static tm.payhas.crm.statics.StaticConstants.IN_PROCESS;
 import static tm.payhas.crm.statics.StaticConstants.NOT_STARTED;
 
 import android.os.Bundle;
@@ -13,10 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
 
@@ -78,6 +77,9 @@ public class FragmentTasks extends Fragment {
             @Override
             public void onResponse(Call<ResponseTasks> call, Response<ResponseTasks> response) {
                 if (response.code() == 200) {
+                    b.main.setVisibility(View.VISIBLE);
+                    b.swipe.setRefreshing(false);
+                    b.progressBar.setVisibility(View.GONE);
                     adapterTasks.setTasks(response.body().getData().getTasks());
                     Log.e("Size", "onResponse: " + response.body().getData().getTasks().size());
                 }
@@ -87,11 +89,15 @@ public class FragmentTasks extends Fragment {
             @Override
             public void onFailure(Call<ResponseTasks> call, Throwable t) {
                 Log.e("TAG", "onFailure: " + t.getMessage());
+                b.main.setVisibility(View.VISIBLE);
+                b.progressBar.setVisibility(View.GONE);
+                b.swipe.setRefreshing(false);
             }
         });
     }
 
     private void initListeners() {
+        b.swipe.setOnRefreshListener(() -> getTasks());
         b.favAdd.setOnClickListener(view -> {
             b.favAdd.setEnabled(false);
             addFragment(mainFragmentManager, R.id.main_content, FragmentAddTask.newInstance());

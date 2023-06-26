@@ -1,10 +1,17 @@
 package tm.payhas.crm.adapters;
 
+import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
+import static tm.payhas.crm.helpers.Common.addFragment;
+import static tm.payhas.crm.helpers.Common.normalDate;
+
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +21,7 @@ import java.util.ArrayList;
 
 import tm.payhas.crm.R;
 import tm.payhas.crm.dataModels.DataTask;
+import tm.payhas.crm.fragment.FragmentOneTask;
 
 public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolder> {
 
@@ -57,6 +65,10 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolder> 
         private TextView startTime;
         private TextView endTime;
         private TextView status;
+        private TextView members;
+        private TextView priority;
+        private TextView observers;
+        private FrameLayout clickableLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -64,14 +76,28 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolder> 
             startTime = itemView.findViewById(R.id.task_time_start);
             endTime = itemView.findViewById(R.id.task_time_end);
             status = itemView.findViewById(R.id.task_status);
+            members = itemView.findViewById(R.id.task_members);
+            priority = itemView.findViewById(R.id.task_importancy);
+            observers = itemView.findViewById(R.id.observers);
+            clickableLayout = itemView.findViewById(R.id.clickable_layout);
         }
 
         public void bind() {
             DataTask oneTask = tasks.get(getAdapterPosition());
-            nameTask.setText(oneTask.getDescription());
-            startTime.setText(oneTask.getStartsAt());
-            endTime.setText(oneTask.getFinishesAt());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                nameTask.setText(Html.fromHtml(oneTask.getDescription(), Html.FROM_HTML_MODE_COMPACT));
+            } else {
+                nameTask.setText(Html.fromHtml(oneTask.getDescription()));
+            }
+            startTime.setText(normalDate(oneTask.getStartsAt()));
+            endTime.setText(normalDate(oneTask.getFinishesAt()));
             status.setText(oneTask.getStatus());
+            if (oneTask.getObserverUsers() != null)
+                observers.setText(String.valueOf(oneTask.getObserverUsers().size()));
+            if (oneTask.getResponsibleUsers() != null)
+                members.setText(String.valueOf(oneTask.getResponsibleUsers().size()));
+            priority.setText(oneTask.getPriority());
+            clickableLayout.setOnClickListener(view -> addFragment(mainFragmentManager, R.id.main_content, FragmentOneTask.newInstance(oneTask.getId())));
         }
     }
 }

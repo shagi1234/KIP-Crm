@@ -120,6 +120,7 @@ public class AdapterCloud extends RecyclerView.Adapter<AdapterCloud.ViewHolder> 
                     downloader.setEnabled(false);
                     downloadFile(context, BASE_URL + oneFolder.getFileUrl(), oneFolder.getFileName());
                     Log.e("DownloadClicked", "bind: ");
+                    new Handler().postDelayed(() -> downloader.setEnabled(true), 200);
                 });
             }
 

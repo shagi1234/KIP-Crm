@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginVertical="12sp"
-                android:text="New Project"
+                android:text="Добавление задачи"
                 android:textColor="@color/text_color"
                 android:textSize="16sp" />
 
@@ -61,7 +61,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="6dp"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Name of task"
+                        android:text="Укажите имя задача"
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
 
@@ -213,7 +213,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="6dp"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Executor"
+                        android:text="Исполнитель"
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
 
@@ -243,7 +243,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="6dp"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Ответственный"
+                        android:text="Соисполнители"
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
 
@@ -311,7 +311,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="6dp"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Reminder Type"
+                        android:text="Напомнить"
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
 
@@ -397,7 +397,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="6dp"
                             android:fontFamily="@font/inter_regular"
-                            android:text="Starts"
+                            android:text="Дата начала"
                             android:textColor="@color/text_color"
                             android:textSize="12sp" />
 
@@ -468,7 +468,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="6dp"
                         android:fontFamily="@font/inter_regular"
-                        android:text="File"
+                        android:text="Документ"
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
 
@@ -501,7 +501,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="6dp"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Ответственный"
+                        android:text="Описание "
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
 
@@ -539,7 +539,7 @@
                         android:gravity="center_horizontal"
                         android:maxLines="1"
                         android:paddingVertical="14.5dp"
-                        android:text="Yatda Saklamak"
+                        android:text="СОХРАНИТЬ"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold" />

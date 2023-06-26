@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 public class DataTask {
     private int id;
+    private boolean isAuthor;
+    private boolean isExecutor;
+    private int timeOut;
     private String name;
     private String description;
     private String startsAt;
@@ -15,6 +18,51 @@ public class DataTask {
     private int authorId;
     private String createdAt;
     private String deletedAt;
+    private ArrayList<DataProject.UserInTask> responsibleUsers;
+    private ArrayList<DataProject.UserInTask> observerUsers;
+    private ArrayList<DataTaskComment> comments;
+    private ArrayList<DataChecklist> checklists;
+
+
+    public int getTimeOut() {
+        return timeOut;
+    }
+
+    public void setTimeOut(int timeOut) {
+        this.timeOut = timeOut;
+    }
+
+    public ArrayList<DataChecklist> getChecklists() {
+        return checklists;
+    }
+
+    public void setChecklists(ArrayList<DataChecklist> checklists) {
+        this.checklists = checklists;
+    }
+
+    public ArrayList<DataTaskComment> getComments() {
+        return comments;
+    }
+
+    public void setComments(ArrayList<DataTaskComment> comments) {
+        this.comments = comments;
+    }
+
+    public ArrayList<DataProject.UserInTask> getResponsibleUsers() {
+        return responsibleUsers;
+    }
+
+    public void setResponsibleUsers(ArrayList<DataProject.UserInTask> responsibleUsers) {
+        this.responsibleUsers = responsibleUsers;
+    }
+
+    public ArrayList<DataProject.UserInTask> getObserverUsers() {
+        return observerUsers;
+    }
+
+    public void setObserverUsers(ArrayList<DataProject.UserInTask> observerUsers) {
+        this.observerUsers = observerUsers;
+    }
 
     public int getProjectId() {
         return projectId;
@@ -113,7 +161,21 @@ public class DataTask {
         this.deletedAt = deletedAt;
     }
 
+    public boolean isAuthor() {
+        return isAuthor;
+    }
 
+    public void setAuthor(boolean author) {
+        isAuthor = author;
+    }
+
+    public boolean isExecutor() {
+        return isExecutor;
+    }
+
+    public void setExecutor(boolean executor) {
+        isExecutor = executor;
+    }
 
     public class RemindTime {
         private String remindAt;

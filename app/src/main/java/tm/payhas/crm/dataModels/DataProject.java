@@ -8,6 +8,7 @@ import tm.payhas.crm.api.data.dto.DtoUserInfo;
 
 public class DataProject {
     private int id;
+    private int timeOut;
     private String name;
     private String description;
     private String startsAt;
@@ -19,12 +20,19 @@ public class DataProject {
     private String updatedAt;
     private String deletedAt;
     private ArrayList<UserInTask> projectParticipants;
-        private ArrayList<DataTask> tasks;
+    private ArrayList<DataTask> tasks;
     private DtoUserInfo author;
     private DtoUserInfo executor;
     @SerializedName("_count")
     private Count count;
 
+    public int getTimeOut() {
+        return timeOut;
+    }
+
+    public void setTimeOut(int timeOut) {
+        this.timeOut = timeOut;
+    }
 
     public ArrayList<DataTask> getTasks() {
         return tasks;

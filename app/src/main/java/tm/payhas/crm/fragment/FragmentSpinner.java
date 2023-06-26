@@ -27,9 +27,11 @@ import tm.payhas.crm.databinding.FragmentSpinnerBinding;
 import tm.payhas.crm.helpers.Common;
 import tm.payhas.crm.interfaces.AddTask;
 import tm.payhas.crm.interfaces.HelperAddProject;
+import tm.payhas.crm.interfaces.HelperChecklist;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentSpinner extends Fragment {
+    public static final int TASK_MEMBERS = 7;
     private FragmentSpinnerBinding b;
 
     private int type;
@@ -96,6 +98,10 @@ public class FragmentSpinner extends Fragment {
                 setRecyclerProjectUsers();
                 getObservers();
                 break;
+            case TASK_MEMBERS:
+                setRecyclerProjectUsers();
+                getTaskMembers();
+                break;
             case RESPONSIBLE:
                 setRecyclerProjectUsers();
                 getResponsible();
@@ -123,6 +129,9 @@ public class FragmentSpinner extends Fragment {
 
         }
 
+    }
+
+    private void getTaskMembers() {
     }
 
     private void getProjectExecutors() {
@@ -198,8 +207,12 @@ public class FragmentSpinner extends Fragment {
                         }
                     } else if (type == OBSERVERS) {
                         Fragment addTask = mainFragmentManager.findFragmentByTag(FragmentAddTask.class.getSimpleName());
+                        Fragment addCheckList = mainFragmentManager.findFragmentByTag(FragmentAddChecklist.class.getSimpleName());
                         if (addTask instanceof AddTask) {
                             ((AddTask) addTask).getObserverUsers(selectedUsers);
+                        }
+                        if (addCheckList instanceof HelperChecklist) {
+                            ((HelperChecklist) addCheckList).selectedUsersList(selectedUsers);
                         }
                     }
 

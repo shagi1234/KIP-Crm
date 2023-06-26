@@ -1,6 +1,5 @@
 package tm.payhas.crm.fragment;
 
-import static tm.payhas.crm.helpers.Common.anormalDate;
 import static tm.payhas.crm.helpers.Common.normalDate;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
@@ -14,9 +13,6 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
-import java.util.Calendar;
-import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -109,7 +105,6 @@ public class FragmentOneProject extends Fragment {
 
             @Override
             public void onFailure(Call<ResponseOneProject> call, Throwable t) {
-                Log.e("Erororor", "onFailure: " + t.getMessage());
             }
         });
     }
@@ -118,5 +113,6 @@ public class FragmentOneProject extends Fragment {
         b.projectEndTime.setText(normalDate(data.getDeadline()));
         b.projectTimeStart.setText(normalDate(data.getStartsAt()));
         b.projectUserCount.setText(String.valueOf(data.getProjectParticipants().size()));
+        b.projectRemainingDays.setText(String.valueOf(data.getTimeOut()));
     }
 }

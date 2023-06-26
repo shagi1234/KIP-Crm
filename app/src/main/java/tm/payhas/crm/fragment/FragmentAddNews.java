@@ -96,6 +96,12 @@ public class FragmentAddNews extends Fragment implements UploadedFilesUrl {
     }
 
     private void initListeners() {
+        b.btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addNewChecklist();
+            }
+        });
         b.spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -169,13 +175,11 @@ public class FragmentAddNews extends Fragment implements UploadedFilesUrl {
             b.inputContent.setAlpha(0.5f);
             addNewsToDashboard();
         });
-        b.edtDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openDialog(b.edtDate);
-            }
-        });
+        b.edtDate.setOnClickListener(view -> openDialog(b.edtDate));
 
+    }
+
+    private void addNewChecklist() {
     }
 
     private void addNewsToDashboard() {

@@ -7,10 +7,14 @@ import static tm.payhas.crm.adapters.AdapterChatContact.GROUP;
 import static tm.payhas.crm.adapters.AdapterChatContact.PRIVATE;
 import static tm.payhas.crm.api.network.Network.BASE_URL;
 import static tm.payhas.crm.helpers.Common.addFragment;
+import static tm.payhas.crm.helpers.Common.getImageUri;
+import static tm.payhas.crm.helpers.Common.getRealPathFromURI;
 import static tm.payhas.crm.helpers.Common.normalTime;
+import static tm.payhas.crm.helpers.StaticMethods.getPath;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
+import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGE_SENT;
 import static tm.payhas.crm.statics.StaticConstants.PHOTO;
 import static tm.payhas.crm.statics.StaticConstants.RECEIVED_MESSAGE;
@@ -20,9 +24,12 @@ import static tm.payhas.crm.statics.StaticConstants.USER_STATUS;
 import static tm.payhas.crm.statics.StaticConstants.USER_STATUS_CHANNEL;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -86,6 +93,7 @@ import tm.payhas.crm.webSocket.EmmitUserStatus;
 
 public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     private FragmentChatRoomBinding b;
+    private static final int REQUEST_CODE = 132;
     public static final int CAMERA_REQUEST = 1122;
     private SoftInputAssist softInputAssist;
     private boolean isMessage = false;
@@ -302,7 +310,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         super.onResume();
         new Handler().postDelayed(() -> setPadding(b.chatContent,
                 0,
-                50,
+                statusBarHeight,
                 0,
                 0), 100);
     }
@@ -450,24 +458,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         }
     }
 
-
-    @Override
-    public void userStatus(boolean isActive) {
-        if (isActive)
-            b.userStatus.setText("Online");
-        else
-            b.userStatus.setText("Offline");
-    }
-
-    @Override
-    public void newMessage(DataMessageTarget messageTarget) {
-        b.recChatScreen.smoothScrollToPosition(1);
-        Log.e(TAG, "newMessage: " + "status received");
-        onNewMessage(RECEIVED_MESSAGE, messageTarget);
-    }
-
-    @Override
-    public void newImageImageUrl(DataFile dataFile) {
+    private void sendImage(DataFile dataFile) {
         Date c = Calendar.getInstance().getTime();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
         String time = df.format(c);
@@ -497,6 +488,27 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         String s = new Gson().toJson(newMessage);
         webSocket.sendMessage(s);
         onNewMessage(SENT_MESSAGE, newMessageData);
+    }
+
+
+    @Override
+    public void userStatus(boolean isActive) {
+        if (isActive)
+            b.userStatus.setText("Online");
+        else
+            b.userStatus.setText("Offline");
+    }
+
+    @Override
+    public void newMessage(DataMessageTarget messageTarget) {
+        b.recChatScreen.smoothScrollToPosition(1);
+        Log.e(TAG, "newMessage: " + "status received");
+        onNewMessage(RECEIVED_MESSAGE, messageTarget);
+    }
+
+    @Override
+    public void newImageImageUrl(DataFile dataFile) {
+        sendImage(dataFile);
     }
 
     @Override
@@ -580,7 +592,64 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.e(TAG, "onActivityResult: " + "Image Taken");
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                Uri fileUri = data.getData();
+                if (fileUri != null) {
+                    String filePath = getPath(getContext(), fileUri);
+                    if (filePath != null) {
+                        File file = new File(filePath);
+                        uploadFile(file);
+                    }
+                }
+            }
+        } else if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
+            if (data != null) {
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                Uri tempUri = getImageUri(getContext(), photo);
+
+                // CALL THIS METHOD TO GET THE ACTUAL PATH
+                File finalFile = new File(getRealPathFromURI(tempUri, getActivity()));
+                uploadFile(finalFile);
+            }
+
     }
+
+    private void uploadFile(File file) {
+        MultipartBody.Part fileToUpload = null;
+        RequestBody requestFile =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"),
+                        new File(file.getPath())
+                );
+        try {
+            fileToUpload = MultipartBody.Part.createFormData("fileUrl", URLEncoder.encode(file.getPath(), "utf-8"), requestFile);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        RequestBody fileUrl = RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(fileToUpload));
+
+        Call<ResponseSingleFile> upload = Common.getApi().uploadFile(fileToUpload);
+        upload.enqueue(new Callback<ResponseSingleFile>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseSingleFile> call, @NonNull Response<ResponseSingleFile> response) {
+                if (response.isSuccessful()) {
+                    b.linearProgressBar.setVisibility(View.GONE);
+                    DataFile fileUrl = new DataFile();
+                    fileUrl.setSize(response.body().getData().getSize());
+                    fileUrl.setUrl(response.body().getData().getUrl());
+                    sendImage(fileUrl);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseSingleFile> call, Throwable t) {
+                Log.e(TAG, "onFailure: " + t.getMessage());
+                b.linearProgressBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
 
     public void showDialog() {
         final BottomSheetDialog dialog = new BottomSheetDialog(getContext());
@@ -593,7 +662,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         cameraClicker.setOnClickListener(view1 -> {
             b.linearProgressBar.setVisibility(View.VISIBLE);
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            getActivity().startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            startActivityForResult(cameraIntent, CAMERA_REQUEST);
             dialog.dismiss();
         });
         galleryClicker.setOnClickListener(view -> {
@@ -602,12 +671,26 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
             dialog.dismiss();
         });
         clickerFile.setOnClickListener(view -> dialog.dismiss());
-
+        pickFileFromInternalStorage();
 
         dialog.show();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.getWindow().setGravity(BOTTOM);
+    }
+
+    private void pickFileFromInternalStorage() {
+        String[] mimeTypes = {"application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
+                "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .ppt & .pptx
+                "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xls & .xlsx
+                "text/plain", "application/pdf", "application/zip"};
+
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_CODE);
     }
 }

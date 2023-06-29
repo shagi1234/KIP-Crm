@@ -1,14 +1,17 @@
 package tm.payhas.crm.fragment;
 
 import static tm.payhas.crm.adapters.AdapterCloud.CLOUD_TYPE_FILE;
-import static tm.payhas.crm.helpers.StaticMethods.getPath;
+import static tm.payhas.crm.helpers.FileHelper.getRealPathFromURI;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
+import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,9 +23,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuPopupHelper;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -48,6 +54,7 @@ import tm.payhas.crm.api.response.ResponseSingleFile;
 import tm.payhas.crm.dataModels.DataFolder;
 import tm.payhas.crm.databinding.FragmentCloudFileBinding;
 import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.helpers.FileUtil;
 import tm.payhas.crm.interfaces.DataFileSelectedListener;
 import tm.payhas.crm.preference.AccountPreferences;
 
@@ -58,6 +65,7 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
     private ArrayList<DataFolder> selectedArray = new ArrayList<>();
     private AccountPreferences ac;
     private static int REQUEST_CODE = 1;
+    private static int REQUEST_CODE_PERMISSION = 231;
 
     public static FragmentCloudFile newInstance(String fileUrl) {
         FragmentCloudFile fragment = new FragmentCloudFile();
@@ -120,7 +128,7 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
         super.onResume();
         new Handler().postDelayed(() -> setPadding(b.main,
                 0,
-                50,
+                statusBarHeight,
                 0,
                 0), 100);
     }
@@ -245,6 +253,7 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
 
 
     private void pickFileFromInternalStorage() {
+        requestStoragePermission();
         b.linearProgressBar.setVisibility(View.VISIBLE);
 
         String[] mimeTypes = {"application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
@@ -252,10 +261,8 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
                 "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xls & .xlsx
                 "text/plain", "application/pdf", "application/zip"};
 
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-
         intent.setType("*/*");
         intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_CODE);
@@ -265,28 +272,30 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if (data != null && data.getData() != null) {
+            if (data != null) {
                 Uri fileUri = data.getData();
-                String filePath = getPath(getContext(), fileUri);
-                File file = new File(filePath);
-                uploadFile(file);
+                if (fileUri != null) {
+                    String filePath = getRealPathFromURI(getContext(), fileUri);
+                    Log.e("FILE_PATH", "onActivityResult: "+filePath);
+                    Log.e("FILE_URI", "onActivityResult: "+fileUri);
+                    if (filePath != null) {
+                        File file = new File(filePath);
+                        uploadFile(file);
+                    }
+                }
             }
         }
+
+
     }
-
-
     private void uploadFile(File file) {
 
-        List<MultipartBody.Part> list = new ArrayList<>();
-
-
         MultipartBody.Part fileToUpload = null;
-
         RequestBody requestFile =
                 RequestBody.create(
-                        MediaType.parse("multipart/form-data"),
-                        file
-                );
+                        MediaType.parse(
+                                FileUtil.getMimeType(file)),
+                        file);
 
         try {
             fileToUpload = MultipartBody.Part.createFormData("fileUrl", URLEncoder.encode(file.getPath(), "utf-8"), requestFile);
@@ -296,8 +305,6 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
 
         RequestBody directoryUrl = RequestBody.create(MediaType.parse("multipart/form-data"), fileUrl);
         RequestBody originalFileName = RequestBody.create(MediaType.parse("multipart/form-data"), file.getName());
-
-        Log.e("File_URL", "uploadFile: " + fileUrl);
 
         Call<ResponseSingleFile> upload = Common.getApi().uploadFileToCLoud(originalFileName, directoryUrl, fileToUpload);
         upload.enqueue(new Callback<ResponseSingleFile>() {
@@ -314,9 +321,35 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
             @Override
             public void onFailure(Call<ResponseSingleFile> call, Throwable t) {
                 Log.e("TAG", "onFailure: " + t.getMessage());
+                b.linearProgressBar.setVisibility(View.GONE);
+                b.main.setClickable(true);
             }
         });
 
+    }
+
+    // Declare the activity result launcher
+    private ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    // Permission is granted, you can access the file here
+                    // Perform your file access operations
+                } else {
+                    // Permission is denied, handle the failure
+                    // Display an error message or request the permission again
+                }
+            });
+
+    // Request permission at runtime
+    private void requestStoragePermission() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            // Permission has already been granted, you can access the file here
+            // Perform your file access operations
+        } else {
+            // Permission has not been granted, request it from the user
+            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
     }
 
 

@@ -162,5 +162,10 @@ public interface Services {
     @PUT("tasks/status/{id}")
     Call<ResponseOneTask> changeTaskStatus(@Header("Authorization") String token, @Path("id") int id);
 
+    @Headers({"Accept: multipart/form-data"})
+    @Multipart
+    @POST("single/upload/tasks")
+    Call<ResponseSingleFile> uploadFileToTask(@Part MultipartBody.Part fileUrl);
+
 
 }

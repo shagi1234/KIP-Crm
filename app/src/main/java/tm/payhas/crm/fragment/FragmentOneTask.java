@@ -3,9 +3,13 @@ package tm.payhas.crm.fragment;
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.helpers.Common.addFragment;
 import static tm.payhas.crm.helpers.Common.normalDate;
+import static tm.payhas.crm.helpers.StaticMethods.getPath;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -13,25 +17,37 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tm.payhas.crm.R;
+import tm.payhas.crm.activity.ActivityMain;
 import tm.payhas.crm.adapters.AdapterChecklist;
 import tm.payhas.crm.adapters.AdapterSelectedUsers;
 import tm.payhas.crm.adapters.AdapterTaskComments;
 import tm.payhas.crm.api.request.RequestTaskComment;
 import tm.payhas.crm.api.response.ResponseOneTask;
+import tm.payhas.crm.api.response.ResponseSingleFile;
 import tm.payhas.crm.api.response.ResponseTaskComment;
 import tm.payhas.crm.dataModels.DataTask;
 import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.interfaces.ChatRoomInterface;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentOneTask extends Fragment {
     private int taskId;
+    private final int REQUEST_CODE = 11;
     private int projectId;
     private tm.payhas.crm.databinding.FragmentOneTaskBinding b;
     private AdapterSelectedUsers adapterObservers;
@@ -97,13 +113,90 @@ public class FragmentOneTask extends Fragment {
     }
 
     private void initListeners() {
+        b.back.setOnClickListener(view -> getActivity().onBackPressed());
         b.cancelTaskClicker.setOnClickListener(view -> changeTaskStatus());
+        b.btnAttach.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pickFileFromInternalStorage();
+            }
+        });
         b.btnSendComment.setOnClickListener(view -> {
             sendComment();
             b.infoInput.setText("");
         });
         b.addChecklistClicker.setOnClickListener(view -> addFragment(mainFragmentManager, R.id.main_content, FragmentAddChecklist.newInstance(taskId, projectId)));
     }
+
+    private void pickFileFromInternalStorage() {
+        String[] mimeTypes = {"application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
+                "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .ppt & .pptx
+                "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xls & .xlsx
+                "text/plain", "application/pdf", "application/zip"};
+
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                Uri fileUri = data.getData();
+                if (fileUri != null) {
+                    String filePath = getPath(getContext(), fileUri);
+                    if (filePath != null) {
+                        File file = new File(filePath);
+                        uploadFile(file);
+                    }
+                }
+            }
+        }
+    }
+
+    private void uploadFile(File file) {
+        MultipartBody.Part fileToUpload = null;
+        RequestBody requestFile =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"),
+                        new File(file.getPath())
+                );
+        try {
+            fileToUpload = MultipartBody.Part.createFormData("fileUrl", URLEncoder.encode(file.getPath(), "utf-8"), requestFile);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        RequestBody fileUrl = RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(fileToUpload));
+
+        Call<ResponseSingleFile> upload = Common.getApi().uploadFileToTask(fileToUpload);
+        upload.enqueue(new Callback<ResponseSingleFile>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseSingleFile> call, @NonNull Response<ResponseSingleFile> response) {
+                if (response.isSuccessful()) {
+                    Fragment chatRoom = ActivityMain.mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
+
+                    if (chatRoom instanceof ChatRoomInterface) {
+                        assert response.body() != null;
+                        ((ChatRoomInterface) chatRoom).newImageImageUrl(response.body().getData());
+                    }
+                    sendComment();
+                    b.main.setClickable(false);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseSingleFile> call, Throwable t) {
+                Log.e("OneTask", "onFailure: " + t.getMessage());
+            }
+        });
+    }
+
 
     private void changeTaskStatus() {
         Call<ResponseOneTask> call = Common.getApi().changeTaskStatus(ac.getToken(), taskId);

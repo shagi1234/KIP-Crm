@@ -6,6 +6,7 @@ import static tm.payhas.crm.fragment.FragmentSpinner.PROJECTS;
 import static tm.payhas.crm.fragment.FragmentSpinner.PROJECT_EXECUTOR;
 import static tm.payhas.crm.fragment.FragmentSpinner.RESPONSIBLE;
 import static tm.payhas.crm.helpers.Common.addFragment;
+import static tm.payhas.crm.helpers.FileHelper.getRealPathFromURI;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import static tm.payhas.crm.statics.StaticConstants.FINISHED;
@@ -18,7 +19,12 @@ import static tm.payhas.crm.statics.StaticConstants.PENDING;
 import static tm.payhas.crm.statics.StaticConstants.PRIMARY;
 import static tm.payhas.crm.statics.StaticConstants.REVIEW;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -29,15 +35,24 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,8 +60,8 @@ import tm.payhas.crm.R;
 import tm.payhas.crm.adapters.AdapterSelectedUsers;
 import tm.payhas.crm.api.data.dto.DtoUserInfo;
 import tm.payhas.crm.api.request.RequestCreateTask;
+import tm.payhas.crm.api.response.ResponseSingleFile;
 import tm.payhas.crm.api.response.ResponseTasks;
-import tm.payhas.crm.dataModels.DataAttachment;
 import tm.payhas.crm.dataModels.DataProject;
 import tm.payhas.crm.helpers.Common;
 import tm.payhas.crm.interfaces.AddTask;
@@ -54,6 +69,7 @@ import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentAddTask extends Fragment implements AddTask {
     private tm.payhas.crm.databinding.FragmentAddTaskBinding b;
+    private static final int REQUEST_CODE = 112211;
     private AccountPreferences accountPreferences;
     private String importancy = NOT_IMPORTANT;
     private int projectId = 0;
@@ -67,6 +83,7 @@ public class FragmentAddTask extends Fragment implements AddTask {
     private String timeRemind;
     private AdapterSelectedUsers adapterObserver;
     private AdapterSelectedUsers adapterResponsible;
+    private String fileUrl;
 
     public static FragmentAddTask newInstance() {
         FragmentAddTask fragment = new FragmentAddTask();
@@ -135,8 +152,30 @@ public class FragmentAddTask extends Fragment implements AddTask {
                 0), 100);
     }
 
+    private void pickFileFromInternalStorage() {
+        requestStoragePermission();
+        b.fileMain.setVisibility(View.GONE);
+        b.progressAddFile.setVisibility(View.VISIBLE);
+
+        String[] mimeTypes = {"application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
+                "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .ppt & .pptx
+                "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xls & .xlsx
+                "text/plain", "application/pdf", "application/zip"};
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_CODE);
+    }
 
     private void initListeners() {
+        b.files.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pickFileFromInternalStorage();
+            }
+        });
         b.timeEnd.setOnClickListener(view -> openDialog(b.timeEnd, 1));
         b.timeReminder.setOnClickListener(view -> openDialog(b.timeReminder, 2));
         b.timeStart.setOnClickListener(view -> openDialog(b.timeStart, 3));
@@ -338,6 +377,82 @@ public class FragmentAddTask extends Fragment implements AddTask {
 
         for (int i = 0; i < users.size(); i++) {
             observerUserList.add(users.get(i).getId());
+        }
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                Uri fileUri = data.getData();
+                if (fileUri != null) {
+                    String filePath = getRealPathFromURI(getContext(), fileUri);
+                    Log.e("FILE_PATH", "onActivityResult: " + filePath);
+                    Log.e("FILE_URI", "onActivityResult: " + fileUri);
+                    if (filePath != null) {
+                        File file = new File(filePath);
+                        uploadFile(file);
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    private void uploadFile(File file) {
+        MultipartBody.Part fileToUpload = null;
+        RequestBody requestFile = RequestBody.create(MediaType.parse("application/octet-stream"), file);
+
+        try {
+            fileToUpload = MultipartBody.Part.createFormData("fileUrl", URLEncoder.encode(file.getPath(), "utf-8"), requestFile);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        Call<ResponseSingleFile> upload = Common.getApi().uploadFileToTask(fileToUpload);
+        upload.enqueue(new Callback<ResponseSingleFile>() {
+            @Override
+            public void onResponse
+                    (@NonNull Call<ResponseSingleFile> call, @NonNull Response<ResponseSingleFile> response) {
+                if (response.isSuccessful()) {
+//                b.files.setText(response.body().getData().);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseSingleFile> call, Throwable t) {
+                Log.e("TAG", "onFailure: " + t.getMessage());
+                b.progressAddFile.setVisibility(View.GONE);
+                b.fileMain.setClickable(true);
+            }
+        });
+
+    }
+
+    // Declare the activity result launcher
+    private ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    // Permission is granted, you can access the file here
+                    // Perform your file access operations
+                } else {
+                    // Permission is denied, handle the failure
+                    // Display an error message or request the permission again
+                }
+            });
+
+    // Request permission at runtime
+    private void requestStoragePermission() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            // Permission has already been granted, you can access the file here
+            // Perform your file access operations
+        } else {
+            // Permission has not been granted, request it from the user
+            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
         }
     }
 

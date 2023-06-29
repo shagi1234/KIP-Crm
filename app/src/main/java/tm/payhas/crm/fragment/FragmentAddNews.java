@@ -1,6 +1,7 @@
 package tm.payhas.crm.fragment;
 
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
+import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 import static tm.payhas.crm.statics.StaticConstants.HOLIDAYS;
 import static tm.payhas.crm.statics.StaticConstants.NEWS;
 
@@ -175,6 +176,7 @@ public class FragmentAddNews extends Fragment implements UploadedFilesUrl {
             b.inputContent.setAlpha(0.5f);
             addNewsToDashboard();
         });
+        b.btnBack.setOnClickListener(view -> getActivity().onBackPressed());
         b.edtDate.setOnClickListener(view -> openDialog(b.edtDate));
 
     }
@@ -227,7 +229,7 @@ public class FragmentAddNews extends Fragment implements UploadedFilesUrl {
         super.onResume();
         new Handler().postDelayed(() -> setPadding(b.main,
                 0,
-                50,
+                statusBarHeight,
                 0,
                 0), 100);
     }

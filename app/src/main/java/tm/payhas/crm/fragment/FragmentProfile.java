@@ -4,6 +4,7 @@ import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
+import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,6 +42,16 @@ public class FragmentProfile extends Fragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         hideSoftKeyboard(getActivity());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        new Handler().postDelayed(() -> setPadding(b.customTitleBar,
+                0,
+                statusBarHeight,
+                0,
+                0), 50);
     }
 
     @Override

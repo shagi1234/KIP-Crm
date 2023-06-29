@@ -3,7 +3,9 @@ package tm.payhas.crm.adapters;
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.api.network.Network.BASE_URL;
 import static tm.payhas.crm.helpers.Common.addFragment;
-import static tm.payhas.crm.helpers.FileDownloader.downloadFile;
+import static tm.payhas.crm.helpers.DownloadManagerHelper.enqueueDownload;
+import static tm.payhas.crm.helpers.DownloadManagerHelper.getDownloadStatus;
+import static tm.payhas.crm.helpers.DownloadManagerHelper.init;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -48,7 +50,6 @@ public class AdapterCloud extends RecyclerView.Adapter<AdapterCloud.ViewHolder> 
         this.type = type;
 
     }
-
     @SuppressLint("NotifyDataSetChanged")
     public void setAll(ArrayList<DataFolder> all) {
         this.all = all;
@@ -118,8 +119,8 @@ public class AdapterCloud extends RecyclerView.Adapter<AdapterCloud.ViewHolder> 
             if (type == CLOUD_TYPE_FILE) {
                 downloader.setOnClickListener(view -> {
                     downloader.setEnabled(false);
-                    downloadFile(context, BASE_URL + oneFolder.getFileUrl(), oneFolder.getFileName());
-                    Log.e("DownloadClicked", "bind: ");
+                    init(context);
+                    getDownloadStatus(enqueueDownload(BASE_URL +"/"+ oneFolder.getFileUrl(), oneFolder.getFileName()));
                     new Handler().postDelayed(() -> downloader.setEnabled(true), 200);
                 });
             }

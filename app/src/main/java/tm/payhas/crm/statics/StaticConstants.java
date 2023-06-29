@@ -1,7 +1,8 @@
 package tm.payhas.crm.statics;
 
 public class StaticConstants {
-
+    public static String APPLICATION_DIR_NAME = "CRM";
+    public static String FILES_DIR = "/Files/";
     //Message Statuses
     public static final String MESSAGE_UN_SEND = "status0";
     public static final String MESSAGE_SENT = "status1";

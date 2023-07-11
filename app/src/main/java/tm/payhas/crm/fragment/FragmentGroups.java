@@ -3,10 +3,10 @@ package tm.payhas.crm.fragment;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -53,7 +53,12 @@ public class FragmentGroups extends Fragment {
         ac = new AccountPreferences(getContext());
         getGroups();
         setRecycler();
+        initListeners();
         return b.getRoot();
+    }
+
+    private void initListeners() {
+        b.addGroupClickable.setOnClickListener(view -> Toast.makeText(getContext(), "Not Yet", Toast.LENGTH_SHORT).show());
     }
 
     private void getGroups() {

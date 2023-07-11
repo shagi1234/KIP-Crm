@@ -22,6 +22,13 @@ public class RequestCreateTask {
     private ArrayList<DataAttachment> files;
     private int id;
 
+    public ArrayList<DataAttachment> getFiles() {
+        return files;
+    }
+
+    public void setFiles(ArrayList<DataAttachment> files) {
+        this.files = files;
+    }
 
     public int getExecutorId() {
         return executorId;

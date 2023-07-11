@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginVertical="12sp"
-                android:text="Добавление задачи"
+                android:text="@string/new_task"
                 android:textColor="@color/text_color"
                 android:textSize="16sp" />
 
@@ -61,7 +61,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="6dp"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Укажите имя задача"
+                        android:text="@string/title_name"
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
 
@@ -92,7 +92,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="6dp"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Проект"
+                        android:text="@string/project"
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
 
@@ -132,7 +132,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="6dp"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Приоритет"
+                        android:text="@string/importancy"
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
 
@@ -213,7 +213,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="6dp"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Исполнитель"
+                        android:text="@string/executor"
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
 
@@ -243,7 +243,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="6dp"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Соисполнители"
+                        android:text="@string/executors"
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
 
@@ -278,7 +278,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="6dp"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Наблюдатели"
+                        android:text="@string/observers"
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
 
@@ -312,7 +312,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="6dp"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Напомнить"
+                        android:text="@string/remind"
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
 
@@ -351,7 +351,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="6dp"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Напоминание"
+                        android:text="@string/date_remind"
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
 
@@ -398,7 +398,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="6dp"
                             android:fontFamily="@font/inter_regular"
-                            android:text="Дата начала"
+                            android:text="@string/start_time"
                             android:textColor="@color/text_color"
                             android:textSize="12sp" />
 
@@ -434,7 +434,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="6dp"
                             android:fontFamily="@font/inter_regular"
-                            android:text="Дата завершения"
+                            android:text="@string/end_time"
                             android:textColor="@color/text_color"
                             android:textSize="12sp" />
 
@@ -458,31 +458,33 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
 
-                    <LinearLayout
-                        android:id="@+id/file_main"
+                <LinearLayout
+                    android:id="@+id/file_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/document"
+                        android:textColor="@color/text_color"
+                        android:textSize="12sp" />
+
+                    <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="6dp"
-                            android:fontFamily="@font/inter_regular"
-                            android:text="Документ"
-                            android:textColor="@color/text_color"
-                            android:textSize="12sp" />
+                        android:background="@drawable/edt_bg">
 
                         <EditText
                             android:id="@+id/files"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/edt_bg"
+                            android:background="@color/color_transparent"
                             android:clickable="true"
                             android:drawableEnd="@drawable/ic_documenyt_file"
                             android:focusable="false"
@@ -494,16 +496,17 @@
                             android:textColorHint="@color/edt_hint"
                             android:textSize="12sp" />
 
-                    </LinearLayout>
+                        <ProgressBar
+                            android:id="@+id/progress_add_file"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center"
+                            android:padding="5dp"
+                            android:visibility="gone" />
+                    </FrameLayout>
 
-                    <ProgressBar
-                        android:visibility="gone"
-                        android:id="@+id/progress_add_file"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center"
-                        android:padding="5dp" />
-                </FrameLayout>
+
+                </LinearLayout>
 
 
                 <LinearLayout
@@ -517,7 +520,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="6dp"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Описание "
+                        android:text="@string/about"
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
 
@@ -528,7 +531,7 @@
                         android:background="@drawable/edt_bg"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="top"
-                        android:hint="Input"
+                        android:hint=""
                         android:minHeight="110dp"
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="15.5dp"
@@ -555,7 +558,7 @@
                         android:gravity="center_horizontal"
                         android:maxLines="1"
                         android:paddingVertical="14.5dp"
-                        android:text="СОХРАНИТЬ"
+                        android:text="@string/save"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold" />

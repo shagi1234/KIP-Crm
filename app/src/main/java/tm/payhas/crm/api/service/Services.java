@@ -90,7 +90,7 @@ public interface Services {
     @Headers({"Accept: multipart/form-data"})
     @Multipart
     @POST("single/upload/messages")
-    Call<ResponseSingleFile> uploadFile(@Part MultipartBody.Part fileUrl);
+    Call<ResponseSingleFile> uploadFile(@Part("originalFileName") RequestBody originalName, @Part MultipartBody.Part fileUrl);
 
     @Headers({"Accept: multipart/form-data"})
     @Multipart
@@ -165,7 +165,7 @@ public interface Services {
     @Headers({"Accept: multipart/form-data"})
     @Multipart
     @POST("single/upload/tasks")
-    Call<ResponseSingleFile> uploadFileToTask(@Part MultipartBody.Part fileUrl);
+    Call<ResponseSingleFile> uploadFileToTask(@Part("originalFileName") RequestBody originalName, @Part MultipartBody.Part fileUrl);
 
 
 }

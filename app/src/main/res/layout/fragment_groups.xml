@@ -8,9 +8,57 @@
     android:focusable="true"
     tools:context=".fragment.FragmentGroups">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rec_group_contact"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/sent_message"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter_regular"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="17.5dp"
+                    android:text="@string/create_new_group"
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="20dp"
+                    android:src="@drawable/ic_add_circle" />
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/add_group_clickable"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/ripple"
+                android:clickable="true"
+                android:focusable="true" />
+        </FrameLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rec_group_contact"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
 
 </FrameLayout>

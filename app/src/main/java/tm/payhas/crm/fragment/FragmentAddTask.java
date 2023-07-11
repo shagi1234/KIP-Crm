@@ -6,9 +6,13 @@ import static tm.payhas.crm.fragment.FragmentSpinner.PROJECTS;
 import static tm.payhas.crm.fragment.FragmentSpinner.PROJECT_EXECUTOR;
 import static tm.payhas.crm.fragment.FragmentSpinner.RESPONSIBLE;
 import static tm.payhas.crm.helpers.Common.addFragment;
-import static tm.payhas.crm.helpers.FileHelper.getRealPathFromURI;
+import static tm.payhas.crm.helpers.FileUtil.copyFileStream;
+import static tm.payhas.crm.helpers.FileUtil.getPath;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
+import static tm.payhas.crm.helpers.StaticMethods.showToast;
+import static tm.payhas.crm.statics.StaticConstants.APPLICATION_DIR_NAME;
+import static tm.payhas.crm.statics.StaticConstants.FILES_DIR;
 import static tm.payhas.crm.statics.StaticConstants.FINISHED;
 import static tm.payhas.crm.statics.StaticConstants.HIGH;
 import static tm.payhas.crm.statics.StaticConstants.IN_PROCESS;
@@ -24,9 +28,13 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +49,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -62,8 +72,11 @@ import tm.payhas.crm.api.data.dto.DtoUserInfo;
 import tm.payhas.crm.api.request.RequestCreateTask;
 import tm.payhas.crm.api.response.ResponseSingleFile;
 import tm.payhas.crm.api.response.ResponseTasks;
+import tm.payhas.crm.dataModels.DataAttachment;
+import tm.payhas.crm.dataModels.DataFile;
 import tm.payhas.crm.dataModels.DataProject;
 import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.helpers.FileUtil;
 import tm.payhas.crm.interfaces.AddTask;
 import tm.payhas.crm.preference.AccountPreferences;
 
@@ -83,7 +96,7 @@ public class FragmentAddTask extends Fragment implements AddTask {
     private String timeRemind;
     private AdapterSelectedUsers adapterObserver;
     private AdapterSelectedUsers adapterResponsible;
-    private String fileUrl;
+    private DataFile fileTo;
 
     public static FragmentAddTask newInstance() {
         FragmentAddTask fragment = new FragmentAddTask();
@@ -170,12 +183,7 @@ public class FragmentAddTask extends Fragment implements AddTask {
     }
 
     private void initListeners() {
-        b.files.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                pickFileFromInternalStorage();
-            }
-        });
+        b.files.setOnClickListener(view -> pickFileFromInternalStorage());
         b.timeEnd.setOnClickListener(view -> openDialog(b.timeEnd, 1));
         b.timeReminder.setOnClickListener(view -> openDialog(b.timeReminder, 2));
         b.timeStart.setOnClickListener(view -> openDialog(b.timeStart, 3));
@@ -331,6 +339,15 @@ public class FragmentAddTask extends Fragment implements AddTask {
         requestCreateTask.setResponsibleUsers(responsibleUsersList);
         requestCreateTask.setObserverUsers(observerUserList);
         requestCreateTask.setDescription(b.infoInput.getText().toString());
+        ArrayList<DataAttachment> files = new ArrayList<>();
+        if (fileTo != null) {
+            DataAttachment attachment = new DataAttachment();
+            attachment.setFileUrl(fileTo.getUrl());
+            attachment.setFileName(fileTo.getOriginalFileName());
+            files.add(attachment);
+        }
+        requestCreateTask.setFiles(files);
+
         Call<ResponseTasks> call = Common.getApi().createTask(accountPreferences.getToken(), requestCreateTask);
         call.enqueue(new Callback<ResponseTasks>() {
             @Override
@@ -386,39 +403,109 @@ public class FragmentAddTask extends Fragment implements AddTask {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (data != null) {
-                Uri fileUri = data.getData();
-                if (fileUri != null) {
-                    String filePath = getRealPathFromURI(getContext(), fileUri);
-                    Log.e("FILE_PATH", "onActivityResult: " + filePath);
-                    Log.e("FILE_URI", "onActivityResult: " + fileUri);
-                    if (filePath != null) {
-                        File file = new File(filePath);
-                        uploadFile(file);
-                    }
-                }
+               getFile(data);
             }
         }
 
 
     }
+    public void getFile(Intent data) {
+        if (getActivity() == null) return;
+        String filename;
+        String fullFilePath = "";
+        File resultFile = null;
+        int fileSize = 0;
+
+        try {
+            Uri uri = data.getData();
+
+            String mimeType = getActivity().getContentResolver().getType(uri);
+
+            if (mimeType == null) {
+                String path = getPath(getContext(), uri);
+
+                if (path == null) {
+                    filename = FilenameUtils.getName(uri.toString());
+                } else {
+                    File file = new File(path);
+                    filename = file.getName();
+                }
+            } else {
+                Uri returnUri = data.getData();
+
+                Cursor returnCursor = getActivity().getContentResolver().query(returnUri, null, null, null, null);
+                int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+                returnCursor.moveToFirst();
+                filename = returnCursor.getString(nameIndex);
+
+                String size = Long.toString(returnCursor.getLong(sizeIndex));
+                fileSize = Integer.parseInt(size);
+
+
+            }
+            String sourcePath = Environment.getExternalStorageDirectory() + File.separator + APPLICATION_DIR_NAME + FILES_DIR;
+
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                getActivity().getApplicationContext().getExternalFilesDir("Salam/Files/");
+                resultFile = new File(getActivity().getApplicationContext().getExternalFilesDir("Salam/Files/"), filename);
+                copyFileStream(resultFile, uri, getContext());
+                fullFilePath = resultFile.getPath();
+
+            } else {
+                try {
+                    resultFile = new File(sourcePath + filename);
+                    fullFilePath = sourcePath + filename;
+                    copyFileStream(resultFile, uri, getContext());
+
+                } catch (Exception e) {
+                    Log.e("error", "onActivityResult: " + e.getMessage());
+                }
+            }
+
+
+            if (resultFile != null && resultFile.exists()) {
+
+                int finalFileSize = fileSize;
+                String finalFullFilePath = fullFilePath;
+                File finalResultFile = resultFile;
+                uploadFile(finalResultFile);
+
+
+            } else {
+                showToast(getActivity(), "Not found");
+            }
+
+        } catch (Exception e) {
+            Log.e("TAG_error", "onActivityResult: " + e.getMessage());
+        }
+    }
 
     private void uploadFile(File file) {
         MultipartBody.Part fileToUpload = null;
-        RequestBody requestFile = RequestBody.create(MediaType.parse("application/octet-stream"), file);
-
+        RequestBody requestFile = RequestBody.create(
+                MediaType.parse(FileUtil.getMimeType(file)),
+                file);
         try {
             fileToUpload = MultipartBody.Part.createFormData("fileUrl", URLEncoder.encode(file.getPath(), "utf-8"), requestFile);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
-        Call<ResponseSingleFile> upload = Common.getApi().uploadFileToTask(fileToUpload);
+        RequestBody originalFileName = RequestBody.create(MediaType.parse("multipart/form-data"), file.getName());
+
+        Call<ResponseSingleFile> upload = Common.getApi().uploadFileToTask(originalFileName, fileToUpload);
         upload.enqueue(new Callback<ResponseSingleFile>() {
             @Override
             public void onResponse
                     (@NonNull Call<ResponseSingleFile> call, @NonNull Response<ResponseSingleFile> response) {
                 if (response.isSuccessful()) {
-//                b.files.setText(response.body().getData().);
+                    b.progressAddFile.setVisibility(View.GONE);
+                    b.fileMain.setVisibility(View.VISIBLE);
+                    b.fileMain.setClickable(true);
+                    b.files.setText(response.body().getData().getOriginalFileName());
+                    fileTo = response.body().getData();
                 }
             }
 
@@ -427,6 +514,8 @@ public class FragmentAddTask extends Fragment implements AddTask {
                 Log.e("TAG", "onFailure: " + t.getMessage());
                 b.progressAddFile.setVisibility(View.GONE);
                 b.fileMain.setClickable(true);
+                b.fileMain.setVisibility(View.VISIBLE);
+
             }
         });
 

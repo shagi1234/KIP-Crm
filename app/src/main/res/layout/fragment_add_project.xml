@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginVertical="12sp"
-                    android:text="New Project"
+                    android:text="@string/new_project"
                     android:textColor="@color/text_color"
                     android:textSize="16sp" />
 
@@ -66,7 +66,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="6dp"
                             android:fontFamily="@font/inter_regular"
-                            android:text="Укажите имя задача"
+                            android:text="@string/project_name"
                             android:textColor="@color/text_color"
                             android:textSize="12sp" />
 
@@ -76,7 +76,7 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/edt_bg"
                             android:fontFamily="@font/inter_regular"
-                            android:hint="Write..."
+                            android:hint=""
                             android:maxLines="1"
                             android:paddingHorizontal="10dp"
                             android:paddingVertical="15.5dp"
@@ -97,25 +97,39 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="6dp"
                             android:fontFamily="@font/inter_regular"
-                            android:text="Документ"
+                            android:text="@string/document"
                             android:textColor="@color/text_color"
                             android:textSize="12sp" />
 
-                        <EditText
-                            android:id="@+id/attach_file_project"
+                        <FrameLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/edt_bg"
-                            android:clickable="true"
-                            android:drawableEnd="@drawable/ic_documenyt_file"
-                            android:focusable="false"
-                            android:fontFamily="@font/inter_regular"
-                            android:hint="----------"
-                            android:paddingHorizontal="10dp"
-                            android:paddingVertical="15.5dp"
-                            android:textColor="@color/text_color"
-                            android:textColorHint="@color/edt_hint"
-                            android:textSize="12sp" />
+                            android:background="@drawable/edt_bg">
+
+                            <EditText
+                                android:id="@+id/attach_file_project"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/color_transparent"
+                                android:clickable="true"
+                                android:drawableEnd="@drawable/ic_documenyt_file"
+                                android:focusable="false"
+                                android:fontFamily="@font/inter_regular"
+                                android:hint="----------"
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="15.5dp"
+                                android:textColor="@color/text_color"
+                                android:textColorHint="@color/edt_hint"
+                                android:textSize="12sp" />
+
+                            <ProgressBar
+                                android:id="@+id/progress_file"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_gravity="center"
+                                android:visibility="gone" />
+                        </FrameLayout>
+
 
                     </LinearLayout>
 
@@ -130,7 +144,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="6dp"
                             android:fontFamily="@font/inter_regular"
-                            android:text="Описание задачи"
+                            android:text="@string/about"
                             android:textColor="@color/text_color"
                             android:textSize="12sp" />
 
@@ -209,7 +223,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="6dp"
                                 android:fontFamily="@font/inter_regular"
-                                android:text="Участники проекта"
+                                android:text="@string/member_project"
                                 android:textColor="@color/text_color"
                                 android:textSize="12sp" />
 
@@ -218,17 +232,14 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="50dp"
                                 android:background="@drawable/edt_bg" />
+
+                            <FrameLayout
+                                android:id="@+id/clickable_member"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
                         </LinearLayout>
 
-                        <FrameLayout
-                            android:id="@+id/clickable_member"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
                     </FrameLayout>
-
-
-
-
 
 
                     <FrameLayout
@@ -247,7 +258,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="6dp"
                                 android:fontFamily="@font/inter_regular"
-                                android:text="Исполнитель"
+                                android:text="@string/executor"
                                 android:textColor="@color/text_color"
                                 android:textSize="12sp" />
 
@@ -282,7 +293,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="6dp"
                                 android:fontFamily="@font/inter_regular"
-                                android:text="Дата начала"
+                                android:text="@string/start_time"
                                 android:textColor="@color/text_color"
                                 android:textSize="12sp" />
 
@@ -318,7 +329,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="6dp"
                                 android:fontFamily="@font/inter_regular"
-                                android:text="Дата завершения"
+                                android:text="@string/end_time"
                                 android:textColor="@color/text_color"
                                 android:textSize="12sp" />
 
@@ -359,7 +370,8 @@
                             android:gravity="center_horizontal"
                             android:maxLines="1"
                             android:paddingVertical="14.5dp"
-                            android:text="СОХРАНИТЬ"
+                            android:text="@string/save"
+                            android:textAllCaps="true"
                             android:textColor="@color/white"
                             android:textSize="16sp"
                             android:textStyle="bold" />

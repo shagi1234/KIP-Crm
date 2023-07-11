@@ -66,7 +66,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="10dp"
-                android:src="@drawable/ic_logo_crm"
+                android:src="@drawable/ic_logo_lemmer"
                 android:visibility="gone"
                 app:riv_corner_radius="6dp" />
 

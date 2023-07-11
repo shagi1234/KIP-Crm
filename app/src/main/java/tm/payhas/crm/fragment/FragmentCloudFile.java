@@ -1,20 +1,28 @@
 package tm.payhas.crm.fragment;
 
 import static tm.payhas.crm.adapters.AdapterCloud.CLOUD_TYPE_FILE;
-import static tm.payhas.crm.helpers.FileHelper.getRealPathFromURI;
+import static tm.payhas.crm.helpers.FileUtil.copyFileStream;
+import static tm.payhas.crm.helpers.FileUtil.getPath;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
+import static tm.payhas.crm.helpers.StaticMethods.showToast;
 import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
+import static tm.payhas.crm.statics.StaticConstants.APPLICATION_DIR_NAME;
+import static tm.payhas.crm.statics.StaticConstants.FILES_DIR;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -32,13 +40,13 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.io.FilenameUtils;
 import com.google.gson.JsonObject;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -273,23 +281,86 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (data != null) {
-                Uri fileUri = data.getData();
-                if (fileUri != null) {
-                    String filePath = getRealPathFromURI(getContext(), fileUri);
-                    Log.e("FILE_PATH", "onActivityResult: "+filePath);
-                    Log.e("FILE_URI", "onActivityResult: "+fileUri);
-                    if (filePath != null) {
-                        File file = new File(filePath);
-                        uploadFile(file);
-                    }
+                getFile(data);
+            }
+
+        }
+    }
+
+    public void getFile(Intent data) {
+        if (getActivity() == null) return;
+        String filename;
+        String fullFilePath = "";
+        File resultFile = null;
+        int fileSize = 0;
+
+        try {
+            Uri uri = data.getData();
+
+            String mimeType = getActivity().getContentResolver().getType(uri);
+
+            if (mimeType == null) {
+                String path = getPath(getContext(), uri);
+
+                if (path == null) {
+                    filename = FilenameUtils.getName(uri.toString());
+                } else {
+                    File file = new File(path);
+                    filename = file.getName();
+                }
+            } else {
+                Uri returnUri = data.getData();
+
+                Cursor returnCursor = getActivity().getContentResolver().query(returnUri, null, null, null, null);
+                int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+                returnCursor.moveToFirst();
+                filename = returnCursor.getString(nameIndex);
+
+                String size = Long.toString(returnCursor.getLong(sizeIndex));
+                fileSize = Integer.parseInt(size);
+
+
+            }
+            String sourcePath = Environment.getExternalStorageDirectory() + File.separator + APPLICATION_DIR_NAME + FILES_DIR;
+
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                getActivity().getApplicationContext().getExternalFilesDir("Salam/Files/");
+                resultFile = new File(getActivity().getApplicationContext().getExternalFilesDir("Salam/Files/"), filename);
+                copyFileStream(resultFile, uri, getContext());
+                fullFilePath = resultFile.getPath();
+
+            } else {
+                try {
+                    resultFile = new File(sourcePath + filename);
+                    fullFilePath = sourcePath + filename;
+                    copyFileStream(resultFile, uri, getContext());
+
+                } catch (Exception e) {
+                    Log.e("error", "onActivityResult: " + e.getMessage());
                 }
             }
+
+
+            if (resultFile != null && resultFile.exists()) {
+
+                int finalFileSize = fileSize;
+                String finalFullFilePath = fullFilePath;
+                File finalResultFile = resultFile;
+                uploadFile(finalResultFile);
+
+
+            } else {
+                showToast(getActivity(), "Not found");
+            }
+
+        } catch (Exception e) {
+            Log.e("TAG_error", "onActivityResult: " + e.getMessage());
         }
-
-
     }
-    private void uploadFile(File file) {
 
+    private void uploadFile(File file) {
         MultipartBody.Part fileToUpload = null;
         RequestBody requestFile =
                 RequestBody.create(
@@ -300,7 +371,7 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
         try {
             fileToUpload = MultipartBody.Part.createFormData("fileUrl", URLEncoder.encode(file.getPath(), "utf-8"), requestFile);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            Log.e("TAG", "uploadFile: " + e);
         }
 
         RequestBody directoryUrl = RequestBody.create(MediaType.parse("multipart/form-data"), fileUrl);
@@ -311,7 +382,10 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
             @Override
             public void onResponse
                     (@NonNull Call<ResponseSingleFile> call, @NonNull Response<ResponseSingleFile> response) {
-                if (response.isSuccessful()) {
+                b.linearProgressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+
+                if (response.isSuccessful() || response.code() == 201 || response.code()==200) {
                     b.linearProgressBar.setVisibility(View.GONE);
                     b.main.setClickable(true);
                     getFolderFiles();

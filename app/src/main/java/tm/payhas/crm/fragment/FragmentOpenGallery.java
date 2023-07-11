@@ -177,9 +177,10 @@ public class FragmentOpenGallery extends Fragment implements OnBackPressedFragme
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            RequestBody fileUrl = RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(fileToUpload));
+            RequestBody originalFileName = RequestBody.create(MediaType.parse("multipart/form-data"), mediaLocal.getPath());
 
-            Call<ResponseSingleFile> upload = Common.getApi().uploadFile(fileToUpload);
+
+            Call<ResponseSingleFile> upload = Common.getApi().uploadFile(originalFileName, fileToUpload);
             upload.enqueue(new Callback<ResponseSingleFile>() {
                 @Override
                 public void onResponse(@NonNull Call<ResponseSingleFile> call, @NonNull Response<ResponseSingleFile> response) {

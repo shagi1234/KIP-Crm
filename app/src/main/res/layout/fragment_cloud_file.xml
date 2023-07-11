@@ -42,7 +42,7 @@
                 android:fontFamily="@font/inter_regular"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="Cloud"
+                android:text="@string/cloud_file"
                 android:textColor="@color/text_color"
                 android:textSize="16sp"
                 tools:ignore="HardcodedText" />

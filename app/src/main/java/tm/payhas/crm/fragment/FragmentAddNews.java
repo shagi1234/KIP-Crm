@@ -97,12 +97,9 @@ public class FragmentAddNews extends Fragment implements UploadedFilesUrl {
     }
 
     private void initListeners() {
-        b.btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addNewChecklist();
-            }
-        });
+        b.btnSave.setOnClickListener(view -> addNewChecklist());
+        b.btnBack.setOnClickListener(view -> requireActivity().onBackPressed());
+
         b.spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -122,6 +119,7 @@ public class FragmentAddNews extends Fragment implements UploadedFilesUrl {
 
             }
         });
+
         b.edtName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -138,6 +136,7 @@ public class FragmentAddNews extends Fragment implements UploadedFilesUrl {
 
             }
         });
+
         b.edtDescription.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -154,6 +153,7 @@ public class FragmentAddNews extends Fragment implements UploadedFilesUrl {
 
             }
         });
+
         b.edtDate.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -170,13 +170,16 @@ public class FragmentAddNews extends Fragment implements UploadedFilesUrl {
 
             }
         });
+
         b.btnSave.setOnClickListener(view -> {
             b.btnSave.setEnabled(false);
             b.progressBar.setVisibility(View.VISIBLE);
             b.inputContent.setAlpha(0.5f);
             addNewsToDashboard();
         });
+
         b.btnBack.setOnClickListener(view -> getActivity().onBackPressed());
+
         b.edtDate.setOnClickListener(view -> openDialog(b.edtDate));
 
     }

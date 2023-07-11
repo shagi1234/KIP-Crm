@@ -43,7 +43,7 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/inter_regular"
                     android:padding="10dp"
-                    android:text="Cloud"
+                    android:text="@string/cloud_folder"
                     android:textColor="@color/text_color"
                     android:textSize="16sp" />
 

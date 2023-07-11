@@ -30,6 +30,46 @@ public class AccountPreferences {
     private static final String PREF_CURRENT_PROJECT_ID = "_currentProjectId";
     private static final String CLOUD_FOLDER_SELECTABLE = "_selectable";
     private static final String CLOUD_FILE_SELECTABLE = "__selectable";
+    protected final String FINGER_LOCK = "FINGER_LOCK";
+    protected final String PREF_USER_PASSWORD = "USER_PASSWORD";
+
+    public void setFingerLock(int b) {
+        saveToPreference(FINGER_LOCK, b);
+
+    }
+
+    protected void saveToPreference(String key, String value) {
+        editor.putString(key, value);
+        editor.commit();
+    }
+
+    protected void saveToPreference(String key, Boolean value) {
+        editor.putBoolean(key, value);
+        editor.commit();
+    }
+
+    protected void saveToPreference(String key, int value) {
+        editor.putInt(key, value);
+        editor.commit();
+    }
+
+    protected void saveToPreference(String key, long value) {
+        editor.putLong(key, value);
+        editor.commit();
+    }
+
+    public int getFingerLock() {
+        return getInt(FINGER_LOCK, 1);
+    }
+
+    protected int getInt(String key, int defaultValue) {
+        if (_context == null) return 0;
+        return pref.getInt(key, defaultValue);
+    }
+
+    protected int getInt(String key) {
+        return getInt(key, 0);
+    }
 
 
     public static AccountPreferences newInstance(Context context) {
@@ -214,6 +254,25 @@ public class AccountPreferences {
             return "";
         } else
             return pref.getString(PREF_COLOR_CODE, "");
+    }
+
+    public void savePassword(String pass) {
+        saveToPreference(PREF_USER_PASSWORD, pass);
+
+    }
+
+    public String getPassword() {
+
+        return getString(PREF_USER_PASSWORD);
+    }
+
+    protected String getString(String key, String defaultValue) {
+        if (_context == null) return "";
+        return pref.getString(key, defaultValue);
+    }
+
+    protected String getString(String key) {
+        return getString(key, "");
     }
 
     public SharedPreferences.Editor getEditor() {

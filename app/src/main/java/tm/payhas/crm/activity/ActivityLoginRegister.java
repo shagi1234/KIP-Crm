@@ -5,6 +5,7 @@ import static tm.payhas.crm.helpers.StaticMethods.transparentStatusAndNavigation
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import tm.payhas.crm.R;
@@ -26,6 +27,14 @@ public class ActivityLoginRegister extends AppCompatActivity {
 
     private void setContent() {
         Common.addFragment(mainFragmentManager, R.id.login_content, FragmentLogin.newInstance());
+    }
 
+    @Override
+    public void onBackPressed() {
+        Fragment login = mainFragmentManager.findFragmentByTag(FragmentLogin.class.getSimpleName());
+        if (mainFragmentManager.getBackStackEntryCount() == 1 && login != null && login.isVisible()) {
+            finish();
+        } else
+            super.onBackPressed();
     }
 }

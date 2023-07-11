@@ -9,6 +9,7 @@ import static tm.payhas.crm.api.network.Network.BASE_URL;
 import static tm.payhas.crm.helpers.Common.normalTime;
 import static tm.payhas.crm.statics.StaticConstants.DATE;
 import static tm.payhas.crm.statics.StaticConstants.FILE;
+import static tm.payhas.crm.statics.StaticConstants.MEDIA_PLAYER;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGE_DELIVERED;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGE_READ;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGE_RECEIVE;
@@ -24,7 +25,10 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +36,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -42,6 +47,7 @@ import com.google.gson.Gson;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -56,6 +62,7 @@ import tm.payhas.crm.dataModels.DataMessageTarget;
 import tm.payhas.crm.fragment.FragmentChatRoom;
 import tm.payhas.crm.helpers.ChatMenu;
 import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.helpers.MusicProgressBar;
 import tm.payhas.crm.interfaces.ChatRoomInterface;
 import tm.payhas.crm.interfaces.NewMessage;
 import tm.payhas.crm.preference.AccountPreferences;
@@ -79,6 +86,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
         this.type = type;
         accountPreferences = new AccountPreferences(context);
     }
+
 
     @SuppressLint("NotifyDataSetChanged")
     public void setAuthorId(int authorId) {
@@ -217,9 +225,9 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
                 }
                 break;
             case VOICE:
-                if (oneMessage.getAuthorId() == authorId)
+                if (oneMessage.getAuthorId() == authorId) {
                     ((SenderVoiceViewHolder) holder).bind(oneMessage);
-                else
+                } else
                     ((ReceivedVoiceViewHolder) holder).bind(oneMessage, type);
                 break;
             case PHOTO:
@@ -524,28 +532,57 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
         }
     }
 
-    private static class SenderVoiceViewHolder extends RecyclerView.ViewHolder {
+    private class SenderVoiceViewHolder extends RecyclerView.ViewHolder {
         private final TextView voiceInformation;
         private final ImageView status;
         private final TextView time;
+        private final MusicProgressBar voiceProgress;
         private ChatMenu menu;
+        private ImageView playPause;
+        private boolean isPause = true;
 
         public SenderVoiceViewHolder(View itemView) {
             super(itemView);
             voiceInformation = itemView.findViewById(R.id.voice_message_info);
             status = itemView.findViewById(R.id.msg_indicator);
             time = itemView.findViewById(R.id.message_time);
+            voiceProgress = itemView.findViewById(R.id.sent_voice_progress);
+            playPause = itemView.findViewById(R.id.play_pause_voice_message);
             menu = new ChatMenu(itemView.getContext());
         }
 
         @RequiresApi(api = Build.VERSION_CODES.Q)
         public void bind(DataMessageTarget oneMessage) {
-            voiceInformation.setText(oneMessage.getAttachment().getDuration() + "," + oneMessage.getAttachment().getSize());
-            time.setText(normalTime(oneMessage.getCreatedAt()));
+            setInformation(oneMessage);
+            setListeners(oneMessage);
+
+
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.Q)
+        private void setListeners(DataMessageTarget oneMessage) {
             itemView.setOnLongClickListener(view -> {
                 menu.createPopUpMenu(itemView, oneMessage.getId(), oneMessage);
                 return true;
             });
+            playPause.setOnClickListener(view -> {
+                DataMessageTarget oneVoiceMessage = messages.get(getAdapterPosition());
+                Log.e("Play_pause", "play_clicked");
+                isPause = !isPause;
+                if (!isPause) {
+                    playPause.setImageResource(R.drawable.ic_pause_circle);
+                } else {
+                    playPause.setImageResource(R.drawable.ic_play_circle);
+                }
+                if (!isPause) {
+                    setVoiceProgress(oneVoiceMessage);
+                } else {
+                    MEDIA_PLAYER.stop();
+                }
+            });
+        }
+
+        private void setInformation(DataMessageTarget oneMessage) {
             if (oneMessage.getStatus() != null && !oneMessage.getStatus().isEmpty()) {
                 switch (oneMessage.getStatus()) {
                     case MESSAGE_UN_SEND:
@@ -560,16 +597,71 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
                         break;
                 }
             }
+            voiceInformation.setText(oneMessage.getAttachment().getSize()/1000+"KB");
+            time.setText(normalTime(oneMessage.getCreatedAt()));
+        }
+
+        private void setVoiceProgress(DataMessageTarget oneVoiceMessage) {
+            String audioUrl = oneVoiceMessage.getAttachment().getFileUrl();
+            if (MEDIA_PLAYER != null) {
+                MEDIA_PLAYER.stop();
+                MEDIA_PLAYER.release();
+            }
+            MEDIA_PLAYER = new MediaPlayer();
+            MEDIA_PLAYER.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            try {
+                MEDIA_PLAYER.setDataSource(BASE_URL + "/" + audioUrl);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            MEDIA_PLAYER.prepareAsync();
+            MEDIA_PLAYER.setOnCompletionListener(mp -> {
+                // Playback has completed, update progress bar to full duration
+                MEDIA_PLAYER.reset();
+                playPause.setImageResource(R.drawable.ic_play_circle);
+                voiceProgress.setCurrentProgress(0);
+                isPause = true;
+            });
+            MEDIA_PLAYER.setOnPreparedListener(mp -> {
+                // The MediaPlayer is prepared, you can start playing the audio
+                MEDIA_PLAYER.start();
+                Handler handler = new Handler();
+                Runnable progressRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        if (MEDIA_PLAYER != null && MEDIA_PLAYER.isPlaying()) {
+                            int currentPosition = MEDIA_PLAYER.getCurrentPosition();
+                            int totalDuration = MEDIA_PLAYER.getDuration();
+
+                            voiceProgress.setMaxProgress(totalDuration);
+                            voiceProgress.setCurrentProgress(currentPosition);
+
+                            handler.postDelayed(this, 1000); // Update every 1 second
+                        }
+                    }
+                };
+
+                handler.post(progressRunnable);
+            });
+            MEDIA_PLAYER.setOnErrorListener((mp, what, extra) -> {
+                // Handle the error
+                Toast.makeText(itemView.getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                return false; // Return false to indicate that the error is not handled and should be propagated
+            });
+
         }
     }
 
-    private static class ReceivedVoiceViewHolder extends RecyclerView.ViewHolder {
+    private class ReceivedVoiceViewHolder extends RecyclerView.ViewHolder {
         private final TextView voiceInformation;
         private final TextView time;
         private final ChatMenu menu;
         private final LinearLayout senderGroupLayout;
         private final RoundedImageView senderGroupAvatar;
         private final TextView senderGroupName;
+        private final ImageView playPause;
+        private final MusicProgressBar voiceProgress;
+        private boolean isPause = false;
 
         public ReceivedVoiceViewHolder(View itemView) {
             super(itemView);
@@ -579,6 +671,8 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
             senderGroupLayout = itemView.findViewById(R.id.layout_sender_group);
             senderGroupAvatar = itemView.findViewById(R.id.group_sender_avatar);
             senderGroupName = itemView.findViewById(R.id.name_sender_group);
+            playPause = itemView.findViewById(R.id.play_pause_voice_message);
+            voiceProgress = itemView.findViewById(R.id.received_voice_progress);
         }
 
         @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -594,9 +688,76 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
                 menu.createPopUpMenu(itemView, oneMessage.getId(), oneMessage);
                 return true;
             });
-            voiceInformation.setText(oneMessage.getAttachment().getDuration() + "," + oneMessage.getAttachment().getSize());
+            voiceInformation.setText(oneMessage.getAttachment().getSize()/1000+"KB");
             time.setText(normalTime(oneMessage.getCreatedAt()));
+            playPause.setOnClickListener(view -> {
+                DataMessageTarget oneVoiceMessage = messages.get(getAdapterPosition());
+                Log.e("Play_pause", "play_clicked");
+                isPause = !isPause;
+                if (!isPause) {
+                    playPause.setImageResource(R.drawable.ic_pause_circle);
+                } else {
+                    playPause.setImageResource(R.drawable.ic_play_circle);
+                }
+                if (!isPause) {
+                    setVoiceProgress(oneVoiceMessage);
+                } else {
+                    MEDIA_PLAYER.stop();
+                }
+            });
+
         }
+
+        private void setVoiceProgress(DataMessageTarget oneVoiceMessage) {
+            String audioUrl = oneVoiceMessage.getAttachment().getFileUrl();
+            if (MEDIA_PLAYER != null) {
+                MEDIA_PLAYER.stop();
+                MEDIA_PLAYER.release();
+            }
+            MEDIA_PLAYER = new MediaPlayer();
+            MEDIA_PLAYER.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            try {
+                MEDIA_PLAYER.setDataSource(BASE_URL + "/" + audioUrl);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            MEDIA_PLAYER.prepareAsync();
+            MEDIA_PLAYER.setOnCompletionListener(mp -> {
+                // Playback has completed, update progress bar to full duration
+                MEDIA_PLAYER.reset();
+                playPause.setImageResource(R.drawable.ic_play_circle);
+                voiceProgress.setCurrentProgress(0);
+                isPause = true;
+            });
+            MEDIA_PLAYER.setOnPreparedListener(mp -> {
+                // The MediaPlayer is prepared, you can start playing the audio
+                MEDIA_PLAYER.start();
+                Handler handler = new Handler();
+                Runnable progressRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        if (MEDIA_PLAYER != null && MEDIA_PLAYER.isPlaying()) {
+                            int currentPosition = MEDIA_PLAYER.getCurrentPosition();
+                            int totalDuration = MEDIA_PLAYER.getDuration();
+
+                            voiceProgress.setMaxProgress(totalDuration);
+                            voiceProgress.setCurrentProgress(currentPosition);
+
+                            handler.postDelayed(this, 1000); // Update every 1 second
+                        }
+                    }
+                };
+
+                handler.post(progressRunnable);
+            });
+            MEDIA_PLAYER.setOnErrorListener((mp, what, extra) -> {
+                // Handle the error
+                Toast.makeText(itemView.getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                return false; // Return false to indicate that the error is not handled and should be propagated
+            });
+
+        }
+
     }
 
     private static class SenderFileViewHolder extends RecyclerView.ViewHolder {

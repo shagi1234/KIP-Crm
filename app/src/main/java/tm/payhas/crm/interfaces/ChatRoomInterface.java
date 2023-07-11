@@ -1,5 +1,7 @@
 package tm.payhas.crm.interfaces;
 
+import android.view.SurfaceHolder;
+
 import java.util.ArrayList;
 
 import tm.payhas.crm.dataModels.DataFile;
@@ -24,4 +26,5 @@ public interface ChatRoomInterface {
 
     void onMessageReceived(DataMessageTarget messageTarget);
 
+    void onWaveformUpdate(short[] waveformData);
 }

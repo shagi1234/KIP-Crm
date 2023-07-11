@@ -1,21 +1,7 @@
 <resources>
-    <string name="app_name">CRM</string>
+    <string name="app_name">Lemmer</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="remember_me">Remember me?</string>
-    <string name="login">Girmek</string>
-    <string name="friends">СОТРУДНИКИ</string>|
-    <string name="group">группы</string>
-    <string name="register">Agza bolmak</string>
-    <string name="home">Home</string>
-    <string name="chat">Chat</string>
-    <string name="document">Document</string>
-    <string name="profile">Profile</string>
-    <string name="chats">Чаты</string>
-    <string name="search">Search</string>
-
     <string-array name="importancy">
         <item>Низкий</item>
         <item>Средний</item>
@@ -40,5 +26,60 @@
         <item>Tazelik</item>
         <item>Bayramcylyk</item>
     </string-array>
+    <string name="search">Gözleg</string>
+    <string name="home">Esasy Sahypa</string>
+    <string name="birthdays">Doglan günler</string>
+    <string name="holidays">Baýramçylyklar</string>
+    <string name="title_name">Atlandyrylyşy</string>
+    <string name="start_time">Başlaýan wagty</string>
+    <string name="end_time">Tamamlanýan wagty</string>
+    <string name="executors">Ýerine ýetirijiler</string>
+    <string name="save">Ýatda saklamak</string>
+    <string name="new_checklist">Işleri goşmak</string>
+    <string name="add_news">Täzelik goşmak</string>
+    <string name="news_type">Görnüş</string>
+    <string name="about">Düşündirilişi</string>
+    <string name="date">Wagty</string>
+    <string name="project_name">Proýektiň ady</string>
+    <string name="document">Resminama</string>
+    <string name="member_project">Proýekte gatnaşýanlar</string>
+    <string name="executor">Esasy ýerine ýetiriji</string>
+    <string name="new_project">Täze proýekt</string>
+    <string name="project">Proýekt</string>
+    <string name="new_task">Tabşyryk goşmak</string>
+    <string name="importancy">Möhümlilgi</string>
+    <string name="observers">Gözegçiler</string>
+    <string name="remind">Ýatlatma</string>
+    <string name="date_remind">Ýatlatma senesi</string>
+    <string name="cloud_folder">Resminamalar gory</string>
+    <string name="cloud_file">Faýllar</string>
+    <string name="add_comments">Teswir goşmak</string>
+    <string name="enter_new_code">Täze açarsözi ýazyñ</string>
+    <string name="enter_old_code">Köne açarsözi ýazyñ</string>
+    <string name="enter_code">Açarsözi ýazyñ</string>
+    <string name="group_name">Toparyň ady</string>
+    <string name="group">Topar</string>
+    <string name="group_member">Agzalar</string>
+    <string name="username">Ulanyjynyň ady</string>
+    <string name="password">Açar sözi</string>
+    <string name="login">Girmek</string>
+    <string name="chats">Hat alyşmak</string>
+    <string name="project_details">Proýektiň maglumatlary</string>
+    <string name="status">Status</string>
+    <string name="lest_time">Galan wagt</string>
+    <string name="start">Başlamak</string>
+    <string name="task_details">Tabşyryk barada maglumat</string>
+    <string name="add_checklist">Iş goşmak</string>
+    <string name="send">Ugratmak</string>
+    <string name="images">Suratlar</string>
+    <string name="done">Dowam et</string>
+    <string name="profile">Profil</string>
+    <string name="notifications">Habar</string>
+    <string name="language">Dil</string>
+    <string name="log_out">Bыйти</string>
+    <string name="select">Saýlamak</string>
+    <string name="workers">Işgärler</string>
+    <string name="create_new_group">Täze topar döretmek</string>
+
 
 </resources>

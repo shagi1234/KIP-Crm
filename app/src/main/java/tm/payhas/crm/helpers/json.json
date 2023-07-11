@@ -2,13 +2,9 @@
   "statusCode": 200,
   "success": true,
   "data": {
-    "type": "other",
-    "color": null,
-    "size": 37,
-    "fileName": "a_Galogenler.pptx",
-    "fileUrl": "56bd0375c4c2ab72274767508a8d1f/7j1f9lO8gAYLI78Naq3Da_galogenler.pptx",
-    "directoryUrl": "56bd0375c4c2ab72274767508a8d1f",
-    "createdAt": "2023-06-29T16:16:32.870Z",
-    "deletedAt": null
+    "url": "messages/cbec3dcd-f9c0-4fde-9a7d-53c3871d15b8.pptx",
+    "size": 187698,
+    "type": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "originalFileName": "a_Galogenler-1.pptx"
   }
 }

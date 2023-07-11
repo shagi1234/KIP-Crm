@@ -1,5 +1,7 @@
 package tm.payhas.crm.helpers;
 
+import static android.content.Context.VIBRATOR_SERVICE;
+
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
@@ -9,6 +11,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
@@ -36,6 +40,18 @@ public class StaticMethods {
     public static int statusBarHeight;
     public static int navigationBarHeight;
     public static Toast generalToast;
+
+    public static void vibrator(int vibrMilliseconds, Context context) {
+        if (context == null) return;
+        Vibrator vibrator;
+        vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= 26) {
+            vibrator.vibrate(VibrationEffect.createOneShot(vibrMilliseconds, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            vibrator.vibrate(vibrMilliseconds);
+        }
+    }
 
     public static void setBackgroundDrawable(Context context, View view, int color, int borderColor, int corner, boolean isOval, int border) {
         if (context == null) return;

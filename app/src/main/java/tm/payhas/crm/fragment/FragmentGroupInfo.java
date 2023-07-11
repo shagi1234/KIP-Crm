@@ -79,7 +79,7 @@ public class FragmentGroupInfo extends Fragment {
     private void setGroupInfo() {
         Picasso.get().load(BASE_PHOTO + groupAvatar).placeholder(R.color.primary).into(b.groupAvatar);
         b.groupName.setText(groupName);
-        b.participants.setText(String.valueOf(memberCount));
+        b.participants.setText(String.valueOf(memberCount) + R.string.group_member);
     }
 
     private void setUpHelpers() {

@@ -4,7 +4,7 @@ public class DataAttachment {
 
     private String type;
     private String duration;
-    private int size;
+    private Integer size = null;
     private String fileUrl;
     private String fileName;
 

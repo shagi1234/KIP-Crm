@@ -7,7 +7,9 @@ import static tm.payhas.crm.helpers.Common.normalDate;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +24,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -158,6 +159,13 @@ public class AdapterNews extends RecyclerView.Adapter<AdapterNews.ViewHolder> {
         private void setInfo(DataNews oneNews) {
             initListeners(oneNews);
             setImagesList(oneNews.getAttachments());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                newsTitle.setText(Html.fromHtml(oneNews.getTitle(), Html.FROM_HTML_MODE_COMPACT));
+                newsDetails.setText(Html.fromHtml(oneNews.getContent(), Html.FROM_HTML_MODE_COMPACT));
+            } else {
+                newsTitle.setText(Html.fromHtml(oneNews.getTitle()));
+                newsDetails.setText(Html.fromHtml(oneNews.getContent()));
+            }
             newsTitle.setText(oneNews.getTitle());
             newsDetails.setText(oneNews.getContent());
             Picasso.get().load(BASE_PHOTO + oneNews.getAuthor().getAvatar()).placeholder(R.color.primary).into(authorAvatar);

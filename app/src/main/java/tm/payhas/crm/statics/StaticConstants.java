@@ -1,5 +1,7 @@
 package tm.payhas.crm.statics;
 
+import android.media.MediaPlayer;
+
 public class StaticConstants {
     public static String APPLICATION_DIR_NAME = "CRM";
     public static String FILES_DIR = "/Files/";
@@ -45,6 +47,8 @@ public class StaticConstants {
     // Dashboard enums
     public static final String NEWS = "news";
     public static final String HOLIDAYS = "holiday";
+
+    public static MediaPlayer MEDIA_PLAYER = new MediaPlayer();
 
 }
 

@@ -1,6 +1,7 @@
 package tm.payhas.crm.fragment;
 
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
+import static tm.payhas.crm.helpers.Common.addFragment;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
@@ -16,10 +17,10 @@ import androidx.fragment.app.Fragment;
 
 import tm.payhas.crm.R;
 import tm.payhas.crm.databinding.FragmentProfileBinding;
-import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.interfaces.PasswordInterface;
 import tm.payhas.crm.preference.AccountPreferences;
 
-public class FragmentProfile extends Fragment {
+public class FragmentProfile extends Fragment implements PasswordInterface {
     private FragmentProfileBinding b;
     private AccountPreferences accountPreferences;
 
@@ -34,8 +35,6 @@ public class FragmentProfile extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
     }
 
     @Override
@@ -63,7 +62,12 @@ public class FragmentProfile extends Fragment {
         setInfo();
         setBackground();
         initListeners();
+        setSwitch();
         return b.getRoot();
+    }
+
+    private void setSwitch() {
+        b.passwordSwitcher.setChecked(!accountPreferences.getPassword().equals(""));
     }
 
     private void setInfo() {
@@ -74,9 +78,11 @@ public class FragmentProfile extends Fragment {
     private void initListeners() {
         b.profileDetails.setOnClickListener(view -> {
             b.profileDetails.setEnabled(false);
-            Common.addFragment(mainFragmentManager, R.id.main_content, FragmentUserInfo.newInstance(accountPreferences.getAuthorId()));
+            addFragment(mainFragmentManager, R.id.main_content, FragmentUserInfo.newInstance(accountPreferences.getAuthorId()));
             new Handler().postDelayed(() -> b.profileDetails.setEnabled(true), 200);
         });
+        b.layPin.setOnClickListener(view -> addFragment(mainFragmentManager, R.id.main_content, FragmentChangePassword.newInstance(true, false)));
+        b.passwordSwitcher.setOnClickListener(view -> addFragment(mainFragmentManager, R.id.main_content, FragmentChangePassword.newInstance(true, true)));
     }
 
     private void setBackground() {
@@ -85,5 +91,10 @@ public class FragmentProfile extends Fragment {
         setBackgroundDrawable(getContext(), b.pinImage, R.color.profile_icon_bg, 0, 8, false, 0);
         setBackgroundDrawable(getContext(), b.bgProfileDetails, R.color.profile_icon_bg, 0, 8, false, 0);
         setBackgroundDrawable(getContext(), b.layLogout, R.color.profile_icon_bg, 0, 8, false, 0);
+    }
+
+    @Override
+    public void setEnabled() {
+        b.passwordSwitcher.setChecked(!accountPreferences.getPassword().equals(""));
     }
 }

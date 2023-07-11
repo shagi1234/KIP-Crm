@@ -39,10 +39,9 @@
                 android:layout_marginVertical="7dp"
                 android:fontFamily="@font/inter_regular"
                 android:gravity="center"
-                android:text="Profile"
+                android:text="@string/profile"
                 android:textColor="@color/text_color"
-                android:textSize="16sp"
-                tools:ignore="HardcodedText" />
+                android:textSize="16sp" />
 
         </FrameLayout>
 
@@ -94,9 +93,9 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/edt_bg"
                             android:fontFamily="@font/inter_regular"
-                            android:text="Aman"
                             android:paddingHorizontal="10dp"
                             android:paddingVertical="15.5dp"
+                            android:text="Aman"
                             android:textColor="@color/text_color"
                             android:textColorHint="@color/edt_hint"
                             android:textSize="12sp" />
@@ -124,9 +123,9 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/edt_bg"
                             android:fontFamily="@font/inter_regular"
-                            android:text="Amanow"
                             android:paddingHorizontal="10dp"
                             android:paddingVertical="15.5dp"
+                            android:text="Amanow"
                             android:textColor="@color/text_color"
                             android:textColorHint="@color/edt_hint"
                             android:textSize="12sp" />
@@ -154,9 +153,9 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/edt_bg"
                             android:fontFamily="@font/inter_regular"
-                            android:text="113.04.2003"
                             android:paddingHorizontal="10dp"
                             android:paddingVertical="15.5dp"
+                            android:text="113.04.2003"
                             android:textColor="@color/text_color"
                             android:textColorHint="@color/edt_hint"
                             android:textSize="12sp" />
@@ -184,9 +183,9 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/edt_bg"
                             android:fontFamily="@font/inter_regular"
-                            android:text="example@gmail.com"
                             android:paddingHorizontal="10dp"
                             android:paddingVertical="15.5dp"
+                            android:text="example@gmail.com"
                             android:textColor="@color/text_color"
                             android:textColorHint="@color/edt_hint"
                             android:textSize="12sp" />
@@ -214,9 +213,9 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/edt_bg"
                             android:fontFamily="@font/inter_regular"
-                            android:text="65804101"
                             android:paddingHorizontal="10dp"
                             android:paddingVertical="15.5dp"
+                            android:text="65804101"
                             android:textColor="@color/text_color"
                             android:textColorHint="@color/edt_hint"
                             android:textSize="12sp" />

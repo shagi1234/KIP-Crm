@@ -3,15 +3,22 @@ package tm.payhas.crm.fragment;
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.helpers.Common.addFragment;
 import static tm.payhas.crm.helpers.Common.normalDate;
-import static tm.payhas.crm.helpers.StaticMethods.getPath;
+import static tm.payhas.crm.helpers.FileUtil.copyFileStream;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
+import static tm.payhas.crm.helpers.StaticMethods.showToast;
 import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
+import static tm.payhas.crm.statics.StaticConstants.APPLICATION_DIR_NAME;
+import static tm.payhas.crm.statics.StaticConstants.FILES_DIR;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +28,12 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -32,7 +42,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tm.payhas.crm.R;
-import tm.payhas.crm.activity.ActivityMain;
 import tm.payhas.crm.adapters.AdapterChecklist;
 import tm.payhas.crm.adapters.AdapterSelectedUsers;
 import tm.payhas.crm.adapters.AdapterTaskComments;
@@ -40,9 +49,11 @@ import tm.payhas.crm.api.request.RequestTaskComment;
 import tm.payhas.crm.api.response.ResponseOneTask;
 import tm.payhas.crm.api.response.ResponseSingleFile;
 import tm.payhas.crm.api.response.ResponseTaskComment;
+import tm.payhas.crm.dataModels.DataAttachment;
+import tm.payhas.crm.dataModels.DataFile;
 import tm.payhas.crm.dataModels.DataTask;
 import tm.payhas.crm.helpers.Common;
-import tm.payhas.crm.interfaces.ChatRoomInterface;
+import tm.payhas.crm.helpers.FileUtil;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentOneTask extends Fragment {
@@ -122,7 +133,7 @@ public class FragmentOneTask extends Fragment {
             }
         });
         b.btnSendComment.setOnClickListener(view -> {
-            sendComment();
+            sendComment(2, null);
             b.infoInput.setText("");
         });
         b.addChecklistClicker.setOnClickListener(view -> addFragment(mainFragmentManager, R.id.main_content, FragmentAddChecklist.newInstance(taskId, projectId)));
@@ -148,44 +159,102 @@ public class FragmentOneTask extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (data != null) {
-                Uri fileUri = data.getData();
-                if (fileUri != null) {
-                    String filePath = getPath(getContext(), fileUri);
-                    if (filePath != null) {
-                        File file = new File(filePath);
-                        uploadFile(file);
-                    }
+                getFile(data);
+            }
+        }
+    }
+
+    public void getFile(Intent data) {
+        if (getActivity() == null) return;
+        String filename;
+        String fullFilePath = "";
+        File resultFile = null;
+        int fileSize = 0;
+
+        try {
+            Uri uri = data.getData();
+
+            String mimeType = getActivity().getContentResolver().getType(uri);
+
+            if (mimeType == null) {
+                String path = FileUtil.getPath(getContext(), uri);
+
+                if (path == null) {
+                    filename = FilenameUtils.getName(uri.toString());
+                } else {
+                    File file = new File(path);
+                    filename = file.getName();
+                }
+            } else {
+                Uri returnUri = data.getData();
+
+                Cursor returnCursor = getActivity().getContentResolver().query(returnUri, null, null, null, null);
+                int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+                returnCursor.moveToFirst();
+                filename = returnCursor.getString(nameIndex);
+
+                String size = Long.toString(returnCursor.getLong(sizeIndex));
+                fileSize = Integer.parseInt(size);
+
+
+            }
+            String sourcePath = Environment.getExternalStorageDirectory() + File.separator + APPLICATION_DIR_NAME + FILES_DIR;
+
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                getActivity().getApplicationContext().getExternalFilesDir("Salam/Files/");
+                resultFile = new File(getActivity().getApplicationContext().getExternalFilesDir("Salam/Files/"), filename);
+                copyFileStream(resultFile, uri, getContext());
+                fullFilePath = resultFile.getPath();
+
+            } else {
+                try {
+                    resultFile = new File(sourcePath + filename);
+                    fullFilePath = sourcePath + filename;
+                    copyFileStream(resultFile, uri, getContext());
+
+                } catch (Exception e) {
+                    Log.e("error", "onActivityResult: " + e.getMessage());
                 }
             }
+
+
+            if (resultFile != null && resultFile.exists()) {
+
+                int finalFileSize = fileSize;
+                String finalFullFilePath = fullFilePath;
+                File finalResultFile = resultFile;
+                uploadFile(finalResultFile);
+
+
+            } else {
+                showToast(getActivity(), "Not found");
+            }
+
+        } catch (Exception e) {
+            Log.e("TAG_error", "onActivityResult: " + e.getMessage());
         }
     }
 
     private void uploadFile(File file) {
         MultipartBody.Part fileToUpload = null;
-        RequestBody requestFile =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"),
-                        new File(file.getPath())
-                );
+        RequestBody requestFile = RequestBody.create(
+                MediaType.parse(FileUtil.getMimeType(file)),
+                file);
         try {
             fileToUpload = MultipartBody.Part.createFormData("fileUrl", URLEncoder.encode(file.getPath(), "utf-8"), requestFile);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        RequestBody fileUrl = RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(fileToUpload));
+        RequestBody originalFileName = RequestBody.create(MediaType.parse("multipart/form-data"), file.getName());
 
-        Call<ResponseSingleFile> upload = Common.getApi().uploadFileToTask(fileToUpload);
+        Call<ResponseSingleFile> upload = Common.getApi().uploadFileToTask(originalFileName, fileToUpload);
         upload.enqueue(new Callback<ResponseSingleFile>() {
             @Override
             public void onResponse(@NonNull Call<ResponseSingleFile> call, @NonNull Response<ResponseSingleFile> response) {
                 if (response.isSuccessful()) {
-                    Fragment chatRoom = ActivityMain.mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
-
-                    if (chatRoom instanceof ChatRoomInterface) {
-                        assert response.body() != null;
-                        ((ChatRoomInterface) chatRoom).newImageImageUrl(response.body().getData());
-                    }
-                    sendComment();
+                    sendComment(1, response.body().getData());
                     b.main.setClickable(false);
                 }
             }
@@ -215,9 +284,20 @@ public class FragmentOneTask extends Fragment {
         });
     }
 
-    private void sendComment() {
+    private void sendComment(int i, DataFile data) {
         RequestTaskComment requestTaskComment = new RequestTaskComment();
-        requestTaskComment.setText(b.infoInput.getText().toString());
+        if (i == 1) {
+            requestTaskComment.setText("file");
+            ArrayList<DataAttachment> attachments = new ArrayList<>();
+            DataAttachment attachment = new DataAttachment();
+            attachment.setFileUrl(data.getUrl());
+            attachment.setFileName(data.getOriginalFileName());
+            attachments.add(attachment);
+            requestTaskComment.setFiles(attachments);
+        } else if (i == 2) {
+            requestTaskComment.setText(b.infoInput.getText().toString());
+        }
+
         requestTaskComment.setTaskId(taskId);
         Call<ResponseTaskComment> call = Common.getApi().createComment(ac.getToken(), requestTaskComment);
         call.enqueue(new Callback<ResponseTaskComment>() {

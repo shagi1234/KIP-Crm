@@ -5,8 +5,10 @@ import static tm.payhas.crm.helpers.Common.normalDate;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -146,8 +148,13 @@ public class FragmentDashboardItem extends Fragment {
             }
 
             private void setInfo(DataNews oneNews) {
-                b.newsTitle.setText(oneNews.getTitle());
-                b.newsDetails.setText(oneNews.getContent());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    b.newsTitle.setText(Html.fromHtml(oneNews.getTitle(), Html.FROM_HTML_MODE_COMPACT));
+                    b.newsDetails.setText(Html.fromHtml(oneNews.getContent(), Html.FROM_HTML_MODE_COMPACT));
+                } else {
+                    b.newsTitle.setText(Html.fromHtml(oneNews.getTitle()));
+                    b.newsDetails.setText(Html.fromHtml(oneNews.getContent()));
+                }
                 Picasso.get().load(BASE_PHOTO + ac.getPrefAvatarUrl()).placeholder(R.color.primary).into(b.commentMyAvatar);
                 Picasso.get().load(BASE_PHOTO + oneNews.getAuthor().getAvatar()).placeholder(R.color.primary).into(b.newsAuthorImage);
                 b.newsTime.setText(normalDate(oneNews.getCreatedAt()));

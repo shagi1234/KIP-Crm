@@ -101,7 +101,7 @@ public class FragmentMessages extends Fragment {
     }
 
     private void setViewPager() {
-        adapterViewPager.addFragment(new FragmentContacts(), getResources().getString(R.string.friends));
+        adapterViewPager.addFragment(new FragmentContacts(), getResources().getString(R.string.workers));
         adapterViewPager.addFragment(new FragmentGroups(), getResources().getString(R.string.group));
         b.tabLayout.setupWithViewPager(b.viewPager);
         b.viewPager.setAdapter(adapterViewPager);

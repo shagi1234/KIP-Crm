@@ -40,5 +40,9 @@
     <color name="add_image_background">#F0F0F0</color>
     <color name="group_background">#E9E9E9</color>
     <color name="progress_background">#D9D9D9</color>
+    <color name="color_var1">#FFFF9333</color>
+    <color name="color_var2">#FFCD63FF</color>
+    <color name="color_var3">#FF6FC03D</color>
+    <color name="color_var4">#FF4FB7F1</color>
 
 </resources>

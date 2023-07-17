@@ -20,7 +20,9 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 import tm.payhas.crm.api.request.RequestComment;
 import tm.payhas.crm.api.request.RequestCreateTask;
+import tm.payhas.crm.api.request.RequestFcmToken;
 import tm.payhas.crm.api.request.RequestNewChecklist;
+import tm.payhas.crm.api.request.RequestNewFolder;
 import tm.payhas.crm.api.request.RequestNewProject;
 import tm.payhas.crm.api.request.RequestNews;
 import tm.payhas.crm.api.request.RequestTaskComment;
@@ -32,8 +34,10 @@ import tm.payhas.crm.api.response.ResponseDashboard;
 import tm.payhas.crm.api.response.ResponseDashboardItem;
 import tm.payhas.crm.api.response.ResponseDataFolder;
 import tm.payhas.crm.api.response.ResponseDeleteFile;
+import tm.payhas.crm.api.response.ResponseFcmToken;
 import tm.payhas.crm.api.response.ResponseGroupInfo;
 import tm.payhas.crm.api.response.ResponseManyFiles;
+import tm.payhas.crm.api.response.ResponseNewFolder;
 import tm.payhas.crm.api.response.ResponseOneMessage;
 import tm.payhas.crm.api.response.ResponseOneProject;
 import tm.payhas.crm.api.response.ResponseOneTask;
@@ -166,6 +170,14 @@ public interface Services {
     @Multipart
     @POST("single/upload/tasks")
     Call<ResponseSingleFile> uploadFileToTask(@Part("originalFileName") RequestBody originalName, @Part MultipartBody.Part fileUrl);
+
+    @Headers({"Content-Type: application/json"})
+    @PUT("auth/token")
+    Call<ResponseFcmToken> setFcmToken(@Header("Authorization") String token, @Body RequestFcmToken requestFcmToken);
+
+    @Headers({"Content-Type: application/json"})
+    @POST("filestorage/folder")
+    Call<ResponseNewFolder> createNewFolder(@Body RequestNewFolder requestNewFolder);
 
 
 }

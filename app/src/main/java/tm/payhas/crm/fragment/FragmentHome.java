@@ -4,7 +4,6 @@ import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.helpers.Common.addFragment;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
-import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,14 +18,19 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import tm.payhas.crm.R;
 import tm.payhas.crm.adapters.AdapterBirthday;
 import tm.payhas.crm.adapters.AdapterNews;
 import tm.payhas.crm.api.RetrofitCallback;
+import tm.payhas.crm.api.request.RequestFcmToken;
 import tm.payhas.crm.api.response.ResponseDashboard;
+import tm.payhas.crm.api.response.ResponseFcmToken;
 import tm.payhas.crm.databinding.FragmentHomeBinding;
 import tm.payhas.crm.helpers.Common;
-
+import tm.payhas.crm.preference.AccountPreferences;
+import tm.payhas.crm.preference.FcmPreferences;
 
 public class FragmentHome extends Fragment {
 
@@ -34,23 +38,17 @@ public class FragmentHome extends Fragment {
     private AdapterNews adapterNews;
     private AdapterBirthday adapterBirthday;
     private AdapterBirthday adapterHolidays;
-    private int page;
+    private AccountPreferences ac;
+    private FcmPreferences fcmPreferences;
     private final int limit = 10;
 
-
     public static FragmentHome newInstance() {
-        FragmentHome fragment = new FragmentHome();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
+        return new FragmentHome();
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
     }
 
     @Override
@@ -60,15 +58,41 @@ public class FragmentHome extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        b = FragmentHomeBinding.inflate(inflater);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        b = FragmentHomeBinding.inflate(inflater, container, false);
+        setHelpers();
         setBackground();
+        setFcmToken();
         initListeners();
         setRecyclerViews();
         getDashboardInfo();
         return b.getRoot();
+    }
+
+    private void setHelpers() {
+        ac = new AccountPreferences(getContext());
+        fcmPreferences = new FcmPreferences(getContext());
+    }
+
+    private void setFcmToken() {
+        if (!fcmPreferences.getIsSent()) {
+            RequestFcmToken requestFcmToken = new RequestFcmToken();
+            requestFcmToken.setFcmtoken(fcmPreferences.getFcm());
+            Common.getApi().setFcmToken(ac.getToken(), requestFcmToken).enqueue(new Callback<ResponseFcmToken>() {
+                @Override
+                public void onResponse(Call<ResponseFcmToken> call, Response<ResponseFcmToken> response) {
+                    if (response.isSuccessful()) {
+                        Log.e("FCM_TOKEN", "onResponse: " + "Succes");
+                        fcmPreferences.setIsSent(true);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseFcmToken> call, Throwable t) {
+                    Log.e("FCM_TOKEN", "onFailure: " + t.getMessage());
+                }
+            });
+        }
     }
 
     private void initListeners() {
@@ -76,17 +100,18 @@ public class FragmentHome extends Fragment {
             b.linearProgressBar.setVisibility(View.VISIBLE);
             getDashboardInfo();
         });
+
         b.addNews.setOnClickListener(view -> {
             b.addNews.setEnabled(false);
             addFragment(mainFragmentManager, R.id.main_content, FragmentAddNews.newInstance());
             new Handler().postDelayed(() -> b.addNews.setEnabled(true), 200);
         });
+
         b.searchCancel.setOnClickListener(view -> b.searchInput.setText(""));
+
         b.searchInput.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -100,9 +125,7 @@ public class FragmentHome extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+            public void afterTextChanged(Editable editable) {}
         });
     }
 
@@ -124,8 +147,7 @@ public class FragmentHome extends Fragment {
 
     private void getDashboardInfo() {
         String search = b.searchInput.getText().toString();
-        Call<ResponseDashboard> call = Common.getApi().getDashboard(search, 1, limit);
-        call.enqueue(new RetrofitCallback<ResponseDashboard>() {
+        Common.getApi().getDashboard(search, 1, limit).enqueue(new RetrofitCallback<ResponseDashboard>() {
             @Override
             public void onResponse(ResponseDashboard response) {
                 if (response != null && response.isSuccess()) {
@@ -150,13 +172,11 @@ public class FragmentHome extends Fragment {
         });
     }
 
-
     private void setRecyclerBirthday() {
         adapterBirthday = new AdapterBirthday(getContext());
         b.rvBirthdays.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         b.rvBirthdays.setAdapter(adapterBirthday);
     }
-
 
     private void setRecyclerNews() {
         adapterNews = new AdapterNews(getContext());

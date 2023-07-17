@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="22dp"
+    android:background="@drawable/bg_radius_10"
+    android:backgroundTint="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="22dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/inter_regular"
+        android:text="New Folder"
+        android:textColor="@color/text_color"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="22dp"
+        android:layout_marginVertical="10dp"
+        android:background="@drawable/input_folder_background"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/folder_name_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/color_transparent"
+            android:fontFamily="@font/inter_regular"
+            android:hint="write"
+            android:padding="10dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/folder_color"
+            android:layout_width="18sp"
+            android:layout_height="18sp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="15dp"
+            android:src="@color/color_var1"
+            app:riv_oval="true" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="22dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="10dp">
+
+                <View
+                    android:id="@+id/border_var1"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/border_color_selection"
+                    android:backgroundTint="@color/inactive_stroke" />
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/var_color1"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:padding="5dp"
+                    android:src="@color/color_var1"
+                    app:riv_oval="true" />
+
+            </FrameLayout>
+
+
+            <FrameLayout
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="10dp">
+
+                <View
+                    android:id="@+id/border_var2"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/border_color_selection"
+                    android:backgroundTint="@color/inactive_stroke"
+                    android:visibility="gone" />
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/var_color2"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:padding="5dp"
+                    android:src="@color/color_var2"
+                    app:riv_oval="true" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="10dp">
+
+                <View
+                    android:id="@+id/border_var3"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/border_color_selection"
+                    android:backgroundTint="@color/inactive_stroke"
+                    android:visibility="gone" />
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/var_color3"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:padding="5dp"
+                    android:src="@color/color_var3"
+                    app:riv_oval="true" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="10dp">
+
+                <View
+                    android:id="@+id/border_var4"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/border_color_selection"
+                    android:backgroundTint="@color/inactive_stroke"
+                    android:visibility="gone" />
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/var_color4"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:padding="5dp"
+                    android:src="@color/color_var4"
+                    app:riv_oval="true" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginHorizontal="20dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/ripple"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/rubik_regular"
+            android:padding="13sp"
+            android:text="Cancel"
+            android:textColor="@color/error_color"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/done_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/ripple"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/rubik_regular"
+            android:padding="13sp"
+            android:text="OK"
+            android:textColor="@color/primary"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+
+</LinearLayout>

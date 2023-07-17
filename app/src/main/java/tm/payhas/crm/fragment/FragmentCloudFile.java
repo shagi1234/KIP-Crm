@@ -1,5 +1,6 @@
 package tm.payhas.crm.fragment;
 
+import static android.view.Gravity.CENTER;
 import static tm.payhas.crm.adapters.AdapterCloud.CLOUD_TYPE_FILE;
 import static tm.payhas.crm.helpers.FileUtil.copyFileStream;
 import static tm.payhas.crm.helpers.FileUtil.getPath;
@@ -14,9 +15,12 @@ import static tm.payhas.crm.statics.StaticConstants.FILES_DIR;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +33,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -74,6 +80,7 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
     private AccountPreferences ac;
     private static int REQUEST_CODE = 1;
     private static int REQUEST_CODE_PERMISSION = 231;
+    private Dialog dialog;
 
     public static FragmentCloudFile newInstance(String fileUrl) {
         FragmentCloudFile fragment = new FragmentCloudFile();
@@ -145,14 +152,10 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
     private void initListeners() {
         b.deleteCommit.setOnClickListener(view -> {
             b.deleteCommit.setEnabled(true);
-            b.linearProgressBar.setVisibility(View.VISIBLE);
-            b.recCloudFile.setAlpha(0.5f);
-            removeFile();
-            getFolderFiles();
-            b.deleteCommit.setVisibility(View.GONE);
-            b.searchBox.setVisibility(View.VISIBLE);
-            adapterCloudFolder.setSelectable(false);
-            ac.setFolderSelectable(false);
+
+            showDialog();
+
+
             new Handler().postDelayed(() -> b.deleteCommit.setEnabled(true), 200);
         });
         b.back.setOnClickListener(view -> {
@@ -210,7 +213,35 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
         }
     }
 
+    private void showDialog() {
+        dialog = new Dialog(getContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.delete_dialog);
+
+        TextView done = dialog.findViewById(R.id.done_button);
+        TextView cancel = dialog.findViewById(R.id.cancel_button);
+
+        cancel.setOnClickListener(view -> dialog.dismiss());
+
+        done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeFile();
+
+            }
+        });
+
+
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.getWindow().setGravity(CENTER);
+    }
+
     private void removeFile() {
+        b.linearProgressBar.setVisibility(View.VISIBLE);
+        b.recCloudFile.setAlpha(0.5f);
         for (int i = 0; i < selectedArray.size(); i++) {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("fileUrl", selectedArray.get(i).getFileUrl());
@@ -229,6 +260,12 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
             });
         }
         selectedArray.clear();
+        b.deleteCommit.setVisibility(View.GONE);
+        b.searchBox.setVisibility(View.VISIBLE);
+        adapterCloudFolder.setSelectable(false);
+        ac.setFolderSelectable(false);
+        dialog.dismiss();
+        getFolderFiles();
 
     }
 

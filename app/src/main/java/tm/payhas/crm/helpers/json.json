@@ -1,10 +1,15 @@
-{
-  "statusCode": 200,
-  "success": true,
-  "data": {
-    "url": "messages/cbec3dcd-f9c0-4fde-9a7d-53c3871d15b8.pptx",
-    "size": 187698,
-    "type": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    "originalFileName": "a_Galogenler-1.pptx"
-  }
+"data": {
+"id": 1,
+"password": "$2a$05$MLGMYpkJA8IMZuJXuyYwnu36v5AXqpIfZcZh/X4iC1Ldnw0.ON6xu",
+"inActive": false,
+"userId": 1,
+"fcmtoken": [
+"hello",
+"world",
+"hello world"
+],
+"refreshToken": null,
+"createdAt": "2023-07-03T07:13:26.270Z",
+"deletedAt": null
+}
 }

@@ -3,6 +3,9 @@ package tm.payhas.crm.preference;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
+import com.google.gson.Gson;
 
 public class AccountPreferences {
 
@@ -12,6 +15,7 @@ public class AccountPreferences {
     private final Context _context;
     int PRIVATE_MODE = 0;
     @SuppressLint("StaticFieldLeak")
+    private static final String NOTIFICATION = "_notification";
     private static AccountPreferences accountPreferences;
     private static final String PREF_NAME = "Crm_account";
     public static final String LANG_RU = "ru";
@@ -264,6 +268,25 @@ public class AccountPreferences {
     public String getPassword() {
 
         return getString(PREF_USER_PASSWORD);
+    }
+
+    public void saveIds(int[] list) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(_context);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString(NOTIFICATION, json);
+        editor.apply();
+
+    }
+
+
+    public int[] getNotificationIds() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(_context);
+        Gson gson = new Gson();
+        String json = prefs.getString(NOTIFICATION, null);
+
+        return gson.fromJson(json, int[].class);
     }
 
     protected String getString(String key, String defaultValue) {

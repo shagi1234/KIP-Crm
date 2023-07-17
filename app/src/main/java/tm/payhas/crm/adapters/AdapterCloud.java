@@ -12,7 +12,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +49,7 @@ public class AdapterCloud extends RecyclerView.Adapter<AdapterCloud.ViewHolder> 
         this.type = type;
 
     }
+
     @SuppressLint("NotifyDataSetChanged")
     public void setAll(ArrayList<DataFolder> all) {
         this.all = all;
@@ -90,6 +90,7 @@ public class AdapterCloud extends RecyclerView.Adapter<AdapterCloud.ViewHolder> 
 
         LinearLayout main;
         TextView fileName;
+        TextView fileSize;
         CheckBox checkBox;
         ImageView folder;
         ImageView downloader;
@@ -100,6 +101,7 @@ public class AdapterCloud extends RecyclerView.Adapter<AdapterCloud.ViewHolder> 
             main = itemView.findViewById(R.id.cloud_file);
             checkBox = itemView.findViewById(R.id.checkbox);
             fileName = itemView.findViewById(R.id.file_name);
+            fileSize = itemView.findViewById(R.id.file_size);
             folder = itemView.findViewById(R.id.folder);
             downloader = itemView.findViewById(R.id.file_downloader);
 
@@ -109,18 +111,21 @@ public class AdapterCloud extends RecyclerView.Adapter<AdapterCloud.ViewHolder> 
         public void bind(DataFolder oneFolder) {
 
             if (type == CLOUD_TYPE_FOLDER) {
+                fileSize.setVisibility(View.GONE);
                 int folderColor = Color.parseColor(oneFolder.getColor());
-                folder.setColorFilter(folderColor, android.graphics.PorterDuff.Mode.MULTIPLY);
+                folder.setColorFilter(folderColor);
             } else if (type == CLOUD_TYPE_FILE) {
+                fileSize.setVisibility(View.VISIBLE);
                 setFileInfo(oneFolder);
                 downloader.setVisibility(View.VISIBLE);
             }
 
             if (type == CLOUD_TYPE_FILE) {
+                fileSize.setText(String.valueOf(Integer.parseInt(oneFolder.getSize())/1000)+"KB");
                 downloader.setOnClickListener(view -> {
                     downloader.setEnabled(false);
                     init(context);
-                    getDownloadStatus(enqueueDownload(BASE_URL +"/"+ oneFolder.getFileUrl(), oneFolder.getFileName()));
+                    getDownloadStatus(enqueueDownload(BASE_URL + "/" + oneFolder.getFileUrl(), oneFolder.getFileName()));
                     new Handler().postDelayed(() -> downloader.setEnabled(true), 200);
                 });
             }
@@ -184,7 +189,6 @@ public class AdapterCloud extends RecyclerView.Adapter<AdapterCloud.ViewHolder> 
         private void setFileInfo(DataFolder oneFolder) {
             folder.setImageResource(R.drawable.ic_documenyt_file);
             fileName.setText(oneFolder.getFileName());
-
         }
     }
 }

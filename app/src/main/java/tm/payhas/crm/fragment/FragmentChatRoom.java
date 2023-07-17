@@ -208,7 +208,6 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     private void setWaveForm() {
         waveformRecorder = new WaveformRecorder(getContext());
         waveformRecorder.setOnWaveformUpdateListener(this::onWaveformUpdate);
-
     }
 
 
@@ -224,6 +223,9 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
 
     @SuppressLint("SetTextI18n")
     private void setRoom() {
+        if (roomId == 0) {
+            b.noMessages.setVisibility(VISIBLE);
+        }
         if (type == PRIVATE) {
             if (isSet) {
                 b.recChatScreen.smoothScrollToPosition(1);
@@ -259,6 +261,9 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
             public void onResponse(Call<ResponseRoomMessages> call, Response<ResponseRoomMessages> response) {
                 if (response.isSuccessful()) {
                     adapterSingleChat.setMessages(response.body().getData());
+                    if (response.body().getData().size() == 0) {
+
+                    }
                     Log.e(TAG, "onResponse: " + response.body().getData().size());
                 }
             }

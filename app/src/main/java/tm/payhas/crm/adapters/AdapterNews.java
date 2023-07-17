@@ -10,7 +10,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +32,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tm.payhas.crm.R;
+import tm.payhas.crm.adapters.AdapterDashboardComments;
+import tm.payhas.crm.adapters.AdapterNewsImages;
+import tm.payhas.crm.adapters.AdapterNewsIndicator;
 import tm.payhas.crm.api.request.RequestComment;
 import tm.payhas.crm.api.response.ResponseComment;
 import tm.payhas.crm.dataModels.DataComments;
@@ -48,7 +50,6 @@ public class AdapterNews extends RecyclerView.Adapter<AdapterNews.ViewHolder> {
     private final Context context;
     private ArrayList<DataNews> news = new ArrayList<>();
     private AccountPreferences ac;
-
 
     public AdapterNews(Context context) {
         this.context = context;
@@ -69,8 +70,7 @@ public class AdapterNews extends RecyclerView.Adapter<AdapterNews.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
-        holder.bind();
+        holder.bind(news.get(position));
     }
 
     @Override
@@ -123,13 +123,8 @@ public class AdapterNews extends RecyclerView.Adapter<AdapterNews.ViewHolder> {
             adapterNewsImages = new AdapterNewsImages(itemView.getContext());
             adapterNewsIndicator = new AdapterNewsIndicator(itemView.getContext());
 
-        }
-
-        public void bind() {
-            Log.e("AdapterNews", "bind: " + news.size());
             viewPagerImages.setAdapter(adapterNewsImages);
             rvIndicator.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-
             rvIndicator.setAdapter(adapterNewsIndicator);
             rvIndicator.setItemAnimator(new NoItemAnimationRV());
 
@@ -140,8 +135,9 @@ public class AdapterNews extends RecyclerView.Adapter<AdapterNews.ViewHolder> {
                     adapterNewsIndicator.setCurrentPosition(position);
                 }
             });
+        }
 
-            DataNews oneNews = news.get(getAdapterPosition());
+        public void bind(DataNews oneNews) {
             setListeners(oneNews.getId());
             setInfo(oneNews);
         }
@@ -153,11 +149,14 @@ public class AdapterNews extends RecyclerView.Adapter<AdapterNews.ViewHolder> {
                 new Handler().postDelayed(() -> clickableLayout.setEnabled(true), 200);
             });
 
-
+            sendComment.setOnClickListener(view -> {
+                sendComment(id);
+                commentInput.setText("");
+            });
         }
 
+        @SuppressLint("SetTextI18n")
         private void setInfo(DataNews oneNews) {
-            initListeners(oneNews);
             setImagesList(oneNews.getAttachments());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 newsTitle.setText(Html.fromHtml(oneNews.getTitle(), Html.FROM_HTML_MODE_COMPACT));
@@ -173,33 +172,19 @@ public class AdapterNews extends RecyclerView.Adapter<AdapterNews.ViewHolder> {
             authorNameSurname.setText(oneNews.getAuthor().getPersonalData().getName() + "  " + oneNews.getAuthor().getPersonalData().getSurname());
             Picasso.get().load(BASE_PHOTO + ac.getPrefAvatarUrl()).placeholder(R.color.primary).into(myAvatar);
             Picasso.get().load(BASE_PHOTO + oneNews.getAuthor().getAvatar()).placeholder(R.color.primary).into(authorAvatar);
-            if (oneNews.getComments() != null) {
-                if (oneNews.getComments().size() != 0) {
-                    setLastComment(oneNews.getComments().get(0));
-                }
+            if (oneNews.getComments() != null && oneNews.getComments().size() > 0) {
+                setLastComment(oneNews.getComments().get(0));
             } else {
                 lastCommentLayout.setVisibility(View.GONE);
             }
         }
 
-        private void initListeners(DataNews oneNews) {
-            sendComment.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    sendComment(oneNews.getId());
-                    commentInput.setText("");
-                }
-            });
-        }
-
-        @SuppressLint("SetTextI18n")
         private void setLastComment(DataComments comments) {
             lastCommentUserText.setText(comments.getText());
             lastCommentUserName.setText(comments.getAuthor().getPersonalData().getName() + "  " + comments.getAuthor().getPersonalData().getSurname());
             Picasso.get().load(BASE_PHOTO + comments.getAuthor().getAvatar()).placeholder(R.color.primary).into(lastCommentAvatar);
             lastCommentUserDate.setText(normalDate(comments.getCreatedAt()));
         }
-
 
         private void sendComment(int i) {
             RequestComment requestComment = new RequestComment();
@@ -212,22 +197,16 @@ public class AdapterNews extends RecyclerView.Adapter<AdapterNews.ViewHolder> {
                 @Override
                 public void onResponse(@NonNull Call<ResponseComment> call, @NonNull Response<ResponseComment> response) {
                     if (response.isSuccessful()) {
-                        if (adapterComment != null) {
-                            assert response.body() != null;
+                        if (adapterComment != null && response.body() != null) {
                             setLastComment(response.body().getData());
-                            if (response.body().getData() != null) {
-                                ((Comment) adapterComment).onNewComment(response.body().getData());
-                                adapterComment.notifyDataSetChanged();
-                            }
-
+                            ((Comment) adapterComment).onNewComment(response.body().getData());
+                            adapterComment.notifyDataSetChanged();
                         }
                     }
-
                 }
 
                 @Override
                 public void onFailure(Call<ResponseComment> call, Throwable t) {
-
                 }
             });
         }

@@ -597,7 +597,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
                         break;
                 }
             }
-            voiceInformation.setText(oneMessage.getAttachment().getSize()/1000+"KB");
+            voiceInformation.setText(oneMessage.getAttachment().getSize() / 1000 + "KB");
             time.setText(normalTime(oneMessage.getCreatedAt()));
         }
 
@@ -688,7 +688,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
                 menu.createPopUpMenu(itemView, oneMessage.getId(), oneMessage);
                 return true;
             });
-            voiceInformation.setText(oneMessage.getAttachment().getSize()/1000+"KB");
+            voiceInformation.setText(oneMessage.getAttachment().getSize() / 1000 + "KB");
             time.setText(normalTime(oneMessage.getCreatedAt()));
             playPause.setOnClickListener(view -> {
                 DataMessageTarget oneVoiceMessage = messages.get(getAdapterPosition());
@@ -931,8 +931,11 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
             });
             Picasso.get().load(BASE_URL + "/" + oneMessage.getAttachment().getFileUrl()).placeholder(R.color.primary).into(image);
             imageSentTime.setText(normalTime(oneMessage.getCreatedAt()));
-            int size = oneMessage.getAttachment().getSize();
-            imageSentSize.setText(String.valueOf(size / 1000) + "KB");
+            Integer size = oneMessage.getAttachment().getSize();
+            if (size != 0) {
+                // The size is available and not equal to zero
+                imageSentSize.setText(String.valueOf(size / 1000) + "KB");
+            }
         }
     }
 

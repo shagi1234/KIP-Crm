@@ -102,6 +102,11 @@ public class AdapterBirthday extends RecyclerView.Adapter<AdapterBirthday.ViewHo
             Picasso.get().load(BASE_PHOTO + birthday.getUser().getAvatar()).placeholder(R.color.primary).into(avatar);
             title.setText(birthday.getUser().getPersonalData().getName() + " " + birthday.getUser().getPersonalData().getSurname());
             date.setText(normalDate(birthday.getDate()));
+            clickablelayout.setOnClickListener(view -> {
+                clickablelayout.setEnabled(false);
+                addFragment(mainFragmentManager, R.id.main_content, FragmentDashboardItem.newInstance(birthday.getUser().getId()));
+                new Handler().postDelayed(() -> clickablelayout.setEnabled(true), 200);
+            });
         }
 
         public void bindHolidays(DataNews holiday) {

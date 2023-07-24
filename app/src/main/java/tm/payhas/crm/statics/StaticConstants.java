@@ -19,8 +19,6 @@ public class StaticConstants {
     //Task Statuses
     public static String NOT_STARTED = "notStarted";
     public static String IN_PROCESS = "inprocess";
-    public static String REVIEW = "review";
-    public static String PENDING = "pending";
     public static String FINISHED = "finished";
     //Priority
     public static String PRIMARY = "primary";

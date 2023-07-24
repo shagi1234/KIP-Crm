@@ -1,17 +1,13 @@
 package tm.payhas.crm.api.response;
 
-import java.util.ArrayList;
-
-import tm.payhas.crm.dataModels.DataProject;
-
 public class ResponseProjects {
-    private ArrayList<DataProject> data;
+    private DataAuthorProject data;
 
-    public ArrayList<DataProject> getData() {
+    public DataAuthorProject getData() {
         return data;
     }
 
-    public void setData(ArrayList<DataProject> data) {
+    public void setData(DataAuthorProject data) {
         this.data = data;
     }
 }

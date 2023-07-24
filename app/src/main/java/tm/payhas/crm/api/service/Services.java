@@ -21,6 +21,7 @@ import retrofit2.http.Query;
 import tm.payhas.crm.api.request.RequestComment;
 import tm.payhas.crm.api.request.RequestCreateTask;
 import tm.payhas.crm.api.request.RequestFcmToken;
+import tm.payhas.crm.api.request.RequestMyProjects;
 import tm.payhas.crm.api.request.RequestNewChecklist;
 import tm.payhas.crm.api.request.RequestNewFolder;
 import tm.payhas.crm.api.request.RequestNewProject;
@@ -28,6 +29,7 @@ import tm.payhas.crm.api.request.RequestNews;
 import tm.payhas.crm.api.request.RequestTaskComment;
 import tm.payhas.crm.api.request.RequestUserTasks;
 import tm.payhas.crm.api.response.ResponseAddNews;
+import tm.payhas.crm.api.response.ResponseAllProjects;
 import tm.payhas.crm.api.response.ResponseChecklist;
 import tm.payhas.crm.api.response.ResponseComment;
 import tm.payhas.crm.api.response.ResponseDashboard;
@@ -35,6 +37,7 @@ import tm.payhas.crm.api.response.ResponseDashboardItem;
 import tm.payhas.crm.api.response.ResponseDataFolder;
 import tm.payhas.crm.api.response.ResponseDeleteFile;
 import tm.payhas.crm.api.response.ResponseFcmToken;
+import tm.payhas.crm.api.response.ResponseFilter;
 import tm.payhas.crm.api.response.ResponseGroupInfo;
 import tm.payhas.crm.api.response.ResponseManyFiles;
 import tm.payhas.crm.api.response.ResponseNewFolder;
@@ -69,7 +72,12 @@ public interface Services {
     Call<ResponseUserGroup> getContacts(@Header("Authorization") String token);
 
     @GET("projects/all")
-    Call<ResponseProjects> getAllProjects();
+    Call<ResponseAllProjects> getAllProjects();
+
+
+    @Headers({"Content-Type: application/json"})
+    @PATCH("/projects/author")
+    Call<ResponseProjects> getMyProjects(@Header("Authorization") String token, @Body RequestMyProjects requestMyProjects);
 
 
     @GET("users/all")
@@ -147,6 +155,9 @@ public interface Services {
     @GET("tasks/{id}")
     Call<ResponseOneTask> getOneTask(@Header("Authorization") String token, @Path("id") int id);
 
+    @GET("projects/status")
+    Call<ResponseFilter> getFilter();
+
     @Headers({"Content-Type: application/json"})
     @POST("tasks/checklist")
     Call<ResponseChecklist> createNewChecklist(@Header("Authorization") String token, @Body RequestNewChecklist requestNewChecklist);
@@ -165,6 +176,10 @@ public interface Services {
     @Headers({"Content-Type: application/json"})
     @PUT("tasks/status/{id}")
     Call<ResponseOneTask> changeTaskStatus(@Header("Authorization") String token, @Path("id") int id);
+
+    @Headers({"Content-Type: application/json"})
+    @PUT("projects/status/{id}")
+    Call<ResponseOneProject> changeProjectsStatus(@Header("Authorization") String token, @Path("id") int id);
 
     @Headers({"Accept: multipart/form-data"})
     @Multipart

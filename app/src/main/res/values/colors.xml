@@ -5,6 +5,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="error_color">#FF0000</color>
     <color name="primary">#7E69FF</color>
+    <color name="select_all">#492DF6</color>
     <color name="ic_launcher_background">#E9E9EA</color>
     <color name="primary_dark">#322871</color>
     <color name="primary_10">#1A7E69FF</color>
@@ -44,5 +45,7 @@
     <color name="color_var2">#FFCD63FF</color>
     <color name="color_var3">#FF6FC03D</color>
     <color name="color_var4">#FF4FB7F1</color>
+    <color name="bg_filter">#FFF3F3F3</color>
+    <color name="user_bg">#19E1DCFB</color>
 
 </resources>

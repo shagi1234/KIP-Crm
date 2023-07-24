@@ -2,6 +2,7 @@ package tm.payhas.crm.fragment;
 
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.helpers.Common.addFragment;
+import static tm.payhas.crm.helpers.Common.normalDate;
 import static tm.payhas.crm.helpers.FileUtil.copyFileStream;
 import static tm.payhas.crm.helpers.FileUtil.getPath;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
@@ -59,6 +60,7 @@ import tm.payhas.crm.api.response.ResponseOneProject;
 import tm.payhas.crm.api.response.ResponseSingleFile;
 import tm.payhas.crm.dataModels.DataAttachment;
 import tm.payhas.crm.dataModels.DataFile;
+import tm.payhas.crm.dataModels.DataProject;
 import tm.payhas.crm.databinding.FragmentAddProjectBinding;
 import tm.payhas.crm.helpers.Common;
 import tm.payhas.crm.helpers.FileUtil;
@@ -66,19 +68,35 @@ import tm.payhas.crm.interfaces.HelperAddProject;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentAddProject extends Fragment implements HelperAddProject {
+    private static final int REQUEST_CODE = 1122;
     private FragmentAddProjectBinding b;
     private AdapterSelectedUsers adapterSelectedUsers;
     private AdapterSelectedUsers adapterExecutor;
-    private ArrayList<Integer> selecctedUserList = new ArrayList<>();
+    private ArrayList<Integer> selectedUserList = new ArrayList<>();
     private String timeStart;
     private String timeEnd;
     private int executorId;
-    private static final int REQUEST_CODE = 1122;
+    private boolean toEdit;
+    private int projectId;
     private DataFile fileUploaded = null;
+    private DataAttachment fileLoaded = null;
+    // Declare the activity result launcher
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    // Permission is granted, you can access the file here
+                    // Perform your file access operations
+                } else {
+                    // Permission is denied, handle the failure
+                    // Display an error message or request the permission again
+                }
+            });
 
-    public static FragmentAddProject newInstance() {
+    public static FragmentAddProject newInstance(boolean toEdit, int projectId) {
         FragmentAddProject fragment = new FragmentAddProject();
         Bundle args = new Bundle();
+        args.putBoolean("editable", toEdit);
+        args.putInt("projectId", projectId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -87,6 +105,8 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            toEdit = getArguments().getBoolean("editable");
+            projectId = getArguments().getInt("projectId");
         }
     }
 
@@ -94,10 +114,68 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         b = FragmentAddProjectBinding.inflate(inflater);
-        initListeners();
         setRecycler();
-        addNewProject();
+        loadToEdit();
+        initListeners();
         return b.getRoot();
+    }
+
+    private void loadToEdit() {
+        if (toEdit && projectId != 0) {
+            Call<ResponseOneProject> call = Common.getApi().getOneProject(AccountPreferences.newInstance(getContext()).getToken(), projectId, 1, 1);
+            call.enqueue(new Callback<ResponseOneProject>() {
+                @Override
+                public void onResponse(Call<ResponseOneProject> call, Response<ResponseOneProject> response) {
+                    if (response.isSuccessful()) {
+                        b.main.setVisibility(View.VISIBLE);
+                        setProjectInfo(response.body().getData());
+                        setProjectUsers(response.body().getData());
+                        setProjectExecutor(response.body().getData());
+                        setFile(response.body().getData());
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseOneProject> call, Throwable t) {
+                }
+            });
+        }
+    }
+
+    private void setFile(DataProject data) {
+        fileLoaded = data.getFile();
+    }
+
+    private void setProjectExecutor(DataProject data) {
+        ArrayList<DtoUserInfo> selectedList = new ArrayList<>();
+        DtoUserInfo userInfo = data.getExecutor();
+        selectedList.add(userInfo);
+        adapterExecutor.setSelectedList(selectedList);
+    }
+
+    private void setProjectUsers(DataProject data) {
+        ArrayList<DtoUserInfo> selectedList = new ArrayList<>();
+        ArrayList<DataProject.UserInTask> usersList = data.getProjectParticipants();
+        for (int i = 0; i < data.getProjectParticipants().size(); i++) {
+            selectedList.add(usersList.get(i).getUser());
+        }
+        adapterSelectedUsers.setSelectedList(selectedList);
+        for (int i = 0; i < selectedList.size(); i++) {
+            selectedUserList.add(selectedList.get(i).getId());
+        }
+    }
+
+    private void setProjectInfo(DataProject data) {
+        projectId = data.getId();
+        b.edtNameProject.setText(data.getName());
+        b.descriptionProject.setText(data.getDescription());
+        b.attachFileProject.setText(data.getFile().getFileName());
+        b.projectEndTime.setText(normalDate(data.getDeadline()));
+        b.projectStartTime.setText(normalDate(data.getStartsAt()));
+        timeEnd = data.getDeadline();
+        timeStart = data.getStartsAt();
+        executorId = data.getExecutorId();
     }
 
     @Override
@@ -116,8 +194,13 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
         request.setDescription(b.descriptionProject.getText().toString());
         request.setDeadline(timeEnd);
         request.setStartsAt(timeStart);
-        request.setProjectParticipants(selecctedUserList);
+        request.setProjectParticipants(selectedUserList);
         request.setExecutorId(executorId);
+        request.setId(projectId);
+        if (fileLoaded!=null){
+            request.setFile(fileLoaded);
+        }
+
         DataAttachment attachment = new DataAttachment();
         if (fileUploaded != null) {
             attachment.setFileName(fileUploaded.getOriginalFileName());
@@ -157,15 +240,16 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
             addNewProject();
             new Handler().postDelayed(() -> b.btnSave.setEnabled(true), 200);
         });
-        b.clickableMember.setOnClickListener(view -> {
-            b.clickableMember.setEnabled(false);
-            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.PROJECT_MEMBERS, 0));
-            new Handler().postDelayed(() -> b.clickableMember.setEnabled(true), 200);
+        b.editMembers.setOnClickListener(view -> {
+            b.editMembers.setEnabled(false);
+            selectedUserList = adapterSelectedUsers.getSelectedList();
+            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.PROJECT_MEMBERS, 0, selectedUserList));
+            new Handler().postDelayed(() -> b.editMembers.setEnabled(true), 200);
         });
-        b.clickableExecutor.setOnClickListener(view -> {
-            b.clickableExecutor.setEnabled(false);
-            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.PROJECT_EXECUTOR, 0));
-            new Handler().postDelayed(() -> b.clickableExecutor.setEnabled(true), 200);
+        b.editExecutor.setOnClickListener(view -> {
+            b.editExecutor.setEnabled(false);
+            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.PROJECT_EXECUTOR, 0, null));
+            new Handler().postDelayed(() -> b.editExecutor.setEnabled(true), 200);
         });
         b.projectStartTime.setOnClickListener(view -> openDialog(b.projectStartTime));
         b.projectEndTime.setOnClickListener(view -> openDialog2(b.projectEndTime));
@@ -194,7 +278,7 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (datePicker, year1, month1, day1) -> dateSet.setText(String.valueOf(day1) + "/" + String.valueOf(month1 + 1) + "/" + String.valueOf(year1)), year, month, day);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (datePicker, year1, month1, day1) -> dateSet.setText(day1 + "/" + (month1 + 1) + "/" + year1), year, month, day);
         datePickerDialog.show();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         timeStart = df.format(c.getTime());
@@ -205,7 +289,7 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (datePicker, year1, month1, day1) -> dateSet.setText(String.valueOf(day1) + "/" + String.valueOf(month1 + 1) + "/" + String.valueOf(year1)), year, month, day);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (datePicker, year1, month1, day1) -> dateSet.setText(day1 + "/" + (month1 + 1) + "/" + year1), year, month, day);
         datePickerDialog.show();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         timeEnd = df.format(c.getTime());
@@ -222,9 +306,8 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
     @Override
     public void getProjectUsers(ArrayList<DtoUserInfo> userSelectedList) {
         adapterSelectedUsers.setSelectedList(userSelectedList);
-
         for (int i = 0; i < userSelectedList.size(); i++) {
-            selecctedUserList.add(userSelectedList.get(i).getId());
+            selectedUserList.add(userSelectedList.get(i).getId());
         }
     }
 
@@ -348,18 +431,6 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
         });
 
     }
-
-    // Declare the activity result launcher
-    private ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    // Permission is granted, you can access the file here
-                    // Perform your file access operations
-                } else {
-                    // Permission is denied, handle the failure
-                    // Display an error message or request the permission again
-                }
-            });
 
     // Request permission at runtime
     private void requestStoragePermission() {

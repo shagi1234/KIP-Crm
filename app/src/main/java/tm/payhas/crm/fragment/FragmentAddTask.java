@@ -19,9 +19,7 @@ import static tm.payhas.crm.statics.StaticConstants.IN_PROCESS;
 import static tm.payhas.crm.statics.StaticConstants.MEDIUM;
 import static tm.payhas.crm.statics.StaticConstants.NOT_IMPORTANT;
 import static tm.payhas.crm.statics.StaticConstants.NOT_STARTED;
-import static tm.payhas.crm.statics.StaticConstants.PENDING;
 import static tm.payhas.crm.statics.StaticConstants.PRIMARY;
-import static tm.payhas.crm.statics.StaticConstants.REVIEW;
 
 import android.Manifest;
 import android.app.Activity;
@@ -189,23 +187,23 @@ public class FragmentAddTask extends Fragment implements AddTask {
         b.timeStart.setOnClickListener(view -> openDialog(b.timeStart, 3));
         b.vTaskProjects.setOnClickListener(view -> {
             b.vTaskProjects.setEnabled(false);
-            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(PROJECTS, accountPreferences.getPrefCurrentProjectId()));
+            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(PROJECTS, accountPreferences.getPrefCurrentProjectId(),null));
             new Handler().postDelayed(() -> b.vTaskProjects.setEnabled(true), 200);
         });
         b.clickerObserver.setOnClickListener(view -> {
             b.clickerObserver.setEnabled(false);
-            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(OBSERVERS, accountPreferences.getPrefCurrentProjectId()));
+            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(OBSERVERS, accountPreferences.getPrefCurrentProjectId(),null));
             new Handler().postDelayed(() -> b.clickerObserver.setEnabled(true), 200);
 
         });
         b.taskExecutor.setOnClickListener(view -> {
             b.taskExecutor.setEnabled(false);
-            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(PROJECT_EXECUTOR, accountPreferences.getPrefCurrentProjectId()));
+            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(PROJECT_EXECUTOR, accountPreferences.getPrefCurrentProjectId(),null));
             new Handler().postDelayed(() -> b.taskExecutor.setEnabled(true), 200);
         });
         b.clickerResponsible.setOnClickListener(view -> {
             b.clickerResponsible.setEnabled(false);
-            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(RESPONSIBLE, accountPreferences.getPrefCurrentProjectId()));
+            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(RESPONSIBLE, accountPreferences.getPrefCurrentProjectId(),null));
             new Handler().postDelayed(() -> b.clickerResponsible.setEnabled(true), 200);
         });
         b.spinnerReminderType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -247,14 +245,6 @@ public class FragmentAddTask extends Fragment implements AddTask {
                         break;
                     case "В процессе":
                         toSend = IN_PROCESS;
-                        toSend = taskStatusToSend;
-                        break;
-                    case "На проверке":
-                        toSend = REVIEW;
-                        toSend = taskStatusToSend;
-                        break;
-                    case "В ожидании ответашенo":
-                        toSend = PENDING;
                         toSend = taskStatusToSend;
                         break;
                     case "Завершенo":

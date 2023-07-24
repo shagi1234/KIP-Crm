@@ -30,6 +30,7 @@
             tools:ignore="HardcodedText" />
 
         <CheckBox
+            android:clickable="false"
             android:id="@+id/checkbox"
             android:layout_width="30dp"
             android:layout_height="30dp"

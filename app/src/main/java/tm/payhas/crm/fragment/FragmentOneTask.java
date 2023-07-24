@@ -9,6 +9,8 @@ import static tm.payhas.crm.helpers.StaticMethods.showToast;
 import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 import static tm.payhas.crm.statics.StaticConstants.APPLICATION_DIR_NAME;
 import static tm.payhas.crm.statics.StaticConstants.FILES_DIR;
+import static tm.payhas.crm.statics.StaticConstants.IN_PROCESS;
+import static tm.payhas.crm.statics.StaticConstants.NOT_STARTED;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -126,12 +128,7 @@ public class FragmentOneTask extends Fragment {
     private void initListeners() {
         b.back.setOnClickListener(view -> getActivity().onBackPressed());
         b.cancelTaskClicker.setOnClickListener(view -> changeTaskStatus());
-        b.btnAttach.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                pickFileFromInternalStorage();
-            }
-        });
+        b.btnAttach.setOnClickListener(view -> pickFileFromInternalStorage());
         b.btnSendComment.setOnClickListener(view -> {
             sendComment(2, null);
             b.infoInput.setText("");
@@ -325,7 +322,7 @@ public class FragmentOneTask extends Fragment {
                         b.cancelTaskClicker.setVisibility(View.VISIBLE);
                     }
                     setInfo(response.body().getData());
-
+                    setExecutorButton(response.body().getData());
                     adapterObservers.setUserList(response.body().getData().getObserverUsers());
                     adapterResponsible.setUserList(response.body().getData().getResponsibleUsers());
                     adapterTaskComments.setComments(response.body().getData().getComments());
@@ -341,6 +338,24 @@ public class FragmentOneTask extends Fragment {
             }
         });
     }
+
+    private void setExecutorButton(DataTask data) {
+        if (data.isExecutor() || data.isAuthor()) {
+            b.taskChangerCont.setVisibility(View.VISIBLE);
+        } else {
+            b.taskChangerCont.setVisibility(View.GONE);
+        }
+        if (data.getStatus().equals(IN_PROCESS)) {
+            b.cancelTask.setText(R.string.finish);
+        } else if (data.getStatus().equals(NOT_STARTED)) {
+            b.cancelTask.setText(R.string.start);
+        } else {
+            b.taskChangerCont.setVisibility(View.GONE);
+        }
+
+    }
+
+
 
     private void setInfo(DataTask data) {
         b.taskEndTime.setText(normalDate(data.getFinishesAt()));

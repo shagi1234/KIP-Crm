@@ -13,7 +13,7 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone">
 
 
         <LinearLayout
@@ -51,12 +51,55 @@
 
             </FrameLayout>
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="23dp"
+                android:layout_marginVertical="13sp"
+                android:background="@drawable/boreder_1d">
+
+                <LinearLayout
+                    android:id="@+id/project_status_changer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_tick_cicrcle" />
+
+                    <TextView
+                        android:id="@+id/cancel_task"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/inter_bold"
+                        android:gravity="center"
+                        android:text="@string/start"
+                        android:textColor="@color/text_color"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/cancel_task_clicker"
+                    android:layout_width="370dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/ripple"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </FrameLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2.5dp"
                 android:layout_marginBottom="10dp"
                 android:background="#60DCD6D6" />
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -67,6 +110,7 @@
                 android:orientation="vertical"
                 android:paddingHorizontal="20.5dp"
                 android:paddingVertical="10dp">
+
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -256,6 +300,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="83dp"
                 android:background="@color/white" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/edit_project"
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="10dp"
+                    android:background="@drawable/ripple"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:src="@drawable/ic_edit" />
+
+                <ImageView
+                    android:id="@+id/add_task"
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="10dp"
+                    android:background="@drawable/ripple"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:src="@drawable/ic_add_task" />
+            </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_project_tasks"

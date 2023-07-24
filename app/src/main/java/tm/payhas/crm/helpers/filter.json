@@ -1,0 +1,19 @@
+{
+  "data": [
+    {
+      "value": "notStarted",
+      "strTm": "Başlamadyk",
+      "strRu": "Не начата"
+    },
+    {
+      "value": "inprocces",
+      "strTm": " ",
+      "strRu": "В процессе"
+    },
+    {
+      "value": "finished",
+      "strTm": " ",
+      "strRu": "Завершенo"
+    }
+  ]
+}

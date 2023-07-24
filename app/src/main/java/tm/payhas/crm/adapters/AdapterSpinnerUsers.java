@@ -5,6 +5,7 @@ import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ public class AdapterSpinnerUsers extends RecyclerView.Adapter<AdapterSpinnerUser
     public static final int MULTIPLE = 11;
     private ArrayList<DtoUserInfo> usersList = new ArrayList<>();
     private ArrayList<DtoUserInfo> selectedUsers = new ArrayList<>();
+    private ArrayList<Integer> selectedUserList = new ArrayList<>();
 
     public void setUsersList(ArrayList<DtoUserInfo> usersList) {
         this.usersList = usersList;
@@ -45,6 +47,12 @@ public class AdapterSpinnerUsers extends RecyclerView.Adapter<AdapterSpinnerUser
         this.context = context;
         this.activity = activity;
         this.type = type;
+    }
+
+    public void setSelectedUserList(ArrayList<Integer> selectedUserList) {
+        this.selectedUserList = selectedUserList;
+        notifyDataSetChanged();
+        Log.e("SelectedUserList", "setSelectedUserList: " + selectedUserList.size());
     }
 
     public ArrayList<DtoUserInfo> getSelectedUsers() {
@@ -68,8 +76,9 @@ public class AdapterSpinnerUsers extends RecyclerView.Adapter<AdapterSpinnerUser
             DtoUserInfo oneUSer = usersList.get(position);
             holder.bindSingle(oneUSer);
         } else {
-            holder.bind();
-
+            DtoUserInfo oneUser = usersList.get(position);
+            holder.setSelected(oneUser);
+            holder.bind(oneUser);
         }
 
     }
@@ -92,44 +101,44 @@ public class AdapterSpinnerUsers extends RecyclerView.Adapter<AdapterSpinnerUser
             userName = itemView.findViewById(R.id.username);
         }
 
-        public void bind() {
-            main.setBackgroundColor(Color.parseColor("#FFFFFF"));
-            DtoUserInfo oneUser = usersList.get(getAdapterPosition());
-            userName.setText(oneUser.getPersonalData().getName());
-            main.setOnClickListener(view -> {
-                checkBox.setChecked(!checkBox.isChecked());
-                if (checkBox.isChecked()) {
-                    main.setBackgroundColor(Color.parseColor("#197E69FF"));
-                } else {
-                    main.setBackgroundColor(Color.parseColor("#FFFFFF"));
-                }
-
-            });
-
-            DtoUserInfo selectedOne = usersList.get(getAdapterPosition());
-            checkBox.setOnCheckedChangeListener((compoundButton, b) -> {
-                if (checkBox.isChecked()) {
-                    if (selectedUsers.contains(selectedOne)) {
-                        return;
-                    }
-                    selectedUsers.add(selectedOne);
-                    main.setBackgroundColor(Color.parseColor("#197E69FF"));
-                    selectedOne.setSelected(true);
-                } else {
-                    selectedUsers.remove(selectedOne);
-                    selectedOne.setSelected(false);
-                    main.setBackgroundColor(Color.parseColor("#FFFFFF"));
-                }
-
-            });
-            if (selectedOne.isSelected()) {
-                checkBox.setChecked(true);
-                main.setBackgroundColor(Color.parseColor("#197E69FF"));
-            } else {
-                checkBox.setChecked(false);
-                main.setBackgroundColor(Color.parseColor("#FFFFFF"));
-
+        public void setChecked(DtoUserInfo oneUser) {
+            checkBox.setChecked(true);
+            oneUser.setSelected(true);
+            main.setBackgroundColor(Color.parseColor("#197E69FF"));
+            if (!(selectedUsers.contains(oneUser))) {
+                selectedUsers.add(oneUser);
+                selectedUserList.add(oneUser.getId());
             }
+
+        }
+
+        public void setUnChecked(DtoUserInfo oneUser) {
+            checkBox.setChecked(false);
+            oneUser.setSelected(false);
+            main.setBackgroundColor(Color.parseColor("#FFFFFF"));
+            selectedUsers.remove(oneUser);
+            if (selectedUserList.contains(oneUser.getId())) {
+                selectedUserList.removeIf(element -> element == oneUser.getId());}
+        }
+
+        public void bind(DtoUserInfo oneUser) {
+            setUserInfo(oneUser);
+            if (oneUser.isSelected()) {
+                setChecked(oneUser);
+            } else {
+                setUnChecked(oneUser);
+            }
+            main.setOnClickListener(view -> {
+                if (oneUser.isSelected()) {
+                    setUnChecked(oneUser);
+                } else {
+                    setChecked(oneUser);
+                }
+            });
+        }
+
+        private void setUserInfo(DtoUserInfo one) {
+            userName.setText(one.getPersonalData().getName());
         }
 
         public void bindSingle(DtoUserInfo oneUSer) {
@@ -148,6 +157,16 @@ public class AdapterSpinnerUsers extends RecyclerView.Adapter<AdapterSpinnerUser
                     ((AddTask) addTask).setExecutor(oneUSer);
                 }
             });
+        }
+
+        public void setSelected(DtoUserInfo oneUser) {
+            boolean isSelected = selectedUserList.contains(oneUser.getId());
+            oneUser.setSelected(isSelected);
+            if (isSelected) {
+                setChecked(oneUser);
+            } else {
+                setUnChecked(oneUser);
+            }
         }
     }
 }

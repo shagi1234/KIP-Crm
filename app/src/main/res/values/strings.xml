@@ -11,8 +11,6 @@
     <string-array name="status">
         <item>Не начата</item>
         <item>В процессе</item>
-        <item>На проверке</item>
-        <item>В ожидании ответашенo</item>
         <item>Завершенo</item>
     </string-array>
 
@@ -67,7 +65,6 @@
     <string name="project_details">Proýektiň maglumatlary</string>
     <string name="status">Status</string>
     <string name="lest_time">Galan wagt</string>
-    <string name="start">Başlamak</string>
     <string name="task_details">Tabşyryk barada maglumat</string>
     <string name="add_checklist">Iş goşmak</string>
     <string name="send">Ugratmak</string>
@@ -80,6 +77,8 @@
     <string name="select">Saýlamak</string>
     <string name="workers">Işgärler</string>
     <string name="create_new_group">Täze topar döretmek</string>
+    <string name="start">Başlamak</string>
+    <string name="finish">Tamamlamak</string>
 
 
 </resources>

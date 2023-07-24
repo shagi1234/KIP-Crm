@@ -9,6 +9,8 @@ import tm.payhas.crm.api.data.dto.DtoUserInfo;
 public class DataProject {
     private int id;
     private int timeOut;
+    private boolean isAuthor;
+    private boolean isExecutor;
     private String name;
     private String description;
     private String startsAt;
@@ -19,12 +21,21 @@ public class DataProject {
     private int executorId;
     private String updatedAt;
     private String deletedAt;
+    private String status;
     private ArrayList<UserInTask> projectParticipants;
     private ArrayList<DataTask> tasks;
     private DtoUserInfo author;
     private DtoUserInfo executor;
     @SerializedName("_count")
     private Count count;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public int getTimeOut() {
         return timeOut;
@@ -92,6 +103,22 @@ public class DataProject {
 
     public String getCreatedAt() {
         return createdAt;
+    }
+
+    public boolean isAuthor() {
+        return isAuthor;
+    }
+
+    public void setAuthor(boolean author) {
+        isAuthor = author;
+    }
+
+    public boolean isExecutor() {
+        return isExecutor;
+    }
+
+    public void setExecutor(boolean executor) {
+        isExecutor = executor;
     }
 
     public void setCreatedAt(String createdAt) {

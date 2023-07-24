@@ -77,7 +77,12 @@ public class AdapterProjects extends RecyclerView.Adapter<AdapterProjects.ViewHo
             projectName.setText(oneProject.getName());
             startTime.setText(normalDate(oneProject.getStartsAt()));
             endTime.setText(normalDate(oneProject.getDeadline()));
-            memberCount.setText(String.valueOf(oneProject.getProjectParticipants().size()));
+            if (oneProject.getProjectParticipants()!=null){
+                memberCount.setText(String.valueOf(oneProject.getProjectParticipants().size()));
+            }else{
+                memberCount.setText("0");
+
+            }
             clicker.setOnClickListener(view -> {
                 clicker.setEnabled(false);
                 addFragment(mainFragmentManager, R.id.main_content, FragmentOneProject.newInstance(oneProject.getId()));

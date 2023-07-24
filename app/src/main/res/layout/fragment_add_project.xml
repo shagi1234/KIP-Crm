@@ -218,20 +218,39 @@
                             android:layout_marginBottom="20dp"
                             android:orientation="vertical">
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="6dp"
-                                android:fontFamily="@font/inter_regular"
-                                android:text="@string/member_project"
-                                android:textColor="@color/text_color"
-                                android:textSize="12sp" />
+                                android:orientation="horizontal">
+
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_weight="1"
+                                    android:fontFamily="@font/inter_regular"
+                                    android:text="@string/member_project"
+                                    android:textColor="@color/text_color"
+                                    android:textSize="12sp" />
+
+                                <ImageView
+                                    android:id="@+id/edit_members"
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:layout_marginHorizontal="10dp"
+                                    android:layout_marginVertical="5dp"
+                                    android:src="@drawable/ic_edit" />
+
+
+                            </LinearLayout>
+
 
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/members_project"
                                 android:layout_width="match_parent"
-                                android:layout_height="50dp"
-                                android:background="@drawable/edt_bg" />
+                                android:layout_height="wrap_content"
+                                android:background="@color/user_bg" />
 
                             <FrameLayout
                                 android:id="@+id/clickable_member"
@@ -253,20 +272,40 @@
                             android:layout_marginBottom="20dp"
                             android:orientation="vertical">
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="6dp"
-                                android:fontFamily="@font/inter_regular"
-                                android:text="@string/executor"
-                                android:textColor="@color/text_color"
-                                android:textSize="12sp" />
+                                android:orientation="horizontal">
+
+
+                                <TextView
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_weight="1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/inter_regular"
+                                    android:text="@string/executor"
+                                    android:textColor="@color/text_color"
+                                    android:textSize="12sp" />
+
+                                <ImageView
+                                    android:id="@+id/edit_executor"
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:layout_marginHorizontal="10dp"
+                                    android:layout_marginVertical="5dp"
+                                    android:src="@drawable/ic_edit" />
+
+
+                            </LinearLayout>
+
+
 
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/executor_project"
                                 android:layout_width="match_parent"
-                                android:layout_height="50dp"
-                                android:background="@drawable/edt_bg" />
+                                android:layout_height="wrap_content"
+                                android:background="@color/user_bg" />
                         </LinearLayout>
 
                         <FrameLayout

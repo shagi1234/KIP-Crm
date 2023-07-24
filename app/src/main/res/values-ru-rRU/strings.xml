@@ -54,4 +54,5 @@
     <string name="select">Выбор</string>
     <string name="workers">СОТРУДНИКИ</string>
     <string name="create_new_group">Создать Новую Группу</string>
+    <string name="finish">Закончить</string>
 </resources>

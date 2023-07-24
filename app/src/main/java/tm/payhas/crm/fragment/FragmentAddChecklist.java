@@ -97,7 +97,7 @@ public class FragmentAddChecklist extends Fragment implements HelperChecklist {
         b.btnSave.setOnClickListener(view -> createNewChecklist());
         b.startTime.setOnClickListener(view -> openDialog(b.startTime, 1));
         b.endTime.setOnClickListener(view -> openDialog(b.endTime, 2));
-        b.clickableMember.setOnClickListener(view -> addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.TASK_MEMBERS, projectId)));
+        b.clickableMember.setOnClickListener(view -> addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.TASK_MEMBERS, projectId,null)));
     }
 
     private void createNewChecklist() {

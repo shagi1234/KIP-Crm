@@ -1,12 +1,15 @@
 package tm.payhas.crm.fragment;
 
+import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
+import static tm.payhas.crm.helpers.Common.addFragment;
 import static tm.payhas.crm.helpers.Common.normalDate;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
+import static tm.payhas.crm.statics.StaticConstants.IN_PROCESS;
+import static tm.payhas.crm.statics.StaticConstants.NOT_STARTED;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import tm.payhas.crm.R;
 import tm.payhas.crm.adapters.AdapterSelectedUsers;
 import tm.payhas.crm.adapters.AdapterTasks;
 import tm.payhas.crm.api.response.ResponseOneProject;
@@ -72,7 +76,46 @@ public class FragmentOneProject extends Fragment {
     }
 
     private void initListeners() {
+        b.cancelTaskClicker.setOnClickListener(view -> changeProjectStatus());
         b.back.setOnClickListener(view -> getActivity().onBackPressed());
+        b.editProject.setOnClickListener(view -> {
+            b.editProject.setEnabled(false);
+            addFragment(mainFragmentManager, R.id.main_content, FragmentAddProject.newInstance(true, projectId));
+            new Handler().postDelayed(() -> b.editProject.setEnabled(true), 200);
+        });
+    }
+
+    private void changeProjectStatus() {
+        Call<ResponseOneProject> call = Common.getApi().changeProjectsStatus(ac.getToken(), projectId);
+        call.enqueue(new Callback<ResponseOneProject>() {
+            @Override
+            public void onResponse(Call<ResponseOneProject> call, Response<ResponseOneProject> response) {
+                if (response.isSuccessful()) {
+                    getProjectInfo();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseOneProject> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void setExecutorButton(DataProject data) {
+        if (data.isExecutor() || data.isAuthor()) {
+            b.projectStatusChanger.setVisibility(View.VISIBLE);
+        } else {
+            b.projectStatusChanger.setVisibility(View.GONE);
+        }
+        if (data.getStatus().equals(IN_PROCESS)) {
+            b.cancelTask.setText(R.string.finish);
+        } else if (data.getStatus().equals(NOT_STARTED)) {
+            b.cancelTask.setText(R.string.start);
+        } else {
+            b.projectStatusChanger.setVisibility(View.GONE);
+        }
+
     }
 
     private void setRecyclers() {
@@ -100,6 +143,8 @@ public class FragmentOneProject extends Fragment {
                     setProjectInfo(response.body().getData());
                     adapterTasks.setTasks(response.body().getData().getTasks());
                     adapterSelectedUsers.setUserList(response.body().getData().getProjectParticipants());
+                    setExecutorButton(response.body().getData());
+
                 }
             }
 

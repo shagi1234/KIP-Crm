@@ -57,6 +57,8 @@
                 android:background="#60DCD6D6" />
 
             <FrameLayout
+                android:id="@+id/task_changer_cont"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="23dp"

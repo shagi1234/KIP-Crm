@@ -21,7 +21,7 @@ import retrofit2.Response;
 import tm.payhas.crm.adapters.AdapterListProjects;
 import tm.payhas.crm.adapters.AdapterSpinnerUsers;
 import tm.payhas.crm.api.data.dto.DtoUserInfo;
-import tm.payhas.crm.api.response.ResponseProjects;
+import tm.payhas.crm.api.response.ResponseAllProjects;
 import tm.payhas.crm.api.response.ResponseUsersList;
 import tm.payhas.crm.databinding.FragmentSpinnerBinding;
 import tm.payhas.crm.helpers.Common;
@@ -33,9 +33,9 @@ import tm.payhas.crm.preference.AccountPreferences;
 public class FragmentSpinner extends Fragment {
     public static final int TASK_MEMBERS = 7;
     private FragmentSpinnerBinding b;
-
     private int type;
     private int projectId;
+    private ArrayList<Integer> selectedUserList = new ArrayList<>();
     public static final int PROJECT_CONNECTED = 1;
     public static final int PROJECTS = 2;
     public static final int RESPONSIBLE = 3;
@@ -49,11 +49,12 @@ public class FragmentSpinner extends Fragment {
 
 
     // TODO: Rename and change types and number of parameters
-    public static FragmentSpinner newInstance(int type, int projectId) {
+    public static FragmentSpinner newInstance(int type, int projectId, ArrayList<Integer> userList) {
         FragmentSpinner fragment = new FragmentSpinner();
         Bundle args = new Bundle();
         args.putInt("roomId", type);
         args.putInt("projectId", projectId);
+        args.putIntegerArrayList("userList", userList);
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,6 +65,7 @@ public class FragmentSpinner extends Fragment {
         if (getArguments() != null) {
             type = getArguments().getInt("roomId");
             projectId = getArguments().getInt("projectId");
+            selectedUserList = getArguments().getIntegerArrayList("userList");
         }
     }
 
@@ -142,6 +144,7 @@ public class FragmentSpinner extends Fragment {
     }
 
     private void getProjectMembers() {
+        adapterProjectUsers.setSelectedUserList(selectedUserList);
         Call<ResponseUsersList> call = Common.getApi().getAllUsers();
         call.enqueue(new Callback<ResponseUsersList>() {
             @Override
@@ -227,17 +230,17 @@ public class FragmentSpinner extends Fragment {
 
     private void getProjects() {
         b.rvProject.setVisibility(View.VISIBLE);
-        Call<ResponseProjects> call = Common.getApi().getAllProjects();
-        call.enqueue(new Callback<ResponseProjects>() {
+        Call<ResponseAllProjects> call = Common.getApi().getAllProjects();
+        call.enqueue(new Callback<ResponseAllProjects>() {
             @Override
-            public void onResponse(Call<ResponseProjects> call, Response<ResponseProjects> response) {
+            public void onResponse(Call<ResponseAllProjects> call, Response<ResponseAllProjects> response) {
                 if (response.isSuccessful() || response.body() != null) {
                     adapterProjects.setProjects(response.body().getData());
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseProjects> call, Throwable t) {
+            public void onFailure(Call<ResponseAllProjects> call, Throwable t) {
 
             }
         });

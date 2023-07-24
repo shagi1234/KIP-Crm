@@ -26,6 +26,7 @@ import tm.payhas.crm.R;
 import tm.payhas.crm.dataModels.DataBirthdays;
 import tm.payhas.crm.dataModels.DataNews;
 import tm.payhas.crm.fragment.FragmentDashboardItem;
+import tm.payhas.crm.fragment.FragmentUserInfo;
 
 public class AdapterBirthday extends RecyclerView.Adapter<AdapterBirthday.ViewHolder> {
 
@@ -104,7 +105,7 @@ public class AdapterBirthday extends RecyclerView.Adapter<AdapterBirthday.ViewHo
             date.setText(normalDate(birthday.getDate()));
             clickablelayout.setOnClickListener(view -> {
                 clickablelayout.setEnabled(false);
-                addFragment(mainFragmentManager, R.id.main_content, FragmentDashboardItem.newInstance(birthday.getUser().getId()));
+                addFragment(mainFragmentManager, R.id.main_content, FragmentUserInfo.newInstance(birthday.getUser().getId()));
                 new Handler().postDelayed(() -> clickablelayout.setEnabled(true), 200);
             });
         }

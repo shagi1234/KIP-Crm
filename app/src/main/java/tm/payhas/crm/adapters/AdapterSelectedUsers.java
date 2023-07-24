@@ -3,6 +3,7 @@ package tm.payhas.crm.adapters;
 import static tm.payhas.crm.api.network.Network.BASE_PHOTO;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ public class AdapterSelectedUsers extends RecyclerView.Adapter<AdapterSelectedUs
     private int type;
     private ArrayList<DataProject.UserInTask> userList = new ArrayList<>();
     private ArrayList<DtoUserInfo> selectedList = new ArrayList<>();
+    private ArrayList<Integer> userIdList = new ArrayList<>();
 
     public AdapterSelectedUsers(Context context, int type) {
         this.context = context;
@@ -42,6 +44,19 @@ public class AdapterSelectedUsers extends RecyclerView.Adapter<AdapterSelectedUs
         notifyDataSetChanged();
     }
 
+    private void createUserIdList() {
+        for (int i = 0; i < selectedList.size(); i++) {
+            if (!(userIdList.contains(selectedList.get(i).getId()))) {
+                userIdList.add(selectedList.get(i).getId());
+            }
+        }
+    }
+
+    public ArrayList<Integer> getSelectedList() {
+        createUserIdList();
+        return userIdList;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -51,10 +66,11 @@ public class AdapterSelectedUsers extends RecyclerView.Adapter<AdapterSelectedUs
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Log.e("TAG", "Adapter" + userList.size());
         if (type == 1) {
             DataProject.UserInTask oneUser = userList.get(position);
             holder.bind(oneUser);
-        }else {
+        } else {
             DtoUserInfo user = selectedList.get(position);
             holder.bindUser(user);
         }
@@ -92,5 +108,7 @@ public class AdapterSelectedUsers extends RecyclerView.Adapter<AdapterSelectedUs
             Picasso.get().load(BASE_PHOTO + user.getAvatar()).placeholder(R.color.primary).into(image);
 
         }
+
+
     }
 }

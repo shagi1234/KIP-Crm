@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import tm.payhas.crm.dataModels.DataAttachment;
 
 public class RequestNewProject {
+    private Integer id;
     private String name;
     private String description;
     private String deadline;
@@ -12,6 +13,14 @@ public class RequestNewProject {
     private int executorId;
     private ArrayList<Integer> projectParticipants;
     private DataAttachment file;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

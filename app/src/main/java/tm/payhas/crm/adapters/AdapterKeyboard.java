@@ -100,7 +100,7 @@ public class AdapterKeyboard extends RecyclerView.Adapter<AdapterKeyboard.ViewHo
             if (holder.getAdapterPosition() == 9) {
                 holder.keyboardImg.setImageResource(R.drawable.ic_pause_circle);
             } else if (holder.getAdapterPosition() == 11) {
-                holder.keyboardImg.setImageResource(R.drawable.ic_trash);
+                holder.keyboardImg.setImageResource(R.drawable.ic_delete);
             }
         }
 

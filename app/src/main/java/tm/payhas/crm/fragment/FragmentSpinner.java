@@ -6,6 +6,8 @@ import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +20,16 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import tm.payhas.crm.R;
 import tm.payhas.crm.adapters.AdapterListProjects;
 import tm.payhas.crm.adapters.AdapterSpinnerUsers;
 import tm.payhas.crm.api.data.dto.DtoUserInfo;
 import tm.payhas.crm.api.response.ResponseAllProjects;
+import tm.payhas.crm.api.response.ResponseTaskMembers;
 import tm.payhas.crm.api.response.ResponseUsersList;
 import tm.payhas.crm.databinding.FragmentSpinnerBinding;
 import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.helpers.StaticMethods;
 import tm.payhas.crm.interfaces.AddTask;
 import tm.payhas.crm.interfaces.HelperAddProject;
 import tm.payhas.crm.interfaces.HelperChecklist;
@@ -35,6 +40,7 @@ public class FragmentSpinner extends Fragment {
     private FragmentSpinnerBinding b;
     private int type;
     private int projectId;
+    private int taskId;
     private ArrayList<Integer> selectedUserList = new ArrayList<>();
     public static final int PROJECT_CONNECTED = 1;
     public static final int PROJECTS = 2;
@@ -49,11 +55,12 @@ public class FragmentSpinner extends Fragment {
 
 
     // TODO: Rename and change types and number of parameters
-    public static FragmentSpinner newInstance(int type, int projectId, ArrayList<Integer> userList) {
+    public static FragmentSpinner newInstance(int type, int projectId, int taskId, ArrayList<Integer> userList) {
         FragmentSpinner fragment = new FragmentSpinner();
         Bundle args = new Bundle();
         args.putInt("roomId", type);
         args.putInt("projectId", projectId);
+        args.putInt("taskId", taskId);
         args.putIntegerArrayList("userList", userList);
         fragment.setArguments(args);
         return fragment;
@@ -65,6 +72,7 @@ public class FragmentSpinner extends Fragment {
         if (getArguments() != null) {
             type = getArguments().getInt("roomId");
             projectId = getArguments().getInt("projectId");
+            taskId = getArguments().getInt("taskId");
             selectedUserList = getArguments().getIntegerArrayList("userList");
         }
     }
@@ -84,16 +92,23 @@ public class FragmentSpinner extends Fragment {
         accountPreferences = new AccountPreferences(getContext());
         setUpSpinner();
         initListeners();
+        setBackground();
         return b.getRoot();
+    }
+
+    private void setBackground() {
+        StaticMethods.setBackgroundDrawable(getContext(), b.searchBox, R.color.color_transparent, R.color.primary, 6, false, 1);
     }
 
     private void setUpSpinner() {
         switch (type) {
             case PROJECTS:
+                b.searchBox.setVisibility(View.GONE);
                 setRecyclerProject();
                 getProjects();
                 break;
             case PROJECT_CONNECTED:
+                b.searchBox.setVisibility(View.GONE);
                 getProjectsConnected();
                 break;
             case OBSERVERS:
@@ -134,6 +149,20 @@ public class FragmentSpinner extends Fragment {
     }
 
     private void getTaskMembers() {
+        Call<ResponseTaskMembers> call = Common.getApi().getTaskMembers(accountPreferences.getToken(), taskId);
+        call.enqueue(new Callback<ResponseTaskMembers>() {
+            @Override
+            public void onResponse(Call<ResponseTaskMembers> call, Response<ResponseTaskMembers> response) {
+                if (response.isSuccessful()) {
+                    adapterProjectUsers.setUsersList(response.body().getData().getResponsible());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseTaskMembers> call, Throwable t) {
+
+            }
+        });
     }
 
     private void getProjectExecutors() {
@@ -166,6 +195,7 @@ public class FragmentSpinner extends Fragment {
     }
 
     private void getObservers() {
+        adapterProjectUsers.setSelectedUserList(selectedUserList);
         Call<ResponseUsersList> call = Common.getApi().getProjectsUserList(projectId);
         call.enqueue(new Callback<ResponseUsersList>() {
             @Override
@@ -198,9 +228,43 @@ public class FragmentSpinner extends Fragment {
     }
 
     private void initListeners() {
+        b.searchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                switch (type) {
+                    case PROJECT_MEMBERS:
+                    case TASK_MEMBERS:
+                    case RESPONSIBLE:
+                    case OBSERVERS:
+                        adapterProjectUsers.getFilter().filter(charSequence);
+                        adapterProjectUsers.setSearchText(b.searchInput.getText().toString());
+                        break;
+                    case PROJECT_EXECUTOR:
+                        adapterExecutor.getFilter().filter(charSequence);
+                        adapterExecutor.setSearchText(b.searchInput.getText().toString());
+                        break;
+                    default:
+                        break;
+                }
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
         b.customTitleBar
                 .setOnClickListener(view -> {
-                    ArrayList<DtoUserInfo> selectedUsers = adapterProjectUsers.getSelectedUsers();
+                    ArrayList<DtoUserInfo> selectedUsers = new ArrayList<>();
+                    if (adapterProjectUsers.getSelectedUsers() != null)
+                        selectedUsers = adapterProjectUsers.getSelectedUsers();
                     getActivity().onBackPressed();
 
                     if (type == RESPONSIBLE) {

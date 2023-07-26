@@ -83,6 +83,14 @@ public class FragmentOneProject extends Fragment {
             addFragment(mainFragmentManager, R.id.main_content, FragmentAddProject.newInstance(true, projectId));
             new Handler().postDelayed(() -> b.editProject.setEnabled(true), 200);
         });
+        b.addTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                b.addTask.setEnabled(false);
+                addFragment(mainFragmentManager,R.id.main_content,FragmentAddTask.newInstance(projectId,0));
+                new Handler().postDelayed(() -> b.addTask.setEnabled(true), 200);
+            }
+        });
     }
 
     private void changeProjectStatus() {

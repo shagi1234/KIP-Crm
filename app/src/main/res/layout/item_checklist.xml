@@ -41,24 +41,95 @@
                 tools:ignore="RtlSymmetry" />
         </LinearLayout>
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/linear_progress_bar"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="10dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
             android:layout_marginTop="20dp"
-            android:progress="70"
-            app:indicatorColor="@color/primary"
-            app:trackColor="@color/progress_background"
-            app:trackThickness="10dp" />
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp">
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/linear_progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:progress="70"
+                app:indicatorColor="@color/primary"
+                app:trackColor="@color/progress_background"
+                app:trackThickness="10dp" />
+        </androidx.cardview.widget.CardView>
+
 
         <TextView
             android:id="@+id/checklist_progress_numberic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:fontFamily="@font/inter_regular"
             android:text="0%"
             android:textColor="@color/text_color"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="26dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="@string/start_time"
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/checklist_date_start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="26dp"
+                    android:layout_marginTop="10dp"
+                    android:text="0%"
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="26dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="@string/end_time"
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/checklist_date_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="26dp"
+                    android:layout_marginTop="10dp"
+                    android:text="0%"
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

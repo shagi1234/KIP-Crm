@@ -1,5 +1,7 @@
 package tm.payhas.crm.adapters;
 
+import static tm.payhas.crm.helpers.Common.normalDate;
+
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
@@ -61,6 +63,8 @@ public class AdapterChecklist extends RecyclerView.Adapter<AdapterChecklist.View
         TextView name;
         LinearProgressIndicator linearIndicator;
         TextView numericIndicator;
+        TextView dateStart;
+        TextView dateEnd;
         CheckBox checkBox;
         AccountPreferences ac;
 
@@ -70,11 +74,15 @@ public class AdapterChecklist extends RecyclerView.Adapter<AdapterChecklist.View
             linearIndicator = itemView.findViewById(R.id.linear_progress_bar);
             numericIndicator = itemView.findViewById(R.id.checklist_progress_numberic);
             checkBox = itemView.findViewById(R.id.checklist_checkbox);
+            dateEnd = itemView.findViewById(R.id.checklist_date_end);
+            dateStart = itemView.findViewById(R.id.checklist_date_start);
             ac = new AccountPreferences(context);
         }
 
         public void bind(DataChecklist oneChecklist) {
             name.setText(oneChecklist.getName());
+            dateStart.setText(normalDate(oneChecklist.getStartsAt()));
+            dateEnd.setText(normalDate(oneChecklist.getFinishesAt()));
             if (oneChecklist.isCompleted()) {
                 checkBox.setChecked(true);
                 linearIndicator.setProgress(100);

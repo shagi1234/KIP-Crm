@@ -416,19 +416,25 @@ public class AdapterSingleChat extends RecyclerView.Adapter implements NewMessag
                 menu.createPopUpMenu(itemView, messageTarget.getId(), messageTarget);
                 return true;
             });
-            if (messageTarget.getAnswering().getType().equals(STRING)) {
-                replyUserName.setText(messageTarget.getAnswering().getAuthor().getPersonalData().getName());
-                userReplyText.setText(messageTarget.getAnswering().getText());
-            } else if (messageTarget.getAnswering().getType().equals(PHOTO)) {
-                replyImage.setVisibility(View.VISIBLE);
-                line.setVisibility(View.GONE);
-                userReplyText.setText("Photo");
-                Picasso.get().load(BASE_PHOTO + messageTarget.getAnswering().getAttachment().getFileUrl()).placeholder(R.color.primary).into(replyImage);
-            } else if (messageTarget.getAnswering().getType().equals(FILE)) {
-                replyImage.setVisibility(View.VISIBLE);
-                line.setVisibility(View.GONE);
-                userReplyText.setText("File");
-                replyImage.setImageResource(R.drawable.ic_documenyt_file);
+            if (messageTarget.getAnswerId() != 0 || messageTarget.getAnswerId() != null || messageTarget.getAnswering() != null || messageTarget.getAnswering().getType()!=null) {
+                switch (messageTarget.getAnswering().getType()) {
+                    case STRING:
+                        replyUserName.setText(messageTarget.getAnswering().getAuthor().getPersonalData().getName());
+                        userReplyText.setText(messageTarget.getAnswering().getText());
+                        break;
+                    case PHOTO:
+                        replyImage.setVisibility(View.VISIBLE);
+                        line.setVisibility(View.GONE);
+                        userReplyText.setText("Photo");
+                        Picasso.get().load(BASE_PHOTO + messageTarget.getAnswering().getAttachment().getFileUrl()).placeholder(R.color.primary).into(replyImage);
+                        break;
+                    case FILE:
+                        replyImage.setVisibility(View.VISIBLE);
+                        line.setVisibility(View.GONE);
+                        userReplyText.setText("File");
+                        replyImage.setImageResource(R.drawable.ic_documenyt_file);
+                        break;
+                }
             }
 
 

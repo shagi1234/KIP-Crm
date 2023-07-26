@@ -49,6 +49,7 @@ import tm.payhas.crm.api.response.ResponseRoomMessages;
 import tm.payhas.crm.api.response.ResponseSignIn;
 import tm.payhas.crm.api.response.ResponseSingleFile;
 import tm.payhas.crm.api.response.ResponseTaskComment;
+import tm.payhas.crm.api.response.ResponseTaskMembers;
 import tm.payhas.crm.api.response.ResponseTasks;
 import tm.payhas.crm.api.response.ResponseUserGroup;
 import tm.payhas.crm.api.response.ResponseUserInfo;
@@ -193,6 +194,10 @@ public interface Services {
     @Headers({"Content-Type: application/json"})
     @POST("filestorage/folder")
     Call<ResponseNewFolder> createNewFolder(@Body RequestNewFolder requestNewFolder);
+
+    @GET("tasks/members/{id}")
+    Call<ResponseTaskMembers> getTaskMembers(@Header("Authorization") String token, @Path("id") int id);
+
 
 
 }

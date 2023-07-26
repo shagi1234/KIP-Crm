@@ -82,6 +82,7 @@
 
 
                 <LinearLayout
+                    android:id="@+id/lay_projects"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
@@ -114,6 +115,7 @@
                             android:fontFamily="@font/inter_regular"
                             android:gravity="center_vertical"
                             android:paddingHorizontal="10dp"
+                            android:text="Select Project"
                             android:textColor="@color/text_color"
                             android:textColorHint="@color/edt_hint"
                             android:textSize="12sp" />
@@ -238,14 +240,32 @@
                     android:layout_marginBottom="20dp"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:fontFamily="@font/inter_regular"
-                        android:text="@string/executors"
-                        android:textColor="@color/text_color"
-                        android:textSize="12sp" />
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="@string/executors"
+                            android:textColor="@color/text_color"
+                            android:textSize="12sp" />
+
+                        <ImageView
+                            android:id="@+id/edit_responsible"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginHorizontal="10dp"
+                            android:layout_marginVertical="5dp"
+                            android:src="@drawable/ic_edit" />
+
+
+                    </LinearLayout>
 
                     <FrameLayout
                         android:layout_width="match_parent"
@@ -254,8 +274,8 @@
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/task_responseible"
                             android:layout_width="match_parent"
-                            android:layout_height="50dp"
-                            android:background="@drawable/edt_bg"
+                            android:layout_height="wrap_content"
+                            android:background="@color/user_bg"
                             android:fontFamily="@font/inter_regular" />
 
                         <FrameLayout
@@ -273,14 +293,32 @@
                     android:layout_marginBottom="20dp"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:fontFamily="@font/inter_regular"
-                        android:text="@string/observers"
-                        android:textColor="@color/text_color"
-                        android:textSize="12sp" />
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="@string/observers"
+                            android:textColor="@color/text_color"
+                            android:textSize="12sp" />
+
+                        <ImageView
+                            android:id="@+id/edit_observers"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginHorizontal="10dp"
+                            android:layout_marginVertical="5dp"
+                            android:src="@drawable/ic_edit" />
+
+
+                    </LinearLayout>
 
                     <FrameLayout
                         android:layout_width="match_parent"
@@ -289,8 +327,8 @@
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/task_observers"
                             android:layout_width="match_parent"
-                            android:layout_height="50dp"
-                            android:background="@drawable/edt_bg" />
+                            android:layout_height="wrap_content"
+                            android:background="@color/user_bg"/>
 
                         <FrameLayout
                             android:id="@+id/clicker_observer"

@@ -75,6 +75,7 @@ public class FragmentTasks extends Fragment {
         return b.getRoot();
     }
 
+
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
@@ -181,7 +182,7 @@ public class FragmentTasks extends Fragment {
         ArrayList<String> statuses = new ArrayList<>();
         statuses.add(NOT_STARTED);
         RequestUserTasks requestUserTasks = new RequestUserTasks();
-        requestUserTasks.setLimit(10);
+        requestUserTasks.setLimit(50);
         requestUserTasks.setPage(1);
         if (selectedVarianceItems != null) {
             if (selectedVarianceItems.size() != 0)
@@ -216,7 +217,7 @@ public class FragmentTasks extends Fragment {
         b.swipe.setOnRefreshListener(() -> getTasks());
         b.favAdd.setOnClickListener(view -> {
             b.favAdd.setEnabled(false);
-            addFragment(mainFragmentManager, R.id.main_content, FragmentAddTask.newInstance());
+            addFragment(mainFragmentManager, R.id.main_content, FragmentAddTask.newInstance(0,0));
             new Handler().postDelayed(() -> b.favAdd.setEnabled(true), 200);
         });
     }

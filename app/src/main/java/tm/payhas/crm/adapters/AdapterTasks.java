@@ -85,9 +85,9 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolder> 
         public void bind() {
             DataTask oneTask = tasks.get(getAdapterPosition());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                nameTask.setText(Html.fromHtml(oneTask.getDescription(), Html.FROM_HTML_MODE_COMPACT));
+                nameTask.setText(Html.fromHtml(oneTask.getName(), Html.FROM_HTML_MODE_COMPACT));
             } else {
-                nameTask.setText(Html.fromHtml(oneTask.getDescription()));
+                nameTask.setText(Html.fromHtml(oneTask.getName()));
             }
             startTime.setText(normalDate(oneTask.getStartsAt()));
             endTime.setText(normalDate(oneTask.getFinishesAt()));

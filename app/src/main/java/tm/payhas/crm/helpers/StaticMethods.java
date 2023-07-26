@@ -30,6 +30,11 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 import tm.payhas.crm.R;
@@ -323,6 +328,18 @@ public class StaticMethods {
             Log.d("error", "setMargins: " + e.getMessage());
         }
 
+    }
+
+    public static String getOutputFilePath(Context context) {
+        File directory = context.getExternalFilesDir(null);
+        String fileName = "recorded_audio.3gp"; // Replace with your desired file name and extension
+        return directory.getAbsolutePath() + "/" + fileName;
+    }
+
+    public static String getCurrentTime() {
+        Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+        return df.format(c);
     }
 
     public static void showToast(Activity activity, String str) {

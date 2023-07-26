@@ -23,6 +23,7 @@
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/custom_checkbox.xml" value="0.169" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/custom_checkbox_2.xml" value="0.1875" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/edt_bg.xml" value="0.12" />
+        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/ic_delete.xml" value="0.1845" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/ic_launcher_background.xml" value="0.15" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.15" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/ic_logo_crm.xml" value="0.15" />
@@ -30,11 +31,13 @@
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/ic_message_received.xml" value="0.1875" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/ic_msg_indicator_sent.xml" value="0.1875" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/ic_no_messages.xml" value="0.1855" />
+        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/ic_trash.xml" value="0.1845" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/img_info_bg.xml" value="0.187" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/input_folder_background.xml" value="0.16799999999999998" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/item_reply_recieved.xml" value="0.12" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/line.xml" value="0.12" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/oval.xml" value="0.1775" />
+        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/progress_bar_back.xml" value="0.1845" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/received_msg_bg.xml" value="0.187" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/ripple.xml" value="0.187" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/drawable/sender_msg_bg.xml" value="0.187" />
@@ -50,7 +53,7 @@
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_add_news.xml" value="0.25" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_add_project.xml" value="0.25" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_add_task.xml" value="0.2376237623762376" />
-        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_change_password.xml" value="0.25" />
+        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_change_password.xml" value="0.152" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_chat.xml" value="0.176" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_chat_container.xml" value="0.264" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/fragment_chat_room.xml" value="0.264" />
@@ -83,7 +86,7 @@
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_chat_contact.xml" value="0.264" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_chat_witg_date.xml" value="0.24895833333333334" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_chat_with_date.xml" value="0.25" />
-        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_checklist.xml" value="0.264" />
+        <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_checklist.xml" value="0.5062695924764891" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_cloud_file.xml" value="0.5877034358047016" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_dashboard.xml" value="0.25" />
         <entry key="..\:/Users/Programmer/AndroidStudioProjects/CRM/app/src/main/res/layout/item_dashboard_comment.xml" value="0.4" />

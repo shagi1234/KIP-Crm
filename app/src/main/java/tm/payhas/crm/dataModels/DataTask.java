@@ -2,6 +2,8 @@ package tm.payhas.crm.dataModels;
 
 import java.util.ArrayList;
 
+import tm.payhas.crm.api.data.dto.DtoUserInfo;
+
 public class DataTask {
     private int id;
     private boolean isAuthor;
@@ -18,11 +20,56 @@ public class DataTask {
     private int authorId;
     private String createdAt;
     private String deletedAt;
+    private ArrayList<String> remindAt;
     private ArrayList<DataProject.UserInTask> responsibleUsers;
     private ArrayList<DataProject.UserInTask> observerUsers;
     private ArrayList<DataTaskComment> comments;
     private ArrayList<DataChecklist> checklists;
+    private ArrayList<DataAttachment> files;
+    private DataProject project;
+    private int executorId;
+    private DtoUserInfo executor;
 
+
+    public DtoUserInfo getExecutor() {
+        return executor;
+    }
+
+    public void setExecutor(DtoUserInfo executor) {
+        this.executor = executor;
+    }
+
+    public int getExecutorId() {
+        return executorId;
+    }
+
+    public void setExecutorId(int executorId) {
+        this.executorId = executorId;
+    }
+
+    public DataProject getProject() {
+        return project;
+    }
+
+    public void setProject(DataProject project) {
+        this.project = project;
+    }
+
+    public ArrayList<DataAttachment> getFiles() {
+        return files;
+    }
+
+    public void setFiles(ArrayList<DataAttachment> files) {
+        this.files = files;
+    }
+
+    public ArrayList<String> getRemindAt() {
+        return remindAt;
+    }
+
+    public void setRemindAt(ArrayList<String> remindAt) {
+        this.remindAt = remindAt;
+    }
 
     public int getTimeOut() {
         return timeOut;

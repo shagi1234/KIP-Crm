@@ -14,15 +14,18 @@ import static tm.payhas.crm.helpers.Common.getImageUri;
 import static tm.payhas.crm.helpers.Common.getRealPathFromURI;
 import static tm.payhas.crm.helpers.Common.normalTime;
 import static tm.payhas.crm.helpers.FileUtil.copyFileStream;
+import static tm.payhas.crm.helpers.StaticMethods.getCurrentTime;
+import static tm.payhas.crm.helpers.StaticMethods.getOutputFilePath;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
-import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import static tm.payhas.crm.helpers.StaticMethods.showToast;
 import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 import static tm.payhas.crm.statics.StaticConstants.APPLICATION_DIR_NAME;
+import static tm.payhas.crm.statics.StaticConstants.CREATE_MESSAGE;
 import static tm.payhas.crm.statics.StaticConstants.FILE;
 import static tm.payhas.crm.statics.StaticConstants.FILES_DIR;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGE_SENT;
+import static tm.payhas.crm.statics.StaticConstants.NEW_ROOM;
 import static tm.payhas.crm.statics.StaticConstants.PHOTO;
 import static tm.payhas.crm.statics.StaticConstants.RECEIVED_MESSAGE;
 import static tm.payhas.crm.statics.StaticConstants.SENT_MESSAGE;
@@ -52,10 +55,7 @@ import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,10 +77,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 import java.util.UUID;
 
 import okhttp3.MediaType;
@@ -122,7 +118,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     private final String TAG = "chatRoom";
     private boolean isSet = false;
     private int roomId;
-    public int isOpen, text2nd, cameraColor, clear, text, primary;
+    public int clear, text, primary;
     private int userId;
     private String userName;
     private String avatarUrl;
@@ -130,17 +126,15 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     private boolean isActive;
     private AccountPreferences accountPreferences;
     private AdapterSingleChat adapterSingleChat;
-    private String event = "createMessage";
     private boolean toReply = false;
     private int replyMessageId = 0;
     private DataMessageTarget messageToReply;
     private int type;
     private int memberCount;
     private boolean isRecording;
-    private boolean isPressed;
     public static MediaRecorder mediaRecorder;
-    private MotionEvent motionEvent = null;
     private WaveformRecorder waveformRecorder;
+    private boolean isPressed;
 
 
     public static FragmentChatRoom newInstance(int roomId, int userId, String username, String avatarUrl, String lastActivity, boolean isActive, int type, int memberCount) {
@@ -168,14 +162,35 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         hideSoftKeyboard(getActivity());
+
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        new Handler().postDelayed(() -> setPadding(b.chatContent,
+                0,
+                statusBarHeight,
+                0,
+                0), 100);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         b = FragmentChatRoomBinding.inflate(inflater);
         setWaveForm();
-        hideSoftKeyboard(getActivity());
         if (getArguments() != null) {
             roomId = getArguments().getInt("roomId");
             userId = getArguments().getInt("userId");
@@ -186,13 +201,12 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
             isActive = getArguments().getBoolean("isActive");
             memberCount = getArguments().getInt("memberCount");
         }
-        Log.e(TAG, "onCreateView: " + type);
+        hideSoftKeyboard(getActivity());
         if (getActivity() != null) {
             softInputAssist = new SoftInputAssist(getActivity());
         }
         setRoom();
         setRecycler();
-        setBackground();
         initListeners();
         setAuthorId();
         setUserStatus();
@@ -200,8 +214,6 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         if (roomId != 0) {
             getMessages();
         }
-        Log.e(TAG, "onCreateView: roomId" + roomId);
-        Log.e(TAG, "onCreateView: userId" + userId);
         return b.getRoot();
     }
 
@@ -233,7 +245,6 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
                 b.recChatScreen.scrollToPosition(1);
                 isSet = true;
             }
-
             b.username.setText(userName);
             Picasso.get().load(BASE_URL + "/" + avatarUrl).placeholder(R.color.primary).into(b.contactImage);
         } else {
@@ -342,6 +353,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
                 hideSoftKeyboard(getActivity());
             }
         });
+
         b.recordVoice.setOnTouchListener((v, event) -> {
             checkPermissionsAudio();
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -361,14 +373,6 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
             }
             return false;
         });
-
-
-    }
-
-    private String getOutputFilePath() {
-        File directory = requireContext().getExternalFilesDir(null);
-        String fileName = "recorded_audio.3gp"; // Replace with your desired file name and extension
-        return directory.getAbsolutePath() + "/" + fileName;
     }
 
     private void startRecording() {
@@ -376,29 +380,26 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         if (isRecording) {
             return;
         }
-        waveformRecorder.clearWaveform();
-        waveformRecorder.startRecording();
-        b.voiceTimer.setBase(SystemClock.elapsedRealtime());
-        b.voiceTimer.start();
-        setVoiceRecorder();
-        String filePath = getOutputFilePath();
-        mediaRecorder = new MediaRecorder();
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mediaRecorder.setOutputFile(filePath);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
         try {
+            waveformRecorder.clearWaveform();
+            waveformRecorder.startRecording();
+            b.voiceTimer.setBase(SystemClock.elapsedRealtime());
+            b.voiceTimer.start();
+            setVoiceRecorder();
+            String filePath = getOutputFilePath(requireContext());
+            mediaRecorder = new MediaRecorder();
+            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            mediaRecorder.setOutputFile(filePath);
+            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
             mediaRecorder.prepare();
             mediaRecorder.start();
             isRecording = true;
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             e.printStackTrace();
+            // Handle the exception (e.g., show an error message)
         }
-        // Initialize and start the audio recording
-        // Your recording logic goes here
 
-        // Update the recording status
         isRecording = true;
     }
 
@@ -416,50 +417,12 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
             mediaRecorder.release();
             mediaRecorder = null;
             isRecording = false;
-            File voiceRecorded = new File(getOutputFilePath());
-            uploadVoice(voiceRecorded);
-            return getOutputFilePath(); // Return the recorded audio file path
+            File voiceRecorded = new File(getOutputFilePath(requireContext()));
+            uploadFile(3, voiceRecorded);
+            return getOutputFilePath(requireContext());
         }
-        return null; // Return null if recording is not in progress
+        return null;
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        new Handler().postDelayed(() -> setPadding(b.chatContent,
-                0,
-                statusBarHeight,
-                0,
-                0), 100);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater menuInflater = getActivity().getMenuInflater();
-        menuInflater.inflate(R.menu.message_menu, menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
-        return super.onContextItemSelected(item);
-
-    }
-
-    private void setBackground() {
-        setBackgroundDrawable(getContext(), b.input, R.color.edit_text_background, 0, 14, false, 0);
-    }
-
 
     private void setRecycler() {
         if (type == PRIVATE)
@@ -476,136 +439,37 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         b.messageLay.setVisibility(VISIBLE);
     }
 
-    private void sendMessage(int replyId) {
-        if (roomId == 0) {
-            DtoPersonalData personalData = new DtoPersonalData();
-            personalData.setName(accountPreferences.getUserName());
-            personalData.setSurname(accountPreferences.getPrefSurname());
-            personalData.setBirthday(accountPreferences.getPrefBirthday());
-            personalData.setLastName(accountPreferences.getPrefLastname());
-            DtoUserInfo userInfo = new DtoUserInfo();
-            userInfo.setPersonalData(personalData);
-            DataMessageTarget newMessageData = new DataMessageTarget();
-            newMessageData.setRoomId(roomId);
-            newMessageData.setStatus(MESSAGE_SENT);
-            newMessageData.setAuthor(userInfo);
-            newMessageData.setType(STRING);
-            newMessageData.setAuthorId(accountPreferences.getAuthorId());
-            newMessageData.setText(b.input.getText().toString());
-            newMessageData.setFriendId(userId);
-            newMessageData.setStatus(MESSAGE_SENT);
-            newMessageData.setAnswerId(replyId);
-            newMessageData.setLocalId(UUID.randomUUID().toString());
-            RequestNewMessage newMessage = new RequestNewMessage();
-            newMessage.setEvent(event);
-            newMessage.setData(newMessageData);
-            String s = new Gson().toJson(newMessage);
-            webSocket.sendMessage(s);
-        } else {
-            if (replyId == 0) {
-                Date c = Calendar.getInstance().getTime();
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-                String time = df.format(c);
-                DtoPersonalData personalData = new DtoPersonalData();
-                personalData.setName(accountPreferences.getUserName());
-                personalData.setSurname(accountPreferences.getPrefSurname());
-                personalData.setBirthday(accountPreferences.getPrefBirthday());
-                personalData.setLastName(accountPreferences.getPrefLastname());
-                DtoUserInfo userInfo = new DtoUserInfo();
-                userInfo.setPersonalData(personalData);
-                DataMessageTarget newMessageData = new DataMessageTarget();
-                newMessageData.setRoomId(roomId);
-                newMessageData.setAuthor(userInfo);
-                newMessageData.setType(STRING);
-                newMessageData.setCreatedAt(time);
-                newMessageData.setAuthorId(accountPreferences.getAuthorId());
-                newMessageData.setText(b.input.getText().toString());
-                newMessageData.setFriendId(userId);
-                newMessageData.setStatus(MESSAGE_SENT);
-                newMessageData.setLocalId(UUID.randomUUID().toString());
-                RequestNewMessage newMessage = new RequestNewMessage();
-                newMessage.setEvent(event);
-                newMessage.setData(newMessageData);
-                String s = new Gson().toJson(newMessage);
-                webSocket.sendMessage(s);
-                onNewMessage(SENT_MESSAGE, newMessageData);
-            } else {
-                Date c = Calendar.getInstance().getTime();
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-                String time = df.format(c);
-                DtoPersonalData personalData = new DtoPersonalData();
-                personalData.setName(accountPreferences.getUserName());
-                personalData.setSurname(accountPreferences.getPrefSurname());
-                personalData.setBirthday(accountPreferences.getPrefBirthday());
-                personalData.setLastName(accountPreferences.getPrefLastname());
-                DtoUserInfo userInfo = new DtoUserInfo();
-                userInfo.setPersonalData(personalData);
-                DataMessageTarget newMessageData = new DataMessageTarget();
-                newMessageData.setAuthor(userInfo);
-                newMessageData.setCreatedAt(time);
-                newMessageData.setRoomId(roomId);
-                newMessageData.setType(STRING);
-                newMessageData.setAuthorId(accountPreferences.getAuthorId());
-                newMessageData.setText(b.input.getText().toString());
-                newMessageData.setFriendId(userId);
-                newMessageData.setStatus(MESSAGE_SENT);
-                newMessageData.setAnswerId(replyId);
-                newMessageData.setAnswering(messageToReply);
-                String uuid = UUID.randomUUID().toString();
-                Log.e(TAG, "sendMessage: " + uuid);
-                newMessageData.setLocalId(uuid);
-                RequestNewMessage newMessage = new RequestNewMessage();
-                newMessage.setEvent(event);
-                newMessage.setData(newMessageData);
-                String s = new Gson().toJson(newMessage);
-                webSocket.sendMessage(s);
-                onNewMessage(SENT_MESSAGE, newMessageData);
-            }
-
-        }
-    }
-
-    private void onNewMessage(int type, DataMessageTarget newMessage) {
-        if (adapterSingleChat != null) {
-            ((NewMessage) adapterSingleChat).onNewMessage(type, newMessage);
-            adapterSingleChat.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public void onMessageStatus(DataMessageTarget messageTarget) {
-        if (adapterSingleChat != null) {
-            ((NewMessage) adapterSingleChat).onMessageStatus(messageTarget);
-            adapterSingleChat.notifyDataSetChanged();
-        }
-    }
-
-    private void sendImage(DataFile dataFile) {
-        Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-        String time = df.format(c);
+    private DtoUserInfo setUserInfo() {
+        DtoUserInfo userInfo = new DtoUserInfo();
         DtoPersonalData personalData = new DtoPersonalData();
         personalData.setName(accountPreferences.getUserName());
         personalData.setSurname(accountPreferences.getPrefSurname());
         personalData.setBirthday(accountPreferences.getPrefBirthday());
         personalData.setLastName(accountPreferences.getPrefLastname());
-        DtoUserInfo userInfo = new DtoUserInfo();
         userInfo.setPersonalData(personalData);
+        return userInfo;
+    }
+
+    private void sendMessage(int replyId) {
+        RequestNewMessage newMessage = new RequestNewMessage();
         DataMessageTarget newMessageData = new DataMessageTarget();
         newMessageData.setRoomId(roomId);
-        newMessageData.setAuthor(userInfo);
-        newMessageData.setType(PHOTO);
-        newMessageData.setCreatedAt(time);
-        newMessageData.setAuthorId(accountPreferences.getAuthorId());
-        newMessageData.setFriendId(userId);
         newMessageData.setStatus(MESSAGE_SENT);
+        newMessageData.setAuthor(setUserInfo());
+        newMessageData.setType(STRING);
+        newMessageData.setAuthorId(accountPreferences.getAuthorId());
+        newMessageData.setText(b.input.getText().toString());
+        newMessageData.setFriendId(userId);
+        newMessageData.setCreatedAt(getCurrentTime());
         newMessageData.setLocalId(UUID.randomUUID().toString());
-        RequestNewMessage newMessage = new RequestNewMessage();
-        DataAttachment dataAttachment = new DataAttachment();
-        dataAttachment.setFileUrl(dataFile.getUrl());
-        dataAttachment.setSize(dataFile.getSize());
-        newMessageData.setAttachment(dataAttachment);
-        newMessage.setEvent(event);
+        if (replyId!=0){
+            newMessageData.setAnswerId(replyId);
+        }
+        if (roomId == 0) {
+            newMessage.setEvent(NEW_ROOM);
+        } else {
+            newMessage.setEvent(CREATE_MESSAGE);
+        }
         newMessage.setData(newMessageData);
         String s = new Gson().toJson(newMessage);
         webSocket.sendMessage(s);
@@ -613,117 +477,36 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     }
 
     private void sendFile(int i, DataFile dataFile) {
-        Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-        String time = df.format(c);
-        DtoPersonalData personalData = new DtoPersonalData();
-        personalData.setName(accountPreferences.getUserName());
-        personalData.setSurname(accountPreferences.getPrefSurname());
-        personalData.setBirthday(accountPreferences.getPrefBirthday());
-        personalData.setLastName(accountPreferences.getPrefLastname());
-        DtoUserInfo userInfo = new DtoUserInfo();
-        userInfo.setPersonalData(personalData);
+        RequestNewMessage newMessage = new RequestNewMessage();
         DataMessageTarget newMessageData = new DataMessageTarget();
         newMessageData.setRoomId(roomId);
-        newMessageData.setAuthor(userInfo);
+        newMessageData.setAuthor(setUserInfo());
         if (i == 1) {
             newMessageData.setType(PHOTO);
-        } else {
+        } else if (i == 2) {
             newMessageData.setType(FILE);
+        } else if (i == 3) {
+            newMessageData.setType(VOICE);
         }
-        newMessageData.setCreatedAt(time);
+        newMessageData.setCreatedAt(getCurrentTime());
         newMessageData.setAuthorId(accountPreferences.getAuthorId());
         newMessageData.setFriendId(userId);
         newMessageData.setStatus(MESSAGE_SENT);
         newMessageData.setLocalId(UUID.randomUUID().toString());
-        RequestNewMessage newMessage = new RequestNewMessage();
         DataAttachment dataAttachment = new DataAttachment();
         dataAttachment.setFileUrl(dataFile.getUrl());
         dataAttachment.setSize(dataFile.getSize());
         newMessageData.setAttachment(dataAttachment);
-        newMessage.setEvent(event);
+        newMessage.setEvent(CREATE_MESSAGE);
         newMessage.setData(newMessageData);
         String s = new Gson().toJson(newMessage);
         webSocket.sendMessage(s);
         onNewMessage(SENT_MESSAGE, newMessageData);
     }
 
-    private void sendVoice(DataFile dataFile) {
-        Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-        String time = df.format(c);
-        DtoPersonalData personalData = new DtoPersonalData();
-        personalData.setName(accountPreferences.getUserName());
-        personalData.setSurname(accountPreferences.getPrefSurname());
-        personalData.setBirthday(accountPreferences.getPrefBirthday());
-        personalData.setLastName(accountPreferences.getPrefLastname());
-        DtoUserInfo userInfo = new DtoUserInfo();
-        userInfo.setPersonalData(personalData);
-        DataMessageTarget newMessageData = new DataMessageTarget();
-        newMessageData.setRoomId(roomId);
-        newMessageData.setAuthor(userInfo);
-        newMessageData.setType(VOICE);
-        newMessageData.setCreatedAt(time);
-        newMessageData.setAuthorId(accountPreferences.getAuthorId());
-        newMessageData.setFriendId(userId);
-        newMessageData.setStatus(MESSAGE_SENT);
-        newMessageData.setLocalId(UUID.randomUUID().toString());
-        RequestNewMessage newMessage = new RequestNewMessage();
-        DataAttachment dataAttachment = new DataAttachment();
-        dataAttachment.setFileUrl(dataFile.getUrl());
-        dataAttachment.setSize(dataFile.getSize());
-        newMessageData.setAttachment(dataAttachment);
-        newMessage.setEvent(event);
-        newMessage.setData(newMessageData);
-        String s = new Gson().toJson(newMessage);
-        webSocket.sendMessage(s);
-        onNewMessage(SENT_MESSAGE, newMessageData);
-    }
-
-
-    @Override
-    public void userStatus(boolean isActive) {
-        if (isActive)
-            b.userStatus.setText("Online");
-        else
-            b.userStatus.setText("Offline");
-    }
-
-    @Override
-    public void newMessage(DataMessageTarget messageTarget) {
-        b.recChatScreen.smoothScrollToPosition(1);
-        Log.e(TAG, "newMessage: " + "status received");
-        onNewMessage(RECEIVED_MESSAGE, messageTarget);
-    }
-
-    @Override
-    public void newImageImageUrl(DataFile dataFile) {
-        sendImage(dataFile);
-    }
-
-    @Override
-    public void deleteMessage(DataMessageTarget messageTarget) {
+    private void onNewMessage(int type, DataMessageTarget newMessage) {
         if (adapterSingleChat != null) {
-            ((NewMessage) adapterSingleChat).deleteMessage(messageTarget);
-            adapterSingleChat.notifyDataSetChanged();
-        }
-    }
-
-
-    @Override
-    public void newReplyMessage(DataMessageTarget messageTarget) {
-        messageToReply = messageTarget;
-        b.replyLayout.setVisibility(View.VISIBLE);
-        toReply = true;
-        replyMessageId = messageTarget.getId();
-        b.replyUserName.setText(messageTarget.getAuthor().getPersonalData().getName());
-        b.replyText.setText(messageTarget.getText());
-    }
-
-    @Override
-    public void onMessageReceived(DataMessageTarget messageTarget) {
-        if (adapterSingleChat != null) {
-            ((NewMessage) adapterSingleChat).onReceiveYourMessage(messageTarget);
+            ((NewMessage) adapterSingleChat).onNewMessage(type, newMessage);
             adapterSingleChat.notifyDataSetChanged();
         }
     }
@@ -738,37 +521,14 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         webSocket.setUserStatus(emitUserStatus);
     }
 
-
     private boolean checkPermissionsAudio() {
         if (getActivity() == null || getContext() == null) return false;
-
         if (checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO);
             return false;
         }
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.e(TAG, "onActivityResult: " + "Image Taken");
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                getFile(data);
-            }
-        } else if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
-            if (data != null) {
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                Uri tempUri = getImageUri(getContext(), photo);
-
-                // CALL THIS METHOD TO GET THE ACTUAL PATH
-                File finalFile = new File(getRealPathFromURI(tempUri, getActivity()));
-                uploadFile(1, finalFile);
-            }
-
     }
 
     public void getFile(Intent data) {
@@ -872,8 +632,10 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
                     fileUrl.setUrl(response.body().getData().getUrl());
                     if (i == 1) {
                         sendFile(1, fileUrl);
-                    } else {
+                    } else if (i == 2) {
                         sendFile(2, fileUrl);
+                    } else if (i == 3) {
+                        sendFile(3, fileUrl);
                     }
 
                 }
@@ -886,43 +648,6 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
             }
         });
     }
-
-    private void uploadVoice(File file) {
-        MultipartBody.Part fileToUpload = null;
-
-        RequestBody requestFile = RequestBody.create(
-                MediaType.parse(FileUtil.getMimeType(file)),
-                file);
-
-        Log.e(TAG, "uploadFile: " + FileUtil.getMimeType(file));
-        try {
-            fileToUpload = MultipartBody.Part.createFormData("fileUrl", URLEncoder.encode(file.getPath(), "utf-8"), requestFile);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        RequestBody originalFileName = RequestBody.create(MediaType.parse("multipart/form-data"), file.getName());
-
-        Call<ResponseSingleFile> upload = Common.getApi().uploadFile(originalFileName, fileToUpload);
-        upload.enqueue(new Callback<ResponseSingleFile>() {
-            @Override
-            public void onResponse(@NonNull Call<ResponseSingleFile> call, @NonNull Response<ResponseSingleFile> response) {
-                if (response.isSuccessful()) {
-                    b.linearProgressBar.setVisibility(View.GONE);
-                    DataFile fileUrl = new DataFile();
-                    fileUrl.setSize(response.body().getData().getSize());
-                    fileUrl.setUrl(response.body().getData().getUrl());
-                    sendVoice(fileUrl);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseSingleFile> call, Throwable t) {
-                Log.e(TAG, "onFailure: " + t.getMessage());
-                b.linearProgressBar.setVisibility(View.GONE);
-            }
-        });
-    }
-
 
     public void showDialog() {
         final BottomSheetDialog dialog = new BottomSheetDialog(getContext());
@@ -970,6 +695,77 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_CODE);
     }
 
+    @Override
+    public void onMessageStatus(DataMessageTarget messageTarget) {
+        if (adapterSingleChat != null) {
+            ((NewMessage) adapterSingleChat).onMessageStatus(messageTarget);
+            adapterSingleChat.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void userStatus(boolean isActive) {
+        if (isActive)
+            b.userStatus.setText("Online");
+        else
+            b.userStatus.setText("Offline");
+    }
+
+    @Override
+    public void newMessage(DataMessageTarget messageTarget) {
+        b.recChatScreen.smoothScrollToPosition(1);
+        onNewMessage(RECEIVED_MESSAGE, messageTarget);
+    }
+
+    @Override
+    public void onMessageReceived(DataMessageTarget messageTarget) {
+        if (adapterSingleChat != null) {
+            ((NewMessage) adapterSingleChat).onReceiveYourMessage(messageTarget);
+            adapterSingleChat.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void newImageImageUrl(DataFile dataFile) {
+        sendFile(1, dataFile);
+    }
+
+    @Override
+    public void deleteMessage(DataMessageTarget messageTarget) {
+        if (adapterSingleChat != null) {
+            ((NewMessage) adapterSingleChat).deleteMessage(messageTarget);
+            adapterSingleChat.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void newReplyMessage(DataMessageTarget messageTarget) {
+        messageToReply = messageTarget;
+        b.replyLayout.setVisibility(View.VISIBLE);
+        toReply = true;
+        replyMessageId = messageTarget.getId();
+        b.replyUserName.setText(messageTarget.getAuthor().getPersonalData().getName());
+        b.replyText.setText(messageTarget.getText());
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.e(TAG, "onActivityResult: " + "Image Taken");
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                getFile(data);
+            }
+        } else if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
+            if (data != null) {
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                Uri tempUri = getImageUri(getContext(), photo);
+
+                File finalFile = new File(getRealPathFromURI(tempUri, getActivity()));
+                uploadFile(1, finalFile);
+            }
+
+    }
 
     @Override
     public void onWaveformUpdate(short[] waveformData) {

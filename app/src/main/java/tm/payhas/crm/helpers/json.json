@@ -1,31 +1,55 @@
 {
-  "deadline": "2023-06-22T00:00:00.000Z",
-  "description": "dfufjduzyzicxuyszyzuhdjdi.",
-  "executorId": 16,
-  "file": {
-    "fileName": "4293753388.pdf",
-    "fileUrl": "tasks/446c0074-22d1-4e55-b151-d258ec7a5700.pdf"
-  },
-  "name": "ghkuudid",
-  "projectParticipants": [
-    16,
-    1,
-    2,
-    3,
-    11,
-    4,
-    6,
-    12,
-    9,
-    10,
-    2,
-    3,
-    11,
-    4,
-    6,
-    12,
-    9,
-    10
+  "description": "Aman ishlemese ozini asya",
+  "executorId": 1,
+  "files": [
+    {
+      "fileName": "Return to Ag.pdf",
+      "fileUrl": "tasks/882ce9fd-467d-4c60-ba81-cbd32723a386.pdf"
+    }
   ],
-  "startsAt": "2023-06-22T00:00:00.000Z"
+  "finishesAt": "2023-07-26T16:45:53.409Z",
+  "id": 0,
+  "name": "Aman zaybal boldy",
+  "observerUsers": [
+    1,
+    1
+  ],
+  "priority": "primary",
+  "projectId": 2,
+  "remindAt": [
+    "2023-07-26T16:45:48.732Z"
+  ],
+  "reminderType": "observerUsers",
+  "responsibleUsers": [
+    1,
+    1
+  ],
+  "startsAt": "2023-07-26T16:45:51.584Z",
+  "status": "notStarted"
+}
+{
+  "statusCode": 200,
+  "success": true,
+  "data": {
+    "id": 34,
+    "name": "Aman zaybal boldy",
+    "description": "Aman ishlemese ozini asya",
+    "startsAt": "2023-07-26T16:45:51.584Z",
+    "finishesAt": "2023-07-26T16:45:53.409Z",
+    "files": [
+      {
+        "fileUrl": "tasks/882ce9fd-467d-4c60-ba81-cbd32723a386.pdf",
+        "fileName": "Return to Ag.pdf"
+      }
+    ],
+    "projectId": 2,
+    "remindAt": [
+      "2023-07-26T16:45:48.732Z"
+    ],
+    "authorId": 1,
+    "executorId": 1,
+    "createdAt": "2023-07-26T11:46:12.813Z",
+    "updatedAt": "2023-07-26T11:46:12.813Z",
+    "deletedAt": null
+  }
 }

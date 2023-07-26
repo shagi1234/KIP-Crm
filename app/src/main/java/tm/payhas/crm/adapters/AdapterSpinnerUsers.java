@@ -5,11 +5,12 @@ import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -26,7 +27,7 @@ import tm.payhas.crm.fragment.FragmentAddTask;
 import tm.payhas.crm.interfaces.AddTask;
 import tm.payhas.crm.interfaces.HelperAddProject;
 
-public class AdapterSpinnerUsers extends RecyclerView.Adapter<AdapterSpinnerUsers.ViewHolder> {
+public class AdapterSpinnerUsers extends RecyclerView.Adapter<AdapterSpinnerUsers.ViewHolder> implements Filterable {
 
     private Context context;
     private int type;
@@ -34,9 +35,11 @@ public class AdapterSpinnerUsers extends RecyclerView.Adapter<AdapterSpinnerUser
     private int executorUserId;
     public static final int SINGULAR = 22;
     public static final int MULTIPLE = 11;
+    private String searchText;
     private ArrayList<DtoUserInfo> usersList = new ArrayList<>();
     private ArrayList<DtoUserInfo> selectedUsers = new ArrayList<>();
     private ArrayList<Integer> selectedUserList = new ArrayList<>();
+    private ArrayList<DtoUserInfo> filteredUsersList;
 
     public void setUsersList(ArrayList<DtoUserInfo> usersList) {
         this.usersList = usersList;
@@ -49,18 +52,47 @@ public class AdapterSpinnerUsers extends RecyclerView.Adapter<AdapterSpinnerUser
         this.type = type;
     }
 
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                filteredUsersList = new ArrayList<>();
+
+                for (DtoUserInfo user : usersList) {
+                    String userName = user.getPersonalData().getName().toLowerCase();
+                    if (userName.contains(filterPattern)) {
+                        filteredUsersList.add(user);
+                    }
+                }
+
+                FilterResults results = new FilterResults();
+                results.values = filteredUsersList;
+                results.count = filteredUsersList.size();
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                filteredUsersList = (ArrayList<DtoUserInfo>) results.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
+
+    public void setSearchText(String searchText) {
+        this.searchText = searchText;
+        getFilter().filter(searchText); // Apply the filter for search text
+    }
+
     public void setSelectedUserList(ArrayList<Integer> selectedUserList) {
         this.selectedUserList = selectedUserList;
         notifyDataSetChanged();
-        Log.e("SelectedUserList", "setSelectedUserList: " + selectedUserList.size());
     }
 
     public ArrayList<DtoUserInfo> getSelectedUsers() {
         return selectedUsers;
-    }
-
-    public int getExecutorUserId() {
-        return executorUserId;
     }
 
     @NonNull
@@ -72,11 +104,17 @@ public class AdapterSpinnerUsers extends RecyclerView.Adapter<AdapterSpinnerUser
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if (type == SINGULAR) {
-            DtoUserInfo oneUSer = usersList.get(position);
-            holder.bindSingle(oneUSer);
+        DtoUserInfo oneUser;
+        if (searchText != null && !searchText.isEmpty()) {
+            // Use the filteredUsersList when searching
+            oneUser = filteredUsersList.get(position);
         } else {
-            DtoUserInfo oneUser = usersList.get(position);
+            oneUser = usersList.get(position);
+        }
+
+        if (type == SINGULAR) {
+            holder.bindSingle(oneUser);
+        } else {
             holder.setSelected(oneUser);
             holder.bind(oneUser);
         }
@@ -85,14 +123,18 @@ public class AdapterSpinnerUsers extends RecyclerView.Adapter<AdapterSpinnerUser
 
     @Override
     public int getItemCount() {
-        return usersList.size();
+        if (searchText != null && !searchText.isEmpty()) {
+            // Use the filteredUsersList size when searching
+            return filteredUsersList.size();
+        } else {
+            return usersList.size();
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView userName;
         CheckBox checkBox;
         LinearLayout main;
-
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -105,11 +147,10 @@ public class AdapterSpinnerUsers extends RecyclerView.Adapter<AdapterSpinnerUser
             checkBox.setChecked(true);
             oneUser.setSelected(true);
             main.setBackgroundColor(Color.parseColor("#197E69FF"));
-            if (!(selectedUsers.contains(oneUser))) {
+            if (!selectedUsers.contains(oneUser)) {
                 selectedUsers.add(oneUser);
                 selectedUserList.add(oneUser.getId());
             }
-
         }
 
         public void setUnChecked(DtoUserInfo oneUser) {
@@ -117,8 +158,7 @@ public class AdapterSpinnerUsers extends RecyclerView.Adapter<AdapterSpinnerUser
             oneUser.setSelected(false);
             main.setBackgroundColor(Color.parseColor("#FFFFFF"));
             selectedUsers.remove(oneUser);
-            if (selectedUserList.contains(oneUser.getId())) {
-                selectedUserList.removeIf(element -> element == oneUser.getId());}
+            selectedUserList.remove((Integer) oneUser.getId());
         }
 
         public void bind(DtoUserInfo oneUser) {
@@ -141,20 +181,19 @@ public class AdapterSpinnerUsers extends RecyclerView.Adapter<AdapterSpinnerUser
             userName.setText(one.getPersonalData().getName());
         }
 
-        public void bindSingle(DtoUserInfo oneUSer) {
+        public void bindSingle(DtoUserInfo oneUser) {
             main.setBackgroundColor(Color.parseColor("#FFFFFF"));
-            userName.setText(oneUSer.getPersonalData().getName());
+            userName.setText(oneUser.getPersonalData().getName());
             main.setOnClickListener(view -> {
-                int exUs = oneUSer.getId();
-                exUs = executorUserId;
+                executorUserId = oneUser.getId();
                 activity.onBackPressed();
                 Fragment addProject = mainFragmentManager.findFragmentByTag(FragmentAddProject.class.getSimpleName());
                 Fragment addTask = mainFragmentManager.findFragmentByTag(FragmentAddTask.class.getSimpleName());
                 if (addProject instanceof HelperAddProject) {
-                    ((HelperAddProject) addProject).getExecutorUser(oneUSer);
+                    ((HelperAddProject) addProject).getExecutorUser(oneUser);
                 }
                 if (addTask instanceof AddTask) {
-                    ((AddTask) addTask).setExecutor(oneUSer);
+                    ((AddTask) addTask).setExecutor(oneUser);
                 }
             });
         }

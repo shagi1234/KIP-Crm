@@ -1,8 +1,7 @@
 package tm.payhas.crm.fragment;
 
-import static tm.payhas.crm.helpers.StaticMethods.navigationBarHeight;
 import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
-import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
+import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -21,7 +19,6 @@ import java.util.ArrayList;
 import tm.payhas.crm.R;
 import tm.payhas.crm.adapters.AdapterKeyboard;
 import tm.payhas.crm.databinding.FragmentChangePasswordBinding;
-import tm.payhas.crm.helpers.StaticMethods;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentChangePassword extends Fragment {
@@ -46,7 +43,7 @@ public class FragmentChangePassword extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        StaticMethods.setPadding(b.mainLay, 0, statusBarHeight, 0, navigationBarHeight);
+        setPadding(b.constraint, 0, 50, 0, 0);
 
     }
 
@@ -67,6 +64,7 @@ public class FragmentChangePassword extends Fragment {
         b = FragmentChangePasswordBinding.inflate(inflater, container, false);
         addKeyboardCount();
         init();
+        Log.e("Password", "onCreateView: "+accountPreferences.getPassword());
         return b.getRoot();
     }
 

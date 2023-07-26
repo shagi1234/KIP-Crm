@@ -139,7 +139,7 @@ public class Common {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", us);
         try {
             Date date = format.parse(initialStringDate);
-            String stringDate = new SimpleDateFormat("yyyy/MM/dd", us).format(date);
+            String stringDate = new SimpleDateFormat("dd/MM/yyyy", us).format(date);
             String stringTime = new SimpleDateFormat("HH:mm", us).format(date);
             String finalDateTime = stringDate.concat(" ").concat(stringTime);
             dateTaken = stringDate;
@@ -150,7 +150,7 @@ public class Common {
         return dateTaken;
     }
 
-    public static Date anormalDate(String dateGiven) {
+    public static Date notNormalDate(String dateGiven) {
         String initialStringDate = dateGiven;
         Locale us = new Locale("US");
         Date dateTaken = null;

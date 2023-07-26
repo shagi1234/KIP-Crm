@@ -126,6 +126,16 @@ public class FragmentOneTask extends Fragment {
     }
 
     private void initListeners() {
+        b.editTask.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        b.editTask.setEnabled(false);
+                        addFragment(mainFragmentManager, R.id.main_content, FragmentAddTask.newInstance(projectId, taskId));
+                        new Handler().postDelayed(() -> b.editTask.setEnabled(true), 200);
+                    }
+                }
+        );
         b.back.setOnClickListener(view -> getActivity().onBackPressed());
         b.cancelTaskClicker.setOnClickListener(view -> changeTaskStatus());
         b.btnAttach.setOnClickListener(view -> pickFileFromInternalStorage());
@@ -354,7 +364,6 @@ public class FragmentOneTask extends Fragment {
         }
 
     }
-
 
 
     private void setInfo(DataTask data) {

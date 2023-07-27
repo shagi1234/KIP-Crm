@@ -16,11 +16,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tm.payhas.crm.R;
+import tm.payhas.crm.adapters.AdapterLanguage;
 import tm.payhas.crm.adapters.AdapterListProjects;
 import tm.payhas.crm.adapters.AdapterSpinnerUsers;
 import tm.payhas.crm.api.data.dto.DtoUserInfo;
@@ -48,10 +50,13 @@ public class FragmentSpinner extends Fragment {
     public static final int OBSERVERS = 4;
     public static final int PROJECT_MEMBERS = 5;
     public static final int PROJECT_EXECUTOR = 6;
+    public static final int LANGUAGE = 8;
     private AdapterListProjects adapterProjects;
     private AdapterSpinnerUsers adapterProjectUsers;
     private AdapterSpinnerUsers adapterExecutor;
     private AccountPreferences accountPreferences;
+    private ArrayList<String> languages = new ArrayList<>();
+    private AdapterLanguage adapterLanguage;
 
 
     // TODO: Rename and change types and number of parameters
@@ -100,9 +105,17 @@ public class FragmentSpinner extends Fragment {
         StaticMethods.setBackgroundDrawable(getContext(), b.searchBox, R.color.color_transparent, R.color.primary, 6, false, 1);
     }
 
+    private void setAdapterLanguage() {
+        b.rvSpinnerUsers.setVisibility(View.VISIBLE);
+        adapterLanguage = new AdapterLanguage(getContext(), getActivity());
+        b.rvSpinnerUsers.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        b.rvSpinnerUsers.setAdapter(adapterLanguage);
+    }
+
     private void setUpSpinner() {
         switch (type) {
             case PROJECTS:
+                b.customTitleBar.setEnabled(false);
                 b.searchBox.setVisibility(View.GONE);
                 setRecyclerProject();
                 getProjects();
@@ -128,6 +141,7 @@ public class FragmentSpinner extends Fragment {
                 getProjectMembers();
                 break;
             case PROJECT_EXECUTOR:
+                b.customTitleBar.setEnabled(false);
                 getProjectExecutors();
                 Call<ResponseUsersList> call = Common.getApi().getAllUsers();
                 call.enqueue(new Callback<ResponseUsersList>() {
@@ -143,9 +157,24 @@ public class FragmentSpinner extends Fragment {
 
                     }
                 });
+                break;
+            case LANGUAGE:
+                b.spinnerText.setText(R.string.language);
+                b.customTitleBar.setEnabled(false);
+                b.searchBox.setVisibility(View.GONE);
+                setAdapterLanguage();
+                getLanguages();
+                break;
 
         }
 
+    }
+
+    private void getLanguages() {
+        languages.clear();
+        String[] languagesToSet = getResources().getStringArray(R.array.languages);
+        languages.addAll(Arrays.asList(languagesToSet));
+        adapterLanguage.setLanguages(languages);
     }
 
     private void getTaskMembers() {
@@ -248,6 +277,7 @@ public class FragmentSpinner extends Fragment {
                         adapterExecutor.getFilter().filter(charSequence);
                         adapterExecutor.setSearchText(b.searchInput.getText().toString());
                         break;
+
                     default:
                         break;
                 }

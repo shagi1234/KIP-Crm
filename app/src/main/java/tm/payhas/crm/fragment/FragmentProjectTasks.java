@@ -56,8 +56,8 @@ public class FragmentProjectTasks extends Fragment {
 
     private void setViewPager() {
         adapterViewPager = new AdapterViewPager(mainFragmentManager);
-        adapterViewPager.addFragment(new FragmentTasks(), "задачи");
-        adapterViewPager.addFragment(new FragmentProjects(), "Проекты");
+        adapterViewPager.addFragment(new FragmentTasks(),getActivity().getResources().getString(R.string.tasks) );
+        adapterViewPager.addFragment(new FragmentProjects(),getActivity().getResources().getString(R.string.projects) );
         b.tabsProjectTasks.setupWithViewPager(b.vpProjectTasks);
         b.vpProjectTasks.setAdapter(adapterViewPager);
     }

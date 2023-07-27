@@ -18,8 +18,6 @@ public class AccountPreferences {
     private static final String NOTIFICATION = "_notification";
     private static AccountPreferences accountPreferences;
     private static final String PREF_NAME = "Crm_account";
-    public static final String LANG_RU = "ru";
-    public static final String LANG_TK = "tk";
     private static final String IS_LOGGED_IN = "_is_logged_in";
     private static final String PREF_TOKEN = "_token";
     private static final String PREF_SURNAME = "_surname";
@@ -225,17 +223,6 @@ public class AccountPreferences {
         }
     }
 
-    public void setLanguage(String lang) {
-        editor.putString(PREF_LANGUAGE, lang);
-        editor.commit();
-    }
-
-    public String getLanguage() {
-        if (_context == null) {
-            return "tkm";
-        } else
-            return pref.getString(PREF_LANGUAGE, "tkm");
-    }
 
     public void setPrefColorCode(String registerImage) {
         editor.putString(PREF_COLOR_CODE, registerImage);

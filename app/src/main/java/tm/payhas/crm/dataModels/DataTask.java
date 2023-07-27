@@ -1,5 +1,7 @@
 package tm.payhas.crm.dataModels;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 import tm.payhas.crm.api.data.dto.DtoUserInfo;
@@ -29,7 +31,16 @@ public class DataTask {
     private DataProject project;
     private int executorId;
     private DtoUserInfo executor;
+    @SerializedName("_count")
+    private Count count;
 
+    public Count getCount() {
+        return count;
+    }
+
+    public void setCount(Count count) {
+        this.count = count;
+    }
 
     public DtoUserInfo getExecutor() {
         return executor;
@@ -235,4 +246,45 @@ public class DataTask {
             this.remindAt = remindAt;
         }
     }
+
+    public class Count {
+
+        private int checklists;
+        private int comments;
+        private int observerUsers;
+        private int responsibleUsers;
+
+        public int getChecklists() {
+            return checklists;
+        }
+
+        public void setChecklists(int checklists) {
+            this.checklists = checklists;
+        }
+
+        public int getComments() {
+            return comments;
+        }
+
+        public void setComments(int comments) {
+            this.comments = comments;
+        }
+
+        public int getObserverUsers() {
+            return observerUsers;
+        }
+
+        public void setObserverUsers(int observerUsers) {
+            this.observerUsers = observerUsers;
+        }
+
+        public int getResponsibleUsers() {
+            return responsibleUsers;
+        }
+
+        public void setResponsibleUsers(int responsibleUsers) {
+            this.responsibleUsers = responsibleUsers;
+        }
+    }
+
 }

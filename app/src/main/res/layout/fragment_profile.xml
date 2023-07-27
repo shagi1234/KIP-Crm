@@ -226,7 +226,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginVertical="13.5dp"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Turkmen dili"
+                        android:text="@string/selected_language"
                         android:textColor="@color/profile_text_color"
                         android:textSize="12sp"
                         android:textStyle="bold" />

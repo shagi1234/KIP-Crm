@@ -3,6 +3,14 @@ package tm.payhas.crm.adapters;
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.helpers.Common.addFragment;
 import static tm.payhas.crm.helpers.Common.normalDate;
+import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
+import static tm.payhas.crm.statics.StaticConstants.FINISHED;
+import static tm.payhas.crm.statics.StaticConstants.HIGH;
+import static tm.payhas.crm.statics.StaticConstants.IN_PROCESS;
+import static tm.payhas.crm.statics.StaticConstants.MEDIUM;
+import static tm.payhas.crm.statics.StaticConstants.NOT_IMPORTANT;
+import static tm.payhas.crm.statics.StaticConstants.NOT_STARTED;
+import static tm.payhas.crm.statics.StaticConstants.PRIMARY;
 
 import android.app.Activity;
 import android.content.Context;
@@ -29,17 +37,14 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolder> 
     private Activity activity;
     private ArrayList<DataTask> tasks = new ArrayList<>();
 
-    public AdapterTasks(Context context) {
+    public AdapterTasks(Context context, Activity activity) {
         this.context = context;
+        this.activity = activity;
     }
 
     public void setTasks(ArrayList<DataTask> tasks) {
         this.tasks = tasks;
         notifyDataSetChanged();
-    }
-
-    public void setActivity(Activity activity) {
-        this.activity = activity;
     }
 
     @NonNull
@@ -91,13 +96,58 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolder> 
             }
             startTime.setText(normalDate(oneTask.getStartsAt()));
             endTime.setText(normalDate(oneTask.getFinishesAt()));
-            status.setText(oneTask.getStatus());
-            if (oneTask.getObserverUsers() != null)
-                observers.setText(String.valueOf(oneTask.getObserverUsers().size()));
-            if (oneTask.getResponsibleUsers() != null)
-                members.setText(String.valueOf(oneTask.getResponsibleUsers().size()));
+            if (oneTask.getStatus() != null)
+                setStatus(oneTask.getStatus());
+            if (oneTask.getStatus() != null)
+                setPriority(oneTask.getPriority());
+            observers.setText(String.valueOf(oneTask.getCount().getObserverUsers()));
+            members.setText(String.valueOf(oneTask.getCount().getResponsibleUsers()));
             priority.setText(oneTask.getPriority());
             clickableLayout.setOnClickListener(view -> addFragment(mainFragmentManager, R.id.main_content, FragmentOneTask.newInstance(oneTask.getId())));
         }
+
+
+        private void setStatus(String statusReceived) {
+            switch (statusReceived) {
+                case IN_PROCESS:
+                    setBackgroundDrawable(context, status, R.color.status_in_process, 0, 50, false, 0);
+                    status.setTextColor(activity.getResources().getColor(R.color.status_in_process_text));
+                    status.setText(R.string.in_process);
+                    break;
+                case NOT_STARTED:
+                    setBackgroundDrawable(context, status, R.color.status_not_started, 0, 50, false, 0);
+                    status.setTextColor(activity.getResources().getColor(R.color.status_not_started_text));
+                    status.setText(R.string.not_started);
+                    break;
+                case FINISHED:
+                    setBackgroundDrawable(context, status, R.color.status_finished, 0, 50, false, 0);
+                    status.setTextColor(activity.getResources().getColor(R.color.status_finished_text));
+                    status.setText(R.string.finished);
+                    break;
+            }
+        }
+
+        private void setPriority(String priority) {
+            switch (priority) {
+                case PRIMARY:
+                    setBackgroundDrawable(context, status, R.color.status_in_process, 0, 50, false, 0);
+                    status.setText(R.string.primary);
+                    break;
+                case MEDIUM:
+                    setBackgroundDrawable(context, status, R.color.status_in_process, 0, 50, false, 0);
+                    status.setText(R.string.medium);
+                    break;
+                case HIGH:
+                    setBackgroundDrawable(context, status, R.color.status_in_process, 0, 50, false, 0);
+                    status.setText(R.string.high);
+                    break;
+                case NOT_IMPORTANT:
+                    setBackgroundDrawable(context, status, R.color.status_in_process, 0, 50, false, 0);
+                    status.setText(R.string.neotlozhnyy);
+                    break;
+            }
+        }
+
+
     }
 }

@@ -1,6 +1,7 @@
 package tm.payhas.crm.helpers;
 
 import static android.content.Context.VIBRATOR_SERVICE;
+import static tm.payhas.crm.helpers.LanguageManager.LANG_RU;
 
 import android.app.Activity;
 import android.content.ContentUris;
@@ -38,7 +39,6 @@ import java.util.Locale;
 import java.util.Objects;
 
 import tm.payhas.crm.R;
-import tm.payhas.crm.preference.AccountPreferences;
 
 public class StaticMethods {
 
@@ -309,9 +309,9 @@ public class StaticMethods {
 
     public static String checkLang(Context context, String tkm, String ru) {
         if (context == null) return tkm;
-        AccountPreferences lm = AccountPreferences.newInstance(context);
+        LanguageManager lm = LanguageManager.newInstance(context);
 
-        if (Objects.equals(lm.getLanguage(), AccountPreferences.LANG_RU)) {
+        if (Objects.equals(lm.getLanguage(), LANG_RU)) {
             return ru;
         }
         return tkm;

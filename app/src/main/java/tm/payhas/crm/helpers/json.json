@@ -1,55 +1,394 @@
 {
-  "description": "Aman ishlemese ozini asya",
-  "executorId": 1,
-  "files": [
-    {
-      "fileName": "Return to Ag.pdf",
-      "fileUrl": "tasks/882ce9fd-467d-4c60-ba81-cbd32723a386.pdf"
-    }
-  ],
-  "finishesAt": "2023-07-26T16:45:53.409Z",
-  "id": 0,
-  "name": "Aman zaybal boldy",
-  "observerUsers": [
-    1,
-    1
-  ],
-  "priority": "primary",
-  "projectId": 2,
-  "remindAt": [
-    "2023-07-26T16:45:48.732Z"
-  ],
-  "reminderType": "observerUsers",
-  "responsibleUsers": [
-    1,
-    1
-  ],
-  "startsAt": "2023-07-26T16:45:51.584Z",
-  "status": "notStarted"
-}
-{
   "statusCode": 200,
   "success": true,
   "data": {
-    "id": 34,
-    "name": "Aman zaybal boldy",
-    "description": "Aman ishlemese ozini asya",
-    "startsAt": "2023-07-26T16:45:51.584Z",
-    "finishesAt": "2023-07-26T16:45:53.409Z",
-    "files": [
+    "count": 24,
+    "pageCount": 1,
+    "tasks": [
       {
-        "fileUrl": "tasks/882ce9fd-467d-4c60-ba81-cbd32723a386.pdf",
-        "fileName": "Return to Ag.pdf"
+        "id": 7,
+        "name": "Task name",
+        "description": "task description",
+        "startsAt": "2023-03-30T00:00:00.000Z",
+        "finishesAt": "2023-10-10T00:00:00.000Z",
+        "status": "inprocess",
+        "priority": "primary",
+        "createdAt": "2023-06-07T12:12:51.454Z",
+        "_count": {
+          "checklists": 2,
+          "comments": 9,
+          "observerUsers": 5,
+          "responsibleUsers": 4
+        }
+      },
+      {
+        "id": 16,
+        "name": "e3333333333333333333333",
+        "description": "<p>dedwedwedwedwedwe</p>",
+        "startsAt": "2023-06-07T00:00:00.000Z",
+        "finishesAt": "2023-06-30T00:00:00.000Z",
+        "status": "finished",
+        "priority": "primary",
+        "createdAt": "2023-06-07T18:18:36.531Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 2,
+          "observerUsers": 2,
+          "responsibleUsers": 2
+        }
+      },
+      {
+        "id": 8,
+        "name": "hello world",
+        "description": "<p>hello world</p>",
+        "startsAt": "2023-06-08T00:00:00.000Z",
+        "finishesAt": "2023-06-30T00:00:00.000Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-06-07T12:16:29.905Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 0,
+          "observerUsers": 4,
+          "responsibleUsers": 3
+        }
+      },
+      {
+        "id": 9,
+        "name": "hello world",
+        "description": "<p>hello world</p>",
+        "startsAt": "2023-06-08T00:00:00.000Z",
+        "finishesAt": "2023-06-30T00:00:00.000Z",
+        "status": "finished",
+        "priority": "primary",
+        "createdAt": "2023-06-07T12:21:20.114Z",
+        "_count": {
+          "checklists": 1,
+          "comments": 0,
+          "observerUsers": 3,
+          "responsibleUsers": 3
+        }
+      },
+      {
+        "id": 17,
+        "name": "ebejdjnsnsnsbsuuduejeh",
+        "description": "sbhshshshdhdhhdhdhdhdhhdhdhdh",
+        "startsAt": "2023-06-23T16:32:12.680Z",
+        "finishesAt": "2023-06-23T16:32:14.305Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-06-23T11:32:25.842Z",
+        "_count": {
+          "checklists": 1,
+          "comments": 0,
+          "observerUsers": 2,
+          "responsibleUsers": 2
+        }
+      },
+      {
+        "id": 18,
+        "name": "sjsjjfnxjzhxhsjdududhnd",
+        "description": "shshsjhshshshshsjshsjsjsjsjs",
+        "startsAt": "2023-06-23T16:37:34.550Z",
+        "finishesAt": "2023-06-23T16:37:36.178Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-06-23T11:37:43.542Z",
+        "_count": {
+          "checklists": 1,
+          "comments": 1,
+          "observerUsers": 1,
+          "responsibleUsers": 2
+        }
+      },
+      {
+        "id": 19,
+        "name": "usjsjdjskaoa",
+        "description": "b sns sjw djjw djw sjwne dkdkd dhshwbxiabsjwbxjskwksoorbsjw d s w e e esosjeuwj",
+        "startsAt": "2023-06-23T17:48:55.418Z",
+        "finishesAt": "2023-06-23T17:48:58.013Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-06-23T12:49:48.717Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 2,
+          "observerUsers": 2,
+          "responsibleUsers": 3
+        }
+      },
+      {
+        "id": 22,
+        "name": "ewkdwedwehdwe",
+        "description": "<p>dewdwedwedew</p>",
+        "startsAt": "2023-06-26T00:00:00.000Z",
+        "finishesAt": "2023-06-30T00:00:00.000Z",
+        "status": "finished",
+        "priority": "primary",
+        "createdAt": "2023-06-26T12:59:52.782Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 4,
+          "observerUsers": 2,
+          "responsibleUsers": 2
+        }
+      },
+      {
+        "id": 21,
+        "name": "jasdnjaed",
+        "description": "<p>dwedwed</p>",
+        "startsAt": "2023-06-26T00:00:00.000Z",
+        "finishesAt": "2023-06-30T00:00:00.000Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-06-26T12:57:28.090Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 1,
+          "observerUsers": 1,
+          "responsibleUsers": 2
+        }
+      },
+      {
+        "id": 23,
+        "name": "gsjsjsj",
+        "description": "uvvu vuvu kbib boob biib biib kivivj ctcyj biibj ",
+        "startsAt": "2023-06-30T17:01:39.365Z",
+        "finishesAt": "2023-06-30T17:01:42.607Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-06-30T12:02:05.023Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 0,
+          "observerUsers": 3,
+          "responsibleUsers": 3
+        }
+      },
+      {
+        "id": 24,
+        "name": "Ggggвылал",
+        "description": "оадвддвлпьтпте",
+        "startsAt": "2023-07-01T11:19:22.267Z",
+        "finishesAt": "2023-07-01T11:19:26.381Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-07-01T06:19:40.817Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 0,
+          "observerUsers": 4,
+          "responsibleUsers": 5
+        }
+      },
+      {
+        "id": 20,
+        "name": "Task name",
+        "description": "task description",
+        "startsAt": "2023-07-21T17:27:49.699Z",
+        "finishesAt": "2023-07-15T17:27:51.748Z",
+        "status": "finished",
+        "priority": "primary",
+        "createdAt": "2023-06-23T19:09:23.413Z",
+        "_count": {
+          "checklists": 4,
+          "comments": 5,
+          "observerUsers": 3,
+          "responsibleUsers": 2
+        }
+      },
+      {
+        "id": 27,
+        "name": "dwedew",
+        "description": "<p>dwedewd</p>",
+        "startsAt": "2023-07-26T00:00:00.000Z",
+        "finishesAt": "2023-07-30T00:00:00.000Z",
+        "status": "notStarted"
+        "priority": "primary",
+        "createdAt": "2023-07-26T08:50:32.693Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 0,
+          "observerUsers": 2,
+          "responsibleUsers": 2
+        }
+      },
+      {
+        "id": 25,
+        "name": "birinji add edilen task",
+        "description": "aman amanow amanowic",
+        "startsAt": "2023-07-26T13:46:41.521Z",
+        "finishesAt": "2023-07-26T13:46:43.433Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-07-26T08:47:12.534Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 0,
+          "observerUsers": 7,
+          "responsibleUsers": 7
+        }
+      },
+      {
+        "id": 26,
+        "name": "hajjsjsjsjs",
+        "description": "gsyhauauua",
+        "startsAt": "2023-07-26T13:48:12.919Z",
+        "finishesAt": "2023-07-26T13:48:14.597Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-07-26T08:48:25.969Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 0,
+          "observerUsers": 4,
+          "responsibleUsers": 4
+        }
+      },
+      {
+        "id": 28,
+        "name": "ghk proje task1",
+        "description": "eiiekejrjr",
+        "startsAt": "2023-07-26T13:52:22.606Z",
+        "finishesAt": "2023-07-26T13:52:24.545Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-07-26T08:52:42.956Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 0,
+          "observerUsers": 4,
+          "responsibleUsers": 3
+        }
+      },
+      {
+        "id": 29,
+        "name": "Task high",
+        "description": "svsvsdgdh",
+        "startsAt": "2023-07-26T16:22:42.714Z",
+        "finishesAt": "2023-07-26T16:22:45.298Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-07-26T11:23:16.309Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 0,
+          "observerUsers": 4,
+          "responsibleUsers": 5
+        }
+      },
+      {
+        "id": 30,
+        "name": "Aman",
+        "description": "123123",
+        "startsAt": "2023-07-26T16:24:26.578Z",
+        "finishesAt": "2023-07-26T16:24:27.884Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-07-26T11:24:53.548Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 0,
+          "observerUsers": 2,
+          "responsibleUsers": 3
+        }
+      },
+      {
+        "id": 31,
+        "name": "belan sapy",
+        "description": "guvhcysys4cyfjftstctd",
+        "startsAt": "2023-07-26T16:28:35.043Z",
+        "finishesAt": "2023-07-26T16:28:36.452Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-07-26T11:28:49.732Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 0,
+          "observerUsers": 2,
+          "responsibleUsers": 2
+        }
+      },
+      {
+        "id": 32,
+        "name": "Amanyn projekti",
+        "description": "ishlemeli?!",
+        "startsAt": "2023-07-26T16:35:23.976Z",
+        "finishesAt": "2023-07-26T16:35:25.879Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-07-26T11:35:42.045Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 0,
+          "observerUsers": 1,
+          "responsibleUsers": 1
+        }
+      },
+      {
+        "id": 33,
+        "name": "Amanyn ishlemeli tasky",
+        "description": "eyyam nache task doretdimow",
+        "startsAt": "2023-07-26T16:42:19.949Z",
+        "finishesAt": "2023-07-26T16:42:21.507Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-07-26T11:42:48.530Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 0,
+          "observerUsers": 1,
+          "responsibleUsers": 1
+        }
+      },
+      {
+        "id": 34,
+        "name": "Aman zaybal boldy",
+        "description": "Aman ishlemese ozini asya",
+        "startsAt": "2023-07-26T16:45:51.584Z",
+        "finishesAt": "2023-07-26T16:45:53.409Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-07-26T11:46:12.813Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 0,
+          "observerUsers": 1,
+          "responsibleUsers": 1
+        }
+      },
+      {
+        "id": 36,
+        "name": "Aman zaybal boldy",
+        "description": "Aman ishlemese ozini asya",
+        "startsAt": "2023-07-26T16:45:51.584Z",
+        "finishesAt": "2023-07-26T16:45:53.409Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-07-26T11:57:15.449Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 0,
+          "observerUsers": 1,
+          "responsibleUsers": 1
+        }
+      },
+      {
+        "id": 35,
+        "name": "Aman zaybal boldy",
+        "description": "Aman ishlemese ozini asya",
+        "startsAt": "2023-07-26T16:45:51.584Z",
+        "finishesAt": "2023-07-26T16:45:53.409Z",
+        "status": "notStarted",
+        "priority": "primary",
+        "createdAt": "2023-07-26T11:56:33.206Z",
+        "_count": {
+          "checklists": 0,
+          "comments": 0,
+          "observerUsers": 1,
+          "responsibleUsers": 1
+        }
       }
-    ],
-    "projectId": 2,
-    "remindAt": [
-      "2023-07-26T16:45:48.732Z"
-    ],
-    "authorId": 1,
-    "executorId": 1,
-    "createdAt": "2023-07-26T11:46:12.813Z",
-    "updatedAt": "2023-07-26T11:46:12.813Z",
-    "deletedAt": null
+    ]
   }
 }

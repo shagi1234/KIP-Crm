@@ -7,6 +7,7 @@ import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 
 import tm.payhas.crm.R;
+import tm.payhas.crm.activity.ActivitySplashScreen;
 import tm.payhas.crm.databinding.FragmentProfileBinding;
 import tm.payhas.crm.interfaces.PasswordInterface;
 import tm.payhas.crm.preference.AccountPreferences;
@@ -76,10 +78,22 @@ public class FragmentProfile extends Fragment implements PasswordInterface {
     }
 
     private void initListeners() {
+        b.logout.setOnClickListener(view -> {
+            b.logout.setEnabled(false);
+            accountPreferences.getEditor().clear().commit();
+            getActivity().finish();
+            startActivity(new Intent(getContext(), ActivitySplashScreen.class));
+            new Handler().postDelayed(() -> b.logout.setEnabled(true), 200);
+        });
         b.profileDetails.setOnClickListener(view -> {
             b.profileDetails.setEnabled(false);
             addFragment(mainFragmentManager, R.id.main_content, FragmentUserInfo.newInstance(accountPreferences.getAuthorId()));
             new Handler().postDelayed(() -> b.profileDetails.setEnabled(true), 200);
+        });
+        b.layLanguage.setOnClickListener(view -> {
+            b.layLanguage.setEnabled(false);
+            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.LANGUAGE, 0, 0, null));
+            new Handler().postDelayed(() -> b.layLanguage.setEnabled(true), 200);
         });
         b.layPin.setOnClickListener(view -> addFragment(mainFragmentManager, R.id.main_content, FragmentChangePassword.newInstance(true, false)));
         b.passwordSwitcher.setOnClickListener(view -> addFragment(mainFragmentManager, R.id.main_content, FragmentChangePassword.newInstance(true, true)));

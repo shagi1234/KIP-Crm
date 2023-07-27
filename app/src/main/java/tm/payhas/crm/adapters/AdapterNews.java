@@ -165,8 +165,7 @@ public class AdapterNews extends RecyclerView.Adapter<AdapterNews.ViewHolder> {
                 newsTitle.setText(Html.fromHtml(oneNews.getTitle()));
                 newsDetails.setText(Html.fromHtml(oneNews.getContent()));
             }
-            newsTitle.setText(oneNews.getTitle());
-            newsDetails.setText(oneNews.getContent());
+
             Picasso.get().load(BASE_PHOTO + oneNews.getAuthor().getAvatar()).placeholder(R.color.primary).into(authorAvatar);
             newsTime.setText(normalDate(oneNews.getCreatedAt()));
             authorNameSurname.setText(oneNews.getAuthor().getPersonalData().getName() + "  " + oneNews.getAuthor().getPersonalData().getSurname());

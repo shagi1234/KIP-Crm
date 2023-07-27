@@ -3,9 +3,15 @@ package tm.payhas.crm.adapters;
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.helpers.Common.addFragment;
 import static tm.payhas.crm.helpers.Common.normalDate;
+import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
+import static tm.payhas.crm.statics.StaticConstants.FINISHED;
+import static tm.payhas.crm.statics.StaticConstants.IN_PROCESS;
+import static tm.payhas.crm.statics.StaticConstants.NOT_STARTED;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +31,11 @@ public class AdapterProjects extends RecyclerView.Adapter<AdapterProjects.ViewHo
 
     private Context context;
     private ArrayList<DataProject> projects = new ArrayList<>();
+    private Activity activity;
 
-    public AdapterProjects(Context context) {
+    public AdapterProjects(Context context, Activity activity) {
         this.context = context;
+        this.activity = activity;
     }
 
     public void setProjects(ArrayList<DataProject> projects) {
@@ -77,17 +85,42 @@ public class AdapterProjects extends RecyclerView.Adapter<AdapterProjects.ViewHo
             projectName.setText(oneProject.getName());
             startTime.setText(normalDate(oneProject.getStartsAt()));
             endTime.setText(normalDate(oneProject.getDeadline()));
-            if (oneProject.getProjectParticipants()!=null){
+            Log.e("Projects_status", "bind: "+oneProject.getStatus());
+            if (oneProject.getStatus()!=null){
+                setStatus(oneProject.getStatus());
+            }
+            if (oneProject.getProjectParticipants() != null) {
                 memberCount.setText(String.valueOf(oneProject.getProjectParticipants().size()));
-            }else{
+            } else {
                 memberCount.setText("0");
 
             }
             clicker.setOnClickListener(view -> {
                 clicker.setEnabled(false);
                 addFragment(mainFragmentManager, R.id.main_content, FragmentOneProject.newInstance(oneProject.getId()));
-                new Handler().postDelayed(() -> clicker.setEnabled(true),200);
+                new Handler().postDelayed(() -> clicker.setEnabled(true), 200);
             });
         }
+
+        private void setStatus(String statusReceived) {
+            switch (statusReceived) {
+                case IN_PROCESS:
+                    setBackgroundDrawable(context,status, R.color.status_in_process, 0, 50, false, 0);
+                    status.setTextColor(activity.getResources().getColor(R.color.status_in_process_text));
+                    status.setText(R.string.in_process);
+                    break;
+                case NOT_STARTED:
+                    setBackgroundDrawable(context, status,  R.color.status_not_started, 0, 50, false, 0);
+                    status.setTextColor(activity.getResources().getColor(R.color.status_not_started_text));
+                    status.setText(R.string.not_started);
+                    break;
+                case FINISHED:
+                    setBackgroundDrawable(context, status,  R.color.status_finished, 0, 50, false, 0);
+                    status.setTextColor(activity.getResources().getColor(R.color.status_finished_text));
+                    status.setText(R.string.finished);
+                    break;
+            }
+        }
+
     }
 }

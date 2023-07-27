@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="search">Поиск</string>
-    <string name="home">Esasy Sahypa</string>
+    <string name="home">Главная страница</string>
     <string name="birthdays">Дни рождения</string>
     <string name="holidays">Праздники</string>
     <string name="title_name">Названия</string>
@@ -39,7 +39,7 @@
     <string name="login">Войти</string>
     <string name="project_details">Oбзор Проекта</string>
     <string name="chats">Чаты</string>
-    <string name="status">статус</string>
+    <string name="status">Cтатус</string>
     <string name="lest_time">Оставшееся время</string>
     <string name="start">Начать</string>
     <string name="task_details">ИНФОРМАЦИЯ О ЗАДАЧЕ </string>
@@ -55,4 +55,14 @@
     <string name="workers">СОТРУДНИКИ</string>
     <string name="create_new_group">Создать Новую Группу</string>
     <string name="finish">Закончить</string>
+    <string name="not_started">Не начата</string>
+    <string name="in_process">В процессе</string>
+    <string name="finished">Завершенo</string>
+    <string name="tasks">задачи</string>
+    <string name="projects">Проекты</string>
+    <string name="selected_language">Pусский язык</string>
+    <string name="primary">Низкий</string>
+    <string name="medium">Средний</string>
+    <string name="high">Высокий</string>
+    <string name="neotlozhnyy">Неотложный</string>
 </resources>

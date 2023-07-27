@@ -3,11 +3,15 @@ package tm.payhas.crm.fragment;
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.helpers.Common.addFragment;
 import static tm.payhas.crm.helpers.Common.normalDate;
+import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
+import static tm.payhas.crm.statics.StaticConstants.FINISHED;
 import static tm.payhas.crm.statics.StaticConstants.IN_PROCESS;
 import static tm.payhas.crm.statics.StaticConstants.NOT_STARTED;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -87,10 +91,33 @@ public class FragmentOneProject extends Fragment {
             @Override
             public void onClick(View view) {
                 b.addTask.setEnabled(false);
-                addFragment(mainFragmentManager,R.id.main_content,FragmentAddTask.newInstance(projectId,0));
+                addFragment(mainFragmentManager, R.id.main_content, FragmentAddTask.newInstance(projectId, 0));
                 new Handler().postDelayed(() -> b.addTask.setEnabled(true), 200);
             }
         });
+    }
+
+
+    private void setStatus(String statusReceived) {
+        Activity activity = getActivity();
+        Context context = getContext();
+        switch (statusReceived) {
+            case IN_PROCESS:
+                setBackgroundDrawable(context, b.projectStatus,  R.color.status_in_process, 0, 50, false, 0);
+                b.projectStatus.setTextColor(activity.getResources().getColor(R.color.status_in_process_text));
+                b.projectStatus.setText(R.string.in_process);
+                break;
+            case NOT_STARTED:
+                setBackgroundDrawable(context, b.projectStatus,  R.color.status_not_started, 0, 50, false, 0);
+                b.projectStatus.setTextColor(activity.getResources().getColor(R.color.status_not_started_text));
+                b.projectStatus.setText(R.string.not_started);
+                break;
+            case FINISHED:
+                setBackgroundDrawable(context, b.projectStatus,  R.color.status_finished, 0, 50, false, 0);
+                b.projectStatus.setTextColor(activity.getResources().getColor(R.color.status_finished_text));
+                b.projectStatus.setText(R.string.finished);
+                break;
+        }
     }
 
     private void changeProjectStatus() {
@@ -127,7 +154,7 @@ public class FragmentOneProject extends Fragment {
     }
 
     private void setRecyclers() {
-        adapterTasks = new AdapterTasks(getContext());
+        adapterTasks = new AdapterTasks(getContext(),getActivity());
         b.rvProjectTasks.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         b.rvProjectTasks.setAdapter(adapterTasks);
 
@@ -152,6 +179,7 @@ public class FragmentOneProject extends Fragment {
                     adapterTasks.setTasks(response.body().getData().getTasks());
                     adapterSelectedUsers.setUserList(response.body().getData().getProjectParticipants());
                     setExecutorButton(response.body().getData());
+                    setStatus(response.body().getData().getStatus());
 
                 }
             }

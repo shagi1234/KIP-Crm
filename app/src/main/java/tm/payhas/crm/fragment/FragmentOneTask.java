@@ -4,15 +4,22 @@ import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.helpers.Common.addFragment;
 import static tm.payhas.crm.helpers.Common.normalDate;
 import static tm.payhas.crm.helpers.FileUtil.copyFileStream;
+import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import static tm.payhas.crm.helpers.StaticMethods.showToast;
 import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 import static tm.payhas.crm.statics.StaticConstants.APPLICATION_DIR_NAME;
 import static tm.payhas.crm.statics.StaticConstants.FILES_DIR;
+import static tm.payhas.crm.statics.StaticConstants.FINISHED;
+import static tm.payhas.crm.statics.StaticConstants.HIGH;
 import static tm.payhas.crm.statics.StaticConstants.IN_PROCESS;
+import static tm.payhas.crm.statics.StaticConstants.MEDIUM;
+import static tm.payhas.crm.statics.StaticConstants.NOT_IMPORTANT;
 import static tm.payhas.crm.statics.StaticConstants.NOT_STARTED;
+import static tm.payhas.crm.statics.StaticConstants.PRIMARY;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -145,6 +152,29 @@ public class FragmentOneTask extends Fragment {
         });
         b.addChecklistClicker.setOnClickListener(view -> addFragment(mainFragmentManager, R.id.main_content, FragmentAddChecklist.newInstance(taskId, projectId)));
     }
+
+    private void setStatus(String statusReceived) {
+        Activity activity = getActivity();
+        Context context = getContext();
+        switch (statusReceived) {
+            case IN_PROCESS:
+                setBackgroundDrawable(context, b.taskStatus, R.color.status_in_process, 0, 50, false, 0);
+                b.taskStatus.setTextColor(activity.getResources().getColor(R.color.status_in_process_text));
+                b.taskStatus.setText(R.string.in_process);
+                break;
+            case NOT_STARTED:
+                setBackgroundDrawable(context, b.taskStatus,  R.color.status_not_started, 0, 50, false, 0);
+                b.taskStatus.setTextColor(activity.getResources().getColor(R.color.status_not_started_text));
+                b.taskStatus.setText(R.string.not_started);
+                break;
+            case FINISHED:
+                setBackgroundDrawable(context, b.taskStatus,  R.color.status_finished, 0, 50, false, 0);
+                b.taskStatus.setTextColor(activity.getResources().getColor(R.color.status_finished_text));
+                b.taskStatus.setText(R.string.finished);
+                break;
+        }
+    }
+
 
     private void pickFileFromInternalStorage() {
         String[] mimeTypes = {"application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
@@ -339,6 +369,7 @@ public class FragmentOneTask extends Fragment {
                     adapterChecklist.setChecklists(response.body().getData().getChecklists());
                     Log.e("ChecklistSizeReceived", "onResponse: " + response.body().getData().getChecklists().size());
                     projectId = response.body().getData().getProjectId();
+                    setStatus(response.body().getData().getStatus());
                 }
             }
 

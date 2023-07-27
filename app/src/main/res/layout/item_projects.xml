@@ -42,7 +42,8 @@
                 android:maxLines="2"
                 android:text="Demo Lorem ipsum"
                 android:textColor="@color/text_color"
-                android:textSize="12sp" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -64,7 +65,7 @@
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginVertical="3.5dp"
                     android:fontFamily="@font/inter_regular"
-                    android:text="дата начала"
+                    android:text="@string/start_time"
                     android:textAllCaps="true"
                     android:textColor="@color/text_color"
                     android:textSize="10sp"
@@ -85,6 +86,11 @@
                     tools:ignore="SmallSp" />
             </FrameLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@drawable/dash_lines" />
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -96,7 +102,7 @@
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginVertical="3.5dp"
                     android:fontFamily="@font/inter_regular"
-                    android:text="дата завершения"
+                    android:text="@string/end_time"
                     android:textAllCaps="true"
                     android:textColor="@color/text_color"
                     android:textSize="10sp"
@@ -117,6 +123,11 @@
                     tools:ignore="SmallSp" />
             </FrameLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@drawable/dash_lines" />
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -128,7 +139,7 @@
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginVertical="3.5dp"
                     android:fontFamily="@font/inter_regular"
-                    android:text="статус"
+                    android:text="@string/status"
                     android:textAllCaps="true"
                     android:textColor="@color/text_color"
                     android:textSize="10sp"
@@ -141,18 +152,20 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:layout_marginVertical="3.5dp"
-                    android:background="@drawable/bg_radius_50"
-                    android:backgroundTint="@color/status_bg_color"
                     android:fontFamily="@font/inter_regular"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="2.5dp"
                     android:text="Не начата"
-                    android:textColor="@color/status_color"
+                    android:textColor="@color/status_finished_text"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     tools:ignore="SmallSp" />
             </FrameLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@drawable/dash_lines" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -165,7 +178,7 @@
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginVertical="3.5dp"
                     android:fontFamily="@font/inter_regular"
-                    android:text="участнки задачи"
+                    android:text="@string/member_project"
                     android:textAllCaps="true"
                     android:textColor="@color/text_color"
                     android:textSize="10sp"
@@ -186,6 +199,10 @@
                     tools:ignore="SmallSp" />
             </FrameLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@drawable/dash_lines" />
         </LinearLayout>
     </LinearLayout>
 

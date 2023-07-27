@@ -66,7 +66,7 @@ public class FragmentTasks extends Fragment {
         b = FragmentTasksBinding.inflate(inflater);
         hideSoftKeyboard(getActivity());
         accountPreferences = new AccountPreferences(getContext());
-        adapterTasks = new AdapterTasks(getContext());
+        adapterTasks = new AdapterTasks(getContext(),getActivity());
         setDialog();
         setRecycler();
         getFilterArray();
@@ -223,7 +223,7 @@ public class FragmentTasks extends Fragment {
     }
 
     private void setRecycler() {
-        adapterTasks = new AdapterTasks(getContext());
+        adapterTasks = new AdapterTasks(getContext(),getActivity());
         b.rcvTasks.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         b.rcvTasks.setAdapter(adapterTasks);
     }

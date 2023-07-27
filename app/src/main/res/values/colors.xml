@@ -29,10 +29,14 @@
     <color name="profile_icon_bg">#F8F6F9</color>
     <color name="gray_1000">#3F305B</color>
     <color name="selected_file_color">#197E69FF</color>
-    <color name="tasks_color">#F5F3FF</color>
-    <color name="status_color">#FD852E</color>
+    <color name="tasks_color">#F5F3F3</color>
     <color name="edt_hint">#AAA3B6</color>
-    <color name="status_bg_color">#1AFD852E</color>
+    <color name="status_not_started_text">#FD852E</color>
+    <color name="status_in_process_text">#4FB7F1</color>
+    <color name="status_finished_text">#6FC03D</color>
+    <color name="status_not_started">#17FD852E</color>
+    <color name="status_in_process">#194FB7F1</color>
+    <color name="status_finished">#1A6FC03D</color>
     <color name="dashboard_news_back">#EDF2F7</color>
     <color name="dashboard_news_title">#474747</color>
     <color name="dashboard_news_details">#3D3D3D</color>
@@ -47,5 +51,6 @@
     <color name="color_var4">#FF4FB7F1</color>
     <color name="bg_filter">#FFF3F3F3</color>
     <color name="user_bg">#19E1DCFB</color>
+    <color name="task_broken_line">#367E7E7E</color>
 
 </resources>

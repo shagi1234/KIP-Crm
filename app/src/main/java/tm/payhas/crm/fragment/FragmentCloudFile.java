@@ -420,12 +420,12 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
             public void onResponse
                     (@NonNull Call<ResponseSingleFile> call, @NonNull Response<ResponseSingleFile> response) {
                 b.linearProgressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
-
                 if (response.isSuccessful() || response.code() == 201 || response.code()==200) {
                     b.linearProgressBar.setVisibility(View.GONE);
                     b.main.setClickable(true);
                     getFolderFiles();
+                }else{
+                    Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                 }
             }
 

@@ -24,6 +24,10 @@
         <item>Tazelik</item>
         <item>Bayramcylyk</item>
     </string-array>
+    <string-array name="languages">
+        <item>Pусский язык</item>
+        <item>Türkmen Dili</item>
+    </string-array>
     <string name="search">Gözleg</string>
     <string name="home">Esasy Sahypa</string>
     <string name="birthdays">Doglan günler</string>
@@ -79,6 +83,14 @@
     <string name="create_new_group">Täze topar döretmek</string>
     <string name="start">Başlamak</string>
     <string name="finish">Tamamlamak</string>
-
-
+    <string name="not_started">Başlamadyk</string>
+    <string name="in_process">Işlenilýär</string>
+    <string name="finished">Tamamlanan</string>
+    <string name="tasks">Tabşyryklar</string>
+    <string name="projects">Proýektler</string>
+    <string name="selected_language">Turkmen dili</string>
+    <string name="primary">Pes</string>
+    <string name="medium">Ortacha</string>
+    <string name="high">Yokary</string>
+    <string name="neotlozhnyy">Mohum</string>
 </resources>

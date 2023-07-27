@@ -235,7 +235,7 @@ public class FragmentProjects extends Fragment {
     }
 
     private void setRecycler() {
-        adapterProjects = new AdapterProjects(getContext());
+        adapterProjects = new AdapterProjects(getContext(),getActivity());
         b.rcvProjects.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         b.rcvProjects.setAdapter(adapterProjects);
     }

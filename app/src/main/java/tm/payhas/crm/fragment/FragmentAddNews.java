@@ -1,5 +1,6 @@
 package tm.payhas.crm.fragment;
 
+import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 import static tm.payhas.crm.statics.StaticConstants.HOLIDAYS;
@@ -17,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -68,7 +68,7 @@ public class FragmentAddNews extends Fragment implements UploadedFilesUrl {
         setUpHelpers();
         setSpinner();
         initListeners();
-
+        buttonActivity();
         return b.getRoot();
     }
 
@@ -96,10 +96,9 @@ public class FragmentAddNews extends Fragment implements UploadedFilesUrl {
         b.spinnerType.setAdapter(adapterType);
     }
 
-    private void initListeners() {
-        b.btnSave.setOnClickListener(view -> addNewChecklist());
-        b.btnBack.setOnClickListener(view -> requireActivity().onBackPressed());
 
+    private void initListeners() {
+        b.btnBack.setOnClickListener(view -> requireActivity().onBackPressed());
         b.spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -176,15 +175,13 @@ public class FragmentAddNews extends Fragment implements UploadedFilesUrl {
             b.progressBar.setVisibility(View.VISIBLE);
             b.inputContent.setAlpha(0.5f);
             addNewsToDashboard();
+            new Handler().postDelayed(() -> b.btnSave.setEnabled(true), 200);
         });
 
         b.btnBack.setOnClickListener(view -> getActivity().onBackPressed());
 
         b.edtDate.setOnClickListener(view -> openDialog(b.edtDate));
 
-    }
-
-    private void addNewChecklist() {
     }
 
     private void addNewsToDashboard() {
@@ -214,17 +211,36 @@ public class FragmentAddNews extends Fragment implements UploadedFilesUrl {
                 }
                 b.progressBar.setVisibility(View.GONE);
                 b.inputContent.setAlpha(1);
-                Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(Call<ResponseAddNews> call, Throwable t) {
-                Log.e("NEWS", "onFailure: " + t.getMessage());
                 b.btnSave.setEnabled(true);
                 b.progressBar.setVisibility(View.GONE);
                 b.inputContent.setAlpha(1);
             }
         });
+    }
+
+
+    private void buttonActivity() {
+        Log.e("ImagesSize", "buttonActivity: " + adapterAddImage.getImages().size());
+        if (adapterAddImage.getImages().size() > 1 && b.edtName.getText().toString().length() > 0 && b.edtDescription.getText().toString().length() > 0 && !b.edtDate.getText().toString().equals("_/_/__")) {
+            b.btnSave.setEnabled(true);
+            setBackgroundDrawable(getContext(), b.btnSave, R.color.primary, 0, 10, false, 0);
+        } else {
+            b.btnSave.setEnabled(false);
+            setBackgroundDrawable(getContext(), b.btnSave, R.color.primary_30, 0, 10, false, 0);
+        }
+    }
+
+    private void openDialog(TextView dateSet) {
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (datePicker, year1, month1, day1) -> dateSet.setText(String.valueOf(day1) + "/" + String.valueOf(month1 + 1) + "/" + String.valueOf(year1)), year, month, day);
+        datePickerDialog.show();
     }
 
     @Override
@@ -237,26 +253,13 @@ public class FragmentAddNews extends Fragment implements UploadedFilesUrl {
                 0), 100);
     }
 
-    private void buttonActivity() {
-        b.btnSave.setEnabled(b.edtName.getText().length() > 0 && b.edtDescription.getText().length() > 0);
-    }
-
-    private void openDialog(TextView dateSet) {
-        final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (datePicker, year1, month1, day1) -> dateSet.setText(String.valueOf(day1) + "/" + String.valueOf(month1 + 1) + "/" + String.valueOf(year1)), year, month, day);
-        datePickerDialog.show();
-    }
-
-
     @Override
     public void onUploadManyFiles(ArrayList<String> dataFiles) {
         for (int i = 0; i < dataFiles.size(); i++) {
             images.add(new DataImages(dataFiles.get(i)));
         }
         adapterAddImage.setImages(images);
+        buttonActivity();
     }
 
     @Override

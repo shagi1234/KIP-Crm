@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,6 +32,7 @@ import tm.payhas.crm.api.response.ResponseOneProject;
 import tm.payhas.crm.dataModels.DataProject;
 import tm.payhas.crm.databinding.FragmentOneProjectBinding;
 import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.interfaces.OnInternetStatus;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentOneProject extends Fragment {
@@ -72,7 +74,7 @@ public class FragmentOneProject extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        new Handler().postDelayed(() -> setPadding(b.main,
+        new Handler().postDelayed(() -> setPadding(b.swiper,
                 0,
                 statusBarHeight,
                 0,
@@ -80,6 +82,10 @@ public class FragmentOneProject extends Fragment {
     }
 
     private void initListeners() {
+        b.swiper.setOnRefreshListener(() -> {
+            b.swiper.setRefreshing(true);
+            getProjectInfo();
+        });
         b.cancelTaskClicker.setOnClickListener(view -> changeProjectStatus());
         b.back.setOnClickListener(view -> getActivity().onBackPressed());
         b.editProject.setOnClickListener(view -> {
@@ -103,17 +109,17 @@ public class FragmentOneProject extends Fragment {
         Context context = getContext();
         switch (statusReceived) {
             case IN_PROCESS:
-                setBackgroundDrawable(context, b.projectStatus,  R.color.status_in_process, 0, 50, false, 0);
+                setBackgroundDrawable(context, b.projectStatus, R.color.status_in_process, 0, 50, false, 0);
                 b.projectStatus.setTextColor(activity.getResources().getColor(R.color.status_in_process_text));
                 b.projectStatus.setText(R.string.in_process);
                 break;
             case NOT_STARTED:
-                setBackgroundDrawable(context, b.projectStatus,  R.color.status_not_started, 0, 50, false, 0);
+                setBackgroundDrawable(context, b.projectStatus, R.color.status_not_started, 0, 50, false, 0);
                 b.projectStatus.setTextColor(activity.getResources().getColor(R.color.status_not_started_text));
                 b.projectStatus.setText(R.string.not_started);
                 break;
             case FINISHED:
-                setBackgroundDrawable(context, b.projectStatus,  R.color.status_finished, 0, 50, false, 0);
+                setBackgroundDrawable(context, b.projectStatus, R.color.status_finished, 0, 50, false, 0);
                 b.projectStatus.setTextColor(activity.getResources().getColor(R.color.status_finished_text));
                 b.projectStatus.setText(R.string.finished);
                 break;
@@ -154,7 +160,7 @@ public class FragmentOneProject extends Fragment {
     }
 
     private void setRecyclers() {
-        adapterTasks = new AdapterTasks(getContext(),getActivity());
+        adapterTasks = new AdapterTasks(getContext(), getActivity());
         b.rvProjectTasks.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         b.rvProjectTasks.setAdapter(adapterTasks);
 
@@ -173,7 +179,10 @@ public class FragmentOneProject extends Fragment {
             @Override
             public void onResponse(Call<ResponseOneProject> call, Response<ResponseOneProject> response) {
                 if (response.isSuccessful()) {
-                    b.progressBar.setVisibility(View.GONE);
+                    b.swiper.setRefreshing(false);
+                    OnInternetStatus internetStatusListener = new OnInternetStatus() {
+                    };
+                    internetStatusListener.setConnected(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
                     b.main.setVisibility(View.VISIBLE);
                     setProjectInfo(response.body().getData());
                     adapterTasks.setTasks(response.body().getData().getTasks());
@@ -186,6 +195,10 @@ public class FragmentOneProject extends Fragment {
 
             @Override
             public void onFailure(Call<ResponseOneProject> call, Throwable t) {
+                b.swiper.setRefreshing(false);
+                OnInternetStatus internetStatusListener = new OnInternetStatus() {
+                };
+                internetStatusListener.setConnected(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
             }
         });
     }

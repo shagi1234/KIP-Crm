@@ -5,6 +5,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="error_color">#FF0000</color>
     <color name="primary">#7E69FF</color>
+    <color name="primary_30">#4D7E69FF</color>
     <color name="select_all">#492DF6</color>
     <color name="ic_launcher_background">#E9E9EA</color>
     <color name="primary_dark">#322871</color>

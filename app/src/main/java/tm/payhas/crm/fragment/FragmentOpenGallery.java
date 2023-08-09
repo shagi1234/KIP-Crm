@@ -52,6 +52,7 @@ import tm.payhas.crm.helpers.SelectedMedia;
 import tm.payhas.crm.helpers.StaticMethods;
 import tm.payhas.crm.interfaces.ChatRoomInterface;
 import tm.payhas.crm.interfaces.OnBackPressedFragment;
+import tm.payhas.crm.interfaces.OnUserCountChangeListener;
 import tm.payhas.crm.interfaces.UploadedFilesUrl;
 
 public class FragmentOpenGallery extends Fragment implements OnBackPressedFragment {
@@ -67,7 +68,8 @@ public class FragmentOpenGallery extends Fragment implements OnBackPressedFragme
     private int typeMessageRoom;
     public static final int SINGLE = 1;
     public static final int MANY = 2;
-    private int PERMISSION_FILE = 1;
+    private int PERMISSION_FILE = 1112;
+    public static final int GROUP_AVATAR = 3;
 
     public static FragmentOpenGallery newInstance(int chooseCount, int roomId, int type, int typeMessageRoom) {
         Bundle args = new Bundle();
@@ -186,10 +188,15 @@ public class FragmentOpenGallery extends Fragment implements OnBackPressedFragme
                 public void onResponse(@NonNull Call<ResponseSingleFile> call, @NonNull Response<ResponseSingleFile> response) {
                     if (response.isSuccessful()) {
                         Fragment chatRoom = ActivityMain.mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
+                        Fragment createGroup = ActivityMain.mainFragmentManager.findFragmentByTag(FragmentCreateGroup.class.getSimpleName());
 
                         if (chatRoom instanceof ChatRoomInterface) {
                             assert response.body() != null;
                             ((ChatRoomInterface) chatRoom).newImageImageUrl(response.body().getData());
+                        }
+                        if (createGroup instanceof OnUserCountChangeListener) {
+                            assert response.body() != null;
+                            ((OnUserCountChangeListener) createGroup).avatarUrl(response.body().getData().getUrl());
                         }
                         if (getActivity() != null)
                             getActivity().onBackPressed();
@@ -275,10 +282,10 @@ public class FragmentOpenGallery extends Fragment implements OnBackPressedFragme
         String selection;
 
         selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
-                + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
-                + " OR "
-                + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
-                + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+                + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+//        + " OR "
+//                + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+//                + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO
 
         Uri queryUri = MediaStore.Files.getContentUri("external");
 

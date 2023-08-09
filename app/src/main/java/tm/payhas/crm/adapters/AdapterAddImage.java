@@ -44,6 +44,10 @@ public class AdapterAddImage extends RecyclerView.Adapter<AdapterAddImage.ViewHo
         notifyDataSetChanged();
     }
 
+    public ArrayList<DataImages> getImages() {
+        return images;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

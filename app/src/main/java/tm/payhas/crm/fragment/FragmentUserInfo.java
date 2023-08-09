@@ -1,7 +1,8 @@
 package tm.payhas.crm.fragment;
 
+import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.api.network.Network.BASE_PHOTO;
-import static tm.payhas.crm.helpers.Common.normalDate;
+import static tm.payhas.crm.helpers.Common.addFragment;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 
@@ -22,6 +23,7 @@ import tm.payhas.crm.api.data.dto.DtoUserInfo;
 import tm.payhas.crm.api.response.ResponseUserInfo;
 import tm.payhas.crm.databinding.FragmentUserInfoBinding;
 import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.interfaces.OnInternetStatus;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentUserInfo extends Fragment {
@@ -29,6 +31,7 @@ public class FragmentUserInfo extends Fragment {
     private DtoUserInfo currentUserInfo;
     private AccountPreferences accountPreferences;
     private int userId;
+    private String avatar;
 
     public static FragmentUserInfo newInstance(int userId) {
         FragmentUserInfo fragment = new FragmentUserInfo();
@@ -75,33 +78,57 @@ public class FragmentUserInfo extends Fragment {
             @Override
             public void onResponse(ResponseUserInfo response) {
                 if (response.isSuccess()) {
-                    b.progressBar.setVisibility(View.GONE);
+                    setConnected();
                     b.info.setVisibility(View.VISIBLE);
                     currentUserInfo = response.getData();
                     setUserInfo();
+                    avatar = response.getData().getAvatar();
                 }
             }
 
             @Override
             public void onFailure(Throwable t) {
-                b.progressBar.setVisibility(View.GONE);
+                setNoInternet();
             }
         });
     }
 
+    private void setConnected() {
+        b.swiper.setRefreshing(false);
+        OnInternetStatus internetStatusListener = new OnInternetStatus() {
+        };
+        internetStatusListener.setConnected(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
+    }
+
+    private void setNoInternet() {
+        b.swiper.setRefreshing(false);
+        OnInternetStatus internetStatusListener = new OnInternetStatus() {
+        };
+        internetStatusListener.setNoInternet(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
+    }
+
     private void initListeners() {
+        b.swiper.setOnRefreshListener(() -> {
+            b.swiper.setRefreshing(true);
+            getUserInfo();
+        });
         b.backBtn.setOnClickListener(view -> {
             if (getActivity() != null) {
                 getActivity().onBackPressed();
             }
             b.backBtn.setEnabled(false);
         });
+        b.profileImage.setOnClickListener(view -> {
+            b.profileImage.setEnabled(false);
+            addFragment(mainFragmentManager, R.id.main_content, FragmentPhotoItem.newInstance(avatar));
+            new Handler().postDelayed(() -> b.profileImage.setEnabled(true), 200);
+        });
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        new Handler().postDelayed(() -> setPadding(b.main,
+        new Handler().postDelayed(() -> setPadding(b.swiper,
                 0,
                 50,
                 0,

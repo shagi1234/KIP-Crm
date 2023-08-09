@@ -192,12 +192,10 @@
                 android:focusable="true">
 
                 <TextView
-                    android:id="@+id/btn_back"
+                    android:id="@+id/btn_save_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/bg_radius_10"
-                    android:backgroundTint="@color/primary"
                     android:fontFamily="@font/poppins_regular"
                     android:gravity="center_horizontal"
                     android:maxLines="1"
@@ -214,5 +212,11 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <include
+        android:id="@+id/progress_bar"
+        layout="@layout/layout_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 </FrameLayout>

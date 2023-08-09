@@ -8,6 +8,8 @@
     android:focusable="true"
     tools:context=".fragment.FragmentAddProject">
 
+
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/main"
         android:layout_width="match_parent"
@@ -279,10 +281,10 @@
 
 
                                 <TextView
-                                    android:layout_gravity="center_vertical"
-                                    android:layout_weight="1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_weight="1"
                                     android:fontFamily="@font/inter_regular"
                                     android:text="@string/executor"
                                     android:textColor="@color/text_color"
@@ -298,7 +300,6 @@
 
 
                             </LinearLayout>
-
 
 
                             <androidx.recyclerview.widget.RecyclerView
@@ -399,12 +400,10 @@
                         android:layout_marginBottom="14sp">
 
                         <TextView
-                            android:id="@+id/btn_login"
+                            android:id="@+id/btn_save_text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
-                            android:background="@drawable/sent_msg_bg"
-                            android:backgroundTint="@color/primary"
                             android:fontFamily="@font/poppins_regular"
                             android:gravity="center_horizontal"
                             android:maxLines="1"
@@ -431,5 +430,10 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-
+    <include
+        android:id="@+id/progress_bar"
+        layout="@layout/layout_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 </FrameLayout>

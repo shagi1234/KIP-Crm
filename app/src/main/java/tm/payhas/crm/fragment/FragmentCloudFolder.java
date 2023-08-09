@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.menu.MenuBuilder;
@@ -44,6 +43,7 @@ import tm.payhas.crm.databinding.FragmentCloudFolderBinding;
 import tm.payhas.crm.helpers.Common;
 import tm.payhas.crm.helpers.StaticMethods;
 import tm.payhas.crm.interfaces.DataFileSelectedListener;
+import tm.payhas.crm.interfaces.OnInternetStatus;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentCloudFolder extends Fragment implements DataFileSelectedListener {
@@ -91,12 +91,19 @@ public class FragmentCloudFolder extends Fragment implements DataFileSelectedLis
                     if (response.body() != null && response.body().getData() != null) {
                         adapterCloudFolder.setAll(response.body().getData());
                     }
+                    OnInternetStatus internetStatusListener = new OnInternetStatus() {
+                    };
+                    internetStatusListener.setConnected(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ResponseDataFolder> call, @NonNull Throwable t) {
                 b.linearProgressBar.setVisibility(View.GONE);
+                b.swiper.setRefreshing(false);
+                OnInternetStatus internetStatusListener = new OnInternetStatus() {
+                };
+                internetStatusListener.setNoInternet(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
             }
         });
     }

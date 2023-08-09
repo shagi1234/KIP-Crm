@@ -1,6 +1,7 @@
 package tm.payhas.crm.fragment;
 
 import static android.view.Gravity.CENTER;
+import static android.view.View.VISIBLE;
 import static tm.payhas.crm.adapters.AdapterCloud.CLOUD_TYPE_FILE;
 import static tm.payhas.crm.helpers.FileUtil.copyFileStream;
 import static tm.payhas.crm.helpers.FileUtil.getPath;
@@ -70,6 +71,7 @@ import tm.payhas.crm.databinding.FragmentCloudFileBinding;
 import tm.payhas.crm.helpers.Common;
 import tm.payhas.crm.helpers.FileUtil;
 import tm.payhas.crm.interfaces.DataFileSelectedListener;
+import tm.payhas.crm.interfaces.OnInternetStatus;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentCloudFile extends Fragment implements DataFileSelectedListener {
@@ -125,15 +127,22 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
             public void onResponse(@NonNull Call<ResponseDataFolder> call, @NonNull Response<ResponseDataFolder> response) {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
+                    b.swiper.setRefreshing(false);
+                    b.main.setVisibility(VISIBLE);
                     b.linearProgressBar.setVisibility(View.GONE);
                     b.recCloudFile.setAlpha(1);
                     adapterCloudFolder.setAll(response.body().getData());
+                    OnInternetStatus internetStatusListener = new OnInternetStatus() {};
+                    internetStatusListener.setConnected(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
                 }
+
             }
 
             @Override
             public void onFailure(@NonNull Call<ResponseDataFolder> call, @NonNull Throwable t) {
-
+                b.swiper.setRefreshing(false);
+                OnInternetStatus internetStatusListener = new OnInternetStatus() {};
+                internetStatusListener.setNoInternet(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
             }
         });
     }
@@ -141,7 +150,7 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
     @Override
     public void onResume() {
         super.onResume();
-        new Handler().postDelayed(() -> setPadding(b.main,
+        new Handler().postDelayed(() -> setPadding(b.swiper,
                 0,
                 statusBarHeight,
                 0,
@@ -150,6 +159,10 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
 
     @SuppressLint("RestrictedApi")
     private void initListeners() {
+        b.swiper.setOnRefreshListener(() -> {
+            b.swiper.setRefreshing(true);
+            getFolderFiles();
+        });
         b.deleteCommit.setOnClickListener(view -> {
             b.deleteCommit.setEnabled(true);
 
@@ -193,7 +206,7 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
                             case R.id.delete:
                                 adapterCloudFolder.setSelectable(true);
                                 b.searchBox.setVisibility(View.GONE);
-                                b.deleteCommit.setVisibility(View.VISIBLE);
+                                b.deleteCommit.setVisibility(VISIBLE);
                                 ac.setFileSelectable(true);
                                 return true;
                             default:
@@ -240,7 +253,7 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
     }
 
     private void removeFile() {
-        b.linearProgressBar.setVisibility(View.VISIBLE);
+        b.linearProgressBar.setVisibility(VISIBLE);
         b.recCloudFile.setAlpha(0.5f);
         for (int i = 0; i < selectedArray.size(); i++) {
             JsonObject jsonObject = new JsonObject();
@@ -261,7 +274,7 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
         }
         selectedArray.clear();
         b.deleteCommit.setVisibility(View.GONE);
-        b.searchBox.setVisibility(View.VISIBLE);
+        b.searchBox.setVisibility(VISIBLE);
         adapterCloudFolder.setSelectable(false);
         ac.setFolderSelectable(false);
         dialog.dismiss();
@@ -289,7 +302,7 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
     @Override
     public void setUnSelectable() {
         adapterCloudFolder.setSelectable(false);
-        b.searchBox.setVisibility(View.VISIBLE);
+        b.searchBox.setVisibility(VISIBLE);
         b.deleteCommit.setVisibility(View.GONE);
         b.deleteCount.setText("0");
         selectedArray.clear();
@@ -299,7 +312,7 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
 
     private void pickFileFromInternalStorage() {
         requestStoragePermission();
-        b.linearProgressBar.setVisibility(View.VISIBLE);
+        b.linearProgressBar.setVisibility(VISIBLE);
 
         String[] mimeTypes = {"application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
                 "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .ppt & .pptx
@@ -420,11 +433,11 @@ public class FragmentCloudFile extends Fragment implements DataFileSelectedListe
             public void onResponse
                     (@NonNull Call<ResponseSingleFile> call, @NonNull Response<ResponseSingleFile> response) {
                 b.linearProgressBar.setVisibility(View.GONE);
-                if (response.isSuccessful() || response.code() == 201 || response.code()==200) {
+                if (response.isSuccessful() || response.code() == 201 || response.code() == 200) {
                     b.linearProgressBar.setVisibility(View.GONE);
                     b.main.setClickable(true);
                     getFolderFiles();
-                }else{
+                } else {
                     Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                 }
             }

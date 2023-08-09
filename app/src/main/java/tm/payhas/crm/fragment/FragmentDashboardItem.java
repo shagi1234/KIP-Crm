@@ -38,6 +38,7 @@ import tm.payhas.crm.databinding.FragmentDashboardItemBinding;
 import tm.payhas.crm.helpers.Common;
 import tm.payhas.crm.helpers.NoItemAnimationRV;
 import tm.payhas.crm.interfaces.Comment;
+import tm.payhas.crm.interfaces.OnInternetStatus;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentDashboardItem extends Fragment {
@@ -94,6 +95,10 @@ public class FragmentDashboardItem extends Fragment {
             sendComment(newsId);
             b.commentInput.setText("");
         });
+        b.swiper.setOnRefreshListener(() -> {
+            b.swiper.setRefreshing(true);
+            getNewsInfo();
+        });
     }
 
     private void setImagesAdapter() {
@@ -137,15 +142,14 @@ public class FragmentDashboardItem extends Fragment {
             @Override
             public void onResponse(ResponseDashboardItem response) {
                 if (response.isSuccess()) {
-                    setContent();
+                    b.swiper.setRefreshing(false);
+                    OnInternetStatus internetStatusListener = new OnInternetStatus() {
+                    };
+                    internetStatusListener.setConnected(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
                     setInfo(response.getData().getNews());
                 }
             }
 
-            private void setContent() {
-                b.progressBar.setVisibility(View.GONE);
-                b.main.setVisibility(View.VISIBLE);
-            }
 
             private void setInfo(DataNews oneNews) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -170,7 +174,10 @@ public class FragmentDashboardItem extends Fragment {
 
             @Override
             public void onFailure(Throwable t) {
-
+                b.swiper.setRefreshing(false);
+                OnInternetStatus internetStatusListener = new OnInternetStatus() {
+                };
+                internetStatusListener.setNoInternet(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
             }
         });
     }

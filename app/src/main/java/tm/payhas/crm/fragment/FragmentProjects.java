@@ -34,6 +34,7 @@ import tm.payhas.crm.api.response.ResponseFilter;
 import tm.payhas.crm.api.response.ResponseProjects;
 import tm.payhas.crm.dataModels.DataFilter;
 import tm.payhas.crm.databinding.FragmentProjectsBinding;
+import tm.payhas.crm.interfaces.OnInternetStatus;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentProjects extends Fragment {
@@ -180,7 +181,7 @@ public class FragmentProjects extends Fragment {
         b.swipe.setOnRefreshListener(() -> getProjects());
         b.favAdd.setOnClickListener(view -> {
             b.favAdd.setEnabled(false);
-            addFragment(mainFragmentManager, R.id.main_content, FragmentAddProject.newInstance(false,0));
+            addFragment(mainFragmentManager, R.id.main_content, FragmentAddProject.newInstance(false, 0));
             new Handler().postDelayed(() -> b.favAdd.setEnabled(true), 200);
         });
     }
@@ -217,8 +218,8 @@ public class FragmentProjects extends Fragment {
                 if (response.isSuccessful() || response.body() != null) {
                     adapterProjects.setProjects(response.body().getData().getRows());
                     b.swipe.setRefreshing(false);
-                    b.progressBar.setVisibility(View.GONE);
-                    b.main.setVisibility(View.VISIBLE);
+                    OnInternetStatus internetStatusListener = new OnInternetStatus() {};
+                    internetStatusListener.setConnected(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
                 }
 
             }
@@ -226,8 +227,8 @@ public class FragmentProjects extends Fragment {
             @Override
             public void onFailure(Call<ResponseProjects> call, Throwable t) {
                 b.swipe.setRefreshing(false);
-                b.progressBar.setVisibility(View.GONE);
-                b.main.setVisibility(View.VISIBLE);
+                OnInternetStatus internetStatusListener = new OnInternetStatus() {};
+                internetStatusListener.setNoInternet(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
             }
         });
 
@@ -235,7 +236,7 @@ public class FragmentProjects extends Fragment {
     }
 
     private void setRecycler() {
-        adapterProjects = new AdapterProjects(getContext(),getActivity());
+        adapterProjects = new AdapterProjects(getContext(), getActivity());
         b.rcvProjects.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         b.rcvProjects.setAdapter(adapterProjects);
     }

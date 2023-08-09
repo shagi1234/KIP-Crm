@@ -24,6 +24,7 @@ import tm.payhas.crm.api.request.RequestFcmToken;
 import tm.payhas.crm.api.request.RequestMyProjects;
 import tm.payhas.crm.api.request.RequestNewChecklist;
 import tm.payhas.crm.api.request.RequestNewFolder;
+import tm.payhas.crm.api.request.RequestNewGroup;
 import tm.payhas.crm.api.request.RequestNewProject;
 import tm.payhas.crm.api.request.RequestNews;
 import tm.payhas.crm.api.request.RequestTaskComment;
@@ -41,6 +42,7 @@ import tm.payhas.crm.api.response.ResponseFilter;
 import tm.payhas.crm.api.response.ResponseGroupInfo;
 import tm.payhas.crm.api.response.ResponseManyFiles;
 import tm.payhas.crm.api.response.ResponseNewFolder;
+import tm.payhas.crm.api.response.ResponseOneGroup;
 import tm.payhas.crm.api.response.ResponseOneMessage;
 import tm.payhas.crm.api.response.ResponseOneProject;
 import tm.payhas.crm.api.response.ResponseOneTask;
@@ -79,6 +81,11 @@ public interface Services {
     @Headers({"Content-Type: application/json"})
     @PATCH("/projects/author")
     Call<ResponseProjects> getMyProjects(@Header("Authorization") String token, @Body RequestMyProjects requestMyProjects);
+
+
+    @Headers({"Content-Type: application/json"})
+    @POST("chat/room/group")
+    Call<ResponseOneGroup> createGroup(@Header("Authorization") String token, @Body RequestNewGroup requestNewGroup);
 
 
     @GET("users/all")
@@ -197,7 +204,6 @@ public interface Services {
 
     @GET("tasks/members/{id}")
     Call<ResponseTaskMembers> getTaskMembers(@Header("Authorization") String token, @Path("id") int id);
-
 
 
 }

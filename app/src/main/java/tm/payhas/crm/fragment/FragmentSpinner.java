@@ -35,6 +35,7 @@ import tm.payhas.crm.helpers.StaticMethods;
 import tm.payhas.crm.interfaces.AddTask;
 import tm.payhas.crm.interfaces.HelperAddProject;
 import tm.payhas.crm.interfaces.HelperChecklist;
+import tm.payhas.crm.interfaces.OnInternetStatus;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentSpinner extends Fragment {
@@ -101,6 +102,20 @@ public class FragmentSpinner extends Fragment {
         return b.getRoot();
     }
 
+    private void setConnected() {
+        b.swiper.setRefreshing(false);
+        OnInternetStatus internetStatusListener = new OnInternetStatus() {
+        };
+        internetStatusListener.setConnected(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
+    }
+
+    private void setNoInternet() {
+        b.swiper.setRefreshing(false);
+        OnInternetStatus internetStatusListener = new OnInternetStatus() {
+        };
+        internetStatusListener.setNoInternet(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
+    }
+
     private void setBackground() {
         StaticMethods.setBackgroundDrawable(getContext(), b.searchBox, R.color.color_transparent, R.color.primary, 6, false, 1);
     }
@@ -122,7 +137,6 @@ public class FragmentSpinner extends Fragment {
                 break;
             case PROJECT_CONNECTED:
                 b.searchBox.setVisibility(View.GONE);
-                getProjectsConnected();
                 break;
             case OBSERVERS:
                 setRecyclerProjectUsers();
@@ -143,20 +157,7 @@ public class FragmentSpinner extends Fragment {
             case PROJECT_EXECUTOR:
                 b.customTitleBar.setEnabled(false);
                 getProjectExecutors();
-                Call<ResponseUsersList> call = Common.getApi().getAllUsers();
-                call.enqueue(new Callback<ResponseUsersList>() {
-                    @Override
-                    public void onResponse(Call<ResponseUsersList> call, Response<ResponseUsersList> response) {
-                        if (response.isSuccessful()) {
-                            adapterExecutor.setUsersList(response.body().getData());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseUsersList> call, Throwable t) {
-
-                    }
-                });
+                getAllUsers();
                 break;
             case LANGUAGE:
                 b.spinnerText.setText(R.string.language);
@@ -170,7 +171,26 @@ public class FragmentSpinner extends Fragment {
 
     }
 
+    private void getAllUsers() {
+        Call<ResponseUsersList> call = Common.getApi().getAllUsers();
+        call.enqueue(new Callback<ResponseUsersList>() {
+            @Override
+            public void onResponse(Call<ResponseUsersList> call, Response<ResponseUsersList> response) {
+                if (response.isSuccessful()) {
+                    adapterExecutor.setUsersList(response.body().getData());
+                    setConnected();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseUsersList> call, Throwable t) {
+                setNoInternet();
+            }
+        });
+    }
+
     private void getLanguages() {
+        setConnected();
         languages.clear();
         String[] languagesToSet = getResources().getStringArray(R.array.languages);
         languages.addAll(Arrays.asList(languagesToSet));
@@ -184,12 +204,13 @@ public class FragmentSpinner extends Fragment {
             public void onResponse(Call<ResponseTaskMembers> call, Response<ResponseTaskMembers> response) {
                 if (response.isSuccessful()) {
                     adapterProjectUsers.setUsersList(response.body().getData().getResponsible());
+                    setConnected();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseTaskMembers> call, Throwable t) {
-
+                setNoInternet();
             }
         });
     }
@@ -209,12 +230,13 @@ public class FragmentSpinner extends Fragment {
             public void onResponse(Call<ResponseUsersList> call, Response<ResponseUsersList> response) {
                 if (response.isSuccessful()) {
                     adapterProjectUsers.setUsersList(response.body().getData());
+                    setConnected();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseUsersList> call, Throwable t) {
-
+                setNoInternet();
             }
         });
     }
@@ -231,25 +253,21 @@ public class FragmentSpinner extends Fragment {
             public void onResponse(Call<ResponseUsersList> call, Response<ResponseUsersList> response) {
                 if (response.isSuccessful()) {
                     adapterProjectUsers.setUsersList(response.body().getData());
+                    setConnected();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseUsersList> call, Throwable t) {
-
+                setNoInternet();
             }
         });
     }
 
-    private void getProjectsConnected() {
-
-    }
-
-
     @Override
     public void onResume() {
         super.onResume();
-        new Handler().postDelayed(() -> setPadding(b.customTitleBar,
+        new Handler().postDelayed(() -> setPadding(b.swiper,
                 0,
                 50,
                 0,
@@ -257,6 +275,10 @@ public class FragmentSpinner extends Fragment {
     }
 
     private void initListeners() {
+        b.swiper.setOnRefreshListener(() -> {
+            b.swiper.setEnabled(true);
+            setUpSpinner();
+        });
         b.searchInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -304,10 +326,12 @@ public class FragmentSpinner extends Fragment {
                         }
                     } else if (type == OBSERVERS) {
                         Fragment addTask = mainFragmentManager.findFragmentByTag(FragmentAddTask.class.getSimpleName());
-                        Fragment addCheckList = mainFragmentManager.findFragmentByTag(FragmentAddChecklist.class.getSimpleName());
                         if (addTask instanceof AddTask) {
                             ((AddTask) addTask).getObserverUsers(selectedUsers);
                         }
+
+                    } else if (type == TASK_MEMBERS) {
+                        Fragment addCheckList = mainFragmentManager.findFragmentByTag(FragmentAddChecklist.class.getSimpleName());
                         if (addCheckList instanceof HelperChecklist) {
                             ((HelperChecklist) addCheckList).selectedUsersList(selectedUsers);
                         }
@@ -330,12 +354,13 @@ public class FragmentSpinner extends Fragment {
             public void onResponse(Call<ResponseAllProjects> call, Response<ResponseAllProjects> response) {
                 if (response.isSuccessful() || response.body() != null) {
                     adapterProjects.setProjects(response.body().getData());
+                    setConnected();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseAllProjects> call, Throwable t) {
-
+                setNoInternet();
             }
         });
 

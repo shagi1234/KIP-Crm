@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,9 +33,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tm.payhas.crm.R;
-import tm.payhas.crm.adapters.AdapterDashboardComments;
-import tm.payhas.crm.adapters.AdapterNewsImages;
-import tm.payhas.crm.adapters.AdapterNewsIndicator;
 import tm.payhas.crm.api.request.RequestComment;
 import tm.payhas.crm.api.response.ResponseComment;
 import tm.payhas.crm.dataModels.DataComments;
@@ -157,7 +155,10 @@ public class AdapterNews extends RecyclerView.Adapter<AdapterNews.ViewHolder> {
 
         @SuppressLint("SetTextI18n")
         private void setInfo(DataNews oneNews) {
-            setImagesList(oneNews.getAttachments());
+            if (oneNews.getAttachments().size() != 0 || oneNews.getAttachments() != null)
+                setImagesList(oneNews.getAttachments());
+            else
+                viewPagerImages.setVisibility(View.GONE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 newsTitle.setText(Html.fromHtml(oneNews.getTitle(), Html.FROM_HTML_MODE_COMPACT));
                 newsDetails.setText(Html.fromHtml(oneNews.getContent(), Html.FROM_HTML_MODE_COMPACT));

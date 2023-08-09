@@ -11,6 +11,7 @@ import static tm.payhas.crm.helpers.Common.normalTime;
 import static tm.payhas.crm.helpers.FileUtil.copyFileStream;
 import static tm.payhas.crm.helpers.FileUtil.getPath;
 import static tm.payhas.crm.helpers.StaticMethods.hideSoftKeyboard;
+import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import static tm.payhas.crm.helpers.StaticMethods.showToast;
 import static tm.payhas.crm.statics.StaticConstants.APPLICATION_DIR_NAME;
@@ -36,6 +37,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.OpenableColumns;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,6 +64,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -95,9 +99,9 @@ public class FragmentAddTask extends Fragment implements AddTask {
     private ArrayList<Integer> observerUserList = new ArrayList<>();
     private String reminderTypeToSend = "";
     private String taskStatusToSend = "";
-    private String timeEnd;
-    private String timeStart;
-    private String timeRemind;
+    private String timeEnd = "";
+    private String timeStart = "";
+    private String timeRemind = "";
     private AdapterSelectedUsers adapterObserver;
     private AdapterSelectedUsers adapterResponsible;
     private DataFile fileTo;
@@ -152,7 +156,19 @@ public class FragmentAddTask extends Fragment implements AddTask {
         initListeners();
         setRecyclers();
         setInfo();
+        buttonActivity();
         return b.getRoot();
+    }
+
+    private void buttonActivity() {
+        if (b.edtTaskName.getText().toString().length() > 0 && b.infoInput.getText().toString().length() > 0 && !Objects.equals(reminderTypeToSend, "") && !Objects.equals(timeEnd, "") && !Objects.equals(timeStart, "") && adapterObserver.getSelectedList().size() > 0 && adapterResponsible.getSelectedList().size() > 0 && executorId != 0) {
+            b.btnSave.setEnabled(true);
+            setBackgroundDrawable(getContext(), b.btnSaveText, R.color.primary, 0, 10, false, 0);
+        } else {
+            b.btnSave.setEnabled(false);
+            setBackgroundDrawable(getContext(), b.btnSaveText, R.color.primary_30, 0, 10, false, 0);
+
+        }
     }
 
     private void setInfo() {
@@ -455,6 +471,38 @@ public class FragmentAddTask extends Fragment implements AddTask {
             }
         });
         b.btnSave.setOnClickListener(view -> createTask());
+        b.infoInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                buttonActivity();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        b.edtTaskName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                buttonActivity();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
     private void openDialog(TextView dateSet, int type) {
@@ -477,7 +525,7 @@ public class FragmentAddTask extends Fragment implements AddTask {
 
                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
                     timeRemind = df.format(c.getTime());
-
+                    buttonActivity();
                     dateSet.setText(String.valueOf(day1) + "/" + String.valueOf(month1 + 1) + "/" + String.valueOf(year1) + " " + String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute));
                 }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true);
                 timePickerDialog.show();
@@ -493,8 +541,10 @@ public class FragmentAddTask extends Fragment implements AddTask {
 
                 if (type == 1) {
                     timeEnd = df.format(c.getTime());
+                    buttonActivity();
                 } else if (type == 3) {
                     timeStart = df.format(c.getTime());
+                    buttonActivity();
                 }
 
                 dateSet.setText(String.valueOf(day1) + "/" + String.valueOf(month1 + 1) + "/" + String.valueOf(year1));
@@ -685,12 +735,14 @@ public class FragmentAddTask extends Fragment implements AddTask {
         projectId = oneProject.getId();
         accountPreferences.setPrefCurrentProjectId(oneProject.getId());
         b.vTaskProjects.setText(oneProject.getName());
+        buttonActivity();
     }
 
     @Override
     public void setExecutor(DtoUserInfo user) {
-        b.taskExecutor.setText(user.getPersonalData().getName() + user.getPersonalData().getSurname());
+        b.taskExecutor.setText(String.format("%s %s" ,user.getPersonalData().getName(), user.getPersonalData().getSurname()));
         executorId = user.getId();
+        buttonActivity();
     }
 
     @Override
@@ -701,6 +753,7 @@ public class FragmentAddTask extends Fragment implements AddTask {
         for (int i = 0; i < users.size(); i++) {
             responsibleUsersList.add(users.get(i).getId());
         }
+        buttonActivity();
     }
 
     @Override
@@ -711,6 +764,7 @@ public class FragmentAddTask extends Fragment implements AddTask {
         for (int i = 0; i < users.size(); i++) {
             observerUserList.add(users.get(i).getId());
         }
+        buttonActivity();
     }
 
 

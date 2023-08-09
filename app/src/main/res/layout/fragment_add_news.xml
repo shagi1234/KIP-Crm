@@ -19,6 +19,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
+                android:id="@+id/btn_back"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center_vertical"
@@ -148,7 +149,8 @@
                     android:id="@+id/rv_images"
                     android:layout_width="match_parent"
                     android:layout_height="124dp"
-                    android:background="@color/add_image_background" />
+                    android:background="@color/add_image_background"
+                    android:paddingHorizontal="10dp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -190,7 +192,7 @@
                     android:layout_marginBottom="14sp">
 
                     <FrameLayout
-                        android:id="@+id/btn_save"
+                        android:id="@+id/btn_save_cont"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/ripple"
@@ -198,12 +200,11 @@
                         android:focusable="true">
 
                         <TextView
-                            android:id="@+id/btn_back"
+                            android:enabled="false"
+                            android:id="@+id/btn_save"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
-                            android:background="@drawable/bg_radius_10"
-                            android:backgroundTint="@color/primary"
                             android:fontFamily="@font/poppins_regular"
                             android:gravity="center_horizontal"
                             android:maxLines="1"

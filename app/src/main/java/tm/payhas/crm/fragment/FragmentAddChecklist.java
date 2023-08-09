@@ -2,12 +2,15 @@ package tm.payhas.crm.fragment;
 
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.helpers.Common.addFragment;
+import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,22 +33,21 @@ import tm.payhas.crm.adapters.AdapterSelectedUsers;
 import tm.payhas.crm.api.data.dto.DtoUserInfo;
 import tm.payhas.crm.api.request.RequestNewChecklist;
 import tm.payhas.crm.api.response.ResponseChecklist;
+import tm.payhas.crm.databinding.FragmentAddChecklistBinding;
 import tm.payhas.crm.helpers.Common;
 import tm.payhas.crm.interfaces.HelperChecklist;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentAddChecklist extends Fragment implements HelperChecklist {
-
-
-    private tm.payhas.crm.databinding.FragmentAddChecklistBinding b;
+    private FragmentAddChecklistBinding b;
     private static final String ARG_PARAM1 = "taskId";
     private static final String ARG_PARAM2 = "projectId";
     private int taskId;
     private int projectId;
     private AdapterSelectedUsers adapterSelectedUsers;
     private AccountPreferences ac;
-    private String timeStart;
-    private String timeEnd;
+    private String timeStart = "";
+    private String timeEnd = "";
     private ArrayList<Integer> selectedUsersList = new ArrayList<>();
 
     public static FragmentAddChecklist newInstance(int taskId, int projectId) {
@@ -84,20 +86,47 @@ public class FragmentAddChecklist extends Fragment implements HelperChecklist {
         ac = new AccountPreferences(getContext());
         setRecycler();
         initListeners();
+        buttonActivity();
         return b.getRoot();
     }
 
+    private void buttonActivity() {
+        if (b.edtName.getText().toString().toString().length() > 0 && !timeStart.equals("") && !timeEnd.equals("") && selectedUsersList.size() > 0) {
+            b.btnSave.setEnabled(true);
+            setBackgroundDrawable(getContext(), b.btnSaveText, R.color.primary, 0, 10, false, 0);
+        } else {
+            b.btnSave.setEnabled(false);
+            setBackgroundDrawable(getContext(), b.btnSaveText, R.color.primary_30, 0, 10, false, 0);
+        }
+    }
+
     private void initListeners() {
-        b.back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getActivity().onBackPressed();
-            }
+        b.back.setOnClickListener(view -> getActivity().onBackPressed());
+        b.btnSave.setOnClickListener(view -> {
+            b.btnSave.setEnabled(false);
+            b.progressBar.getRoot().setVisibility(View.VISIBLE);
+            createNewChecklist();
+            new Handler().postDelayed(() -> b.btnSave.setEnabled(true),200);
         });
-        b.btnSave.setOnClickListener(view -> createNewChecklist());
         b.startTime.setOnClickListener(view -> openDialog(b.startTime, 1));
         b.endTime.setOnClickListener(view -> openDialog(b.endTime, 2));
-        b.clickableMember.setOnClickListener(view -> addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.TASK_MEMBERS, projectId,taskId,null)));
+        b.clickableMember.setOnClickListener(view -> addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.TASK_MEMBERS, projectId, taskId, null)));
+        b.edtName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                buttonActivity();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
     private void createNewChecklist() {
@@ -136,6 +165,7 @@ public class FragmentAddChecklist extends Fragment implements HelperChecklist {
         } else {
             timeEnd = df.format(c.getTime());
         }
+        buttonActivity();
     }
 
     private void setRecycler() {

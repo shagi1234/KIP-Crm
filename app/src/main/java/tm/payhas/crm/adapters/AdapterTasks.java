@@ -16,6 +16,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,11 +99,10 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolder> 
             endTime.setText(normalDate(oneTask.getFinishesAt()));
             if (oneTask.getStatus() != null)
                 setStatus(oneTask.getStatus());
-            if (oneTask.getStatus() != null)
+            if (oneTask.getPriority() != null)
                 setPriority(oneTask.getPriority());
             observers.setText(String.valueOf(oneTask.getCount().getObserverUsers()));
             members.setText(String.valueOf(oneTask.getCount().getResponsibleUsers()));
-            priority.setText(oneTask.getPriority());
             clickableLayout.setOnClickListener(view -> addFragment(mainFragmentManager, R.id.main_content, FragmentOneTask.newInstance(oneTask.getId())));
         }
 
@@ -127,23 +127,24 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolder> 
             }
         }
 
-        private void setPriority(String priority) {
-            switch (priority) {
+        private void setPriority(String priorityText) {
+            Log.e("Priority", "setPriority: " + priorityText);
+            switch (priorityText) {
                 case PRIMARY:
-                    setBackgroundDrawable(context, status, R.color.status_in_process, 0, 50, false, 0);
-                    status.setText(R.string.primary);
+                    setBackgroundDrawable(context, priority, R.color.status_in_process, 0, 50, false, 0);
+                    priority.setText(R.string.primary);
                     break;
                 case MEDIUM:
-                    setBackgroundDrawable(context, status, R.color.status_in_process, 0, 50, false, 0);
-                    status.setText(R.string.medium);
+                    setBackgroundDrawable(context, priority, R.color.status_in_process, 0, 50, false, 0);
+                    priority.setText(R.string.medium);
                     break;
                 case HIGH:
-                    setBackgroundDrawable(context, status, R.color.status_in_process, 0, 50, false, 0);
-                    status.setText(R.string.high);
+                    setBackgroundDrawable(context, priority, R.color.status_in_process, 0, 50, false, 0);
+                    priority.setText(R.string.high);
                     break;
                 case NOT_IMPORTANT:
-                    setBackgroundDrawable(context, status, R.color.status_in_process, 0, 50, false, 0);
-                    status.setText(R.string.neotlozhnyy);
+                    setBackgroundDrawable(context, priority, R.color.status_in_process, 0, 50, false, 0);
+                    priority.setText(R.string.neotlozhnyy);
                     break;
             }
         }

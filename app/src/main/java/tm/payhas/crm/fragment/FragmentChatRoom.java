@@ -222,7 +222,6 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         waveformRecorder.setOnWaveformUpdateListener(this::onWaveformUpdate);
     }
 
-
     private void setUserStatus() {
         if (type == PRIVATE) {
             if (isActive)

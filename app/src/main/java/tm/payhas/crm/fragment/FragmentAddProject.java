@@ -5,6 +5,7 @@ import static tm.payhas.crm.helpers.Common.addFragment;
 import static tm.payhas.crm.helpers.Common.normalDate;
 import static tm.payhas.crm.helpers.FileUtil.copyFileStream;
 import static tm.payhas.crm.helpers.FileUtil.getPath;
+import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import static tm.payhas.crm.helpers.StaticMethods.showToast;
 import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
@@ -23,6 +24,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.OpenableColumns;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +48,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -73,8 +77,8 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
     private AdapterSelectedUsers adapterSelectedUsers;
     private AdapterSelectedUsers adapterExecutor;
     private ArrayList<Integer> selectedUserList = new ArrayList<>();
-    private String timeStart;
-    private String timeEnd;
+    private String timeStart = "";
+    private String timeEnd = "";
     private int executorId;
     private boolean toEdit;
     private int projectId;
@@ -117,8 +121,20 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
         setRecycler();
         loadToEdit();
         initListeners();
+        buttonActivity();
         return b.getRoot();
     }
+
+    private void buttonActivity() {
+        if (b.edtNameProject.getText().toString().length() > 0 && b.descriptionProject.getText().toString().length() > 0 && !Objects.equals(timeStart, "") && !Objects.equals(timeStart, "") && adapterSelectedUsers.getSelectedList().size() > 0 && adapterExecutor.getSelectedList().size() > 0) {
+            b.btnSave.setEnabled(true);
+            setBackgroundDrawable(getContext(), b.btnSaveText, R.color.primary, 0, 10, false, 0);
+        } else {
+            b.btnSave.setEnabled(false);
+            setBackgroundDrawable(getContext(), b.btnSaveText, R.color.primary_30, 0, 10, false, 0);
+        }
+    }
+
 
     private void loadToEdit() {
         if (toEdit && projectId != 0) {
@@ -197,7 +213,7 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
         request.setProjectParticipants(selectedUserList);
         request.setExecutorId(executorId);
         request.setId(projectId);
-        if (fileLoaded!=null){
+        if (fileLoaded != null) {
             request.setFile(fileLoaded);
         }
 
@@ -219,6 +235,8 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
 
             @Override
             public void onFailure(Call<ResponseOneProject> call, Throwable t) {
+                b.progressBar.getRoot().setVisibility(View.GONE);
+                Log.e("Add_project", "onFailure: " + t.getMessage());
 
             }
         });
@@ -237,22 +255,55 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
         b.attachFileProject.setOnClickListener(view -> pickFileFromInternalStorage());
         b.btnSave.setOnClickListener(view -> {
             b.btnSave.setEnabled(false);
+            b.progressBar.getRoot().setVisibility(View.VISIBLE);
             addNewProject();
             new Handler().postDelayed(() -> b.btnSave.setEnabled(true), 200);
         });
         b.editMembers.setOnClickListener(view -> {
             b.editMembers.setEnabled(false);
             selectedUserList = adapterSelectedUsers.getSelectedList();
-            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.PROJECT_MEMBERS, 0,0, selectedUserList));
+            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.PROJECT_MEMBERS, 0, 0, selectedUserList));
             new Handler().postDelayed(() -> b.editMembers.setEnabled(true), 200);
         });
         b.editExecutor.setOnClickListener(view -> {
             b.editExecutor.setEnabled(false);
-            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.PROJECT_EXECUTOR, 0,0, null));
+            addFragment(mainFragmentManager, R.id.main_content, FragmentSpinner.newInstance(FragmentSpinner.PROJECT_EXECUTOR, 0, 0, null));
             new Handler().postDelayed(() -> b.editExecutor.setEnabled(true), 200);
         });
         b.projectStartTime.setOnClickListener(view -> openDialog(b.projectStartTime));
         b.projectEndTime.setOnClickListener(view -> openDialog2(b.projectEndTime));
+        b.edtNameProject.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                buttonActivity();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        b.descriptionProject.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                buttonActivity();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
     }
 
@@ -282,6 +333,7 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
         datePickerDialog.show();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         timeStart = df.format(c.getTime());
+        buttonActivity();
     }
 
     private void openDialog2(TextView dateSet) {
@@ -293,6 +345,7 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
         datePickerDialog.show();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         timeEnd = df.format(c.getTime());
+        buttonActivity();
     }
 
     @Override
@@ -301,6 +354,7 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
         oneUserList.add(oneUser);
         executorId = oneUser.getId();
         adapterExecutor.setSelectedList(oneUserList);
+        buttonActivity();
     }
 
     @Override
@@ -309,6 +363,7 @@ public class FragmentAddProject extends Fragment implements HelperAddProject {
         for (int i = 0; i < userSelectedList.size(); i++) {
             selectedUserList.add(userSelectedList.get(i).getId());
         }
+        buttonActivity();
     }
 
     @Override

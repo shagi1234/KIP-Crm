@@ -11,12 +11,8 @@ import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 import static tm.payhas.crm.statics.StaticConstants.APPLICATION_DIR_NAME;
 import static tm.payhas.crm.statics.StaticConstants.FILES_DIR;
 import static tm.payhas.crm.statics.StaticConstants.FINISHED;
-import static tm.payhas.crm.statics.StaticConstants.HIGH;
 import static tm.payhas.crm.statics.StaticConstants.IN_PROCESS;
-import static tm.payhas.crm.statics.StaticConstants.MEDIUM;
-import static tm.payhas.crm.statics.StaticConstants.NOT_IMPORTANT;
 import static tm.payhas.crm.statics.StaticConstants.NOT_STARTED;
-import static tm.payhas.crm.statics.StaticConstants.PRIMARY;
 
 import android.app.Activity;
 import android.content.Context;
@@ -61,15 +57,17 @@ import tm.payhas.crm.api.response.ResponseTaskComment;
 import tm.payhas.crm.dataModels.DataAttachment;
 import tm.payhas.crm.dataModels.DataFile;
 import tm.payhas.crm.dataModels.DataTask;
+import tm.payhas.crm.databinding.FragmentOneTaskBinding;
 import tm.payhas.crm.helpers.Common;
 import tm.payhas.crm.helpers.FileUtil;
+import tm.payhas.crm.interfaces.OnInternetStatus;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentOneTask extends Fragment {
     private int taskId;
     private final int REQUEST_CODE = 11;
     private int projectId;
-    private tm.payhas.crm.databinding.FragmentOneTaskBinding b;
+    private FragmentOneTaskBinding b;
     private AdapterSelectedUsers adapterObservers;
     private AdapterSelectedUsers adapterResponsible;
     private AdapterTaskComments adapterTaskComments;
@@ -95,7 +93,7 @@ public class FragmentOneTask extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        new Handler().postDelayed(() -> setPadding(b.main,
+        new Handler().postDelayed(() -> setPadding(b.swiper,
                 0,
                 statusBarHeight,
                 0,
@@ -133,14 +131,14 @@ public class FragmentOneTask extends Fragment {
     }
 
     private void initListeners() {
-        b.editTask.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        b.editTask.setEnabled(false);
-                        addFragment(mainFragmentManager, R.id.main_content, FragmentAddTask.newInstance(projectId, taskId));
-                        new Handler().postDelayed(() -> b.editTask.setEnabled(true), 200);
-                    }
+        b.swiper.setOnRefreshListener(() -> {
+            b.swiper.setRefreshing(true);
+            getTaskInfo();
+        });
+        b.editTask.setOnClickListener(view -> {
+                    b.editTask.setEnabled(false);
+                    addFragment(mainFragmentManager, R.id.main_content, FragmentAddTask.newInstance(projectId, taskId));
+                    new Handler().postDelayed(() -> b.editTask.setEnabled(true), 200);
                 }
         );
         b.back.setOnClickListener(view -> getActivity().onBackPressed());
@@ -163,12 +161,12 @@ public class FragmentOneTask extends Fragment {
                 b.taskStatus.setText(R.string.in_process);
                 break;
             case NOT_STARTED:
-                setBackgroundDrawable(context, b.taskStatus,  R.color.status_not_started, 0, 50, false, 0);
+                setBackgroundDrawable(context, b.taskStatus, R.color.status_not_started, 0, 50, false, 0);
                 b.taskStatus.setTextColor(activity.getResources().getColor(R.color.status_not_started_text));
                 b.taskStatus.setText(R.string.not_started);
                 break;
             case FINISHED:
-                setBackgroundDrawable(context, b.taskStatus,  R.color.status_finished, 0, 50, false, 0);
+                setBackgroundDrawable(context, b.taskStatus, R.color.status_finished, 0, 50, false, 0);
                 b.taskStatus.setTextColor(activity.getResources().getColor(R.color.status_finished_text));
                 b.taskStatus.setText(R.string.finished);
                 break;
@@ -358,16 +356,19 @@ public class FragmentOneTask extends Fragment {
             @Override
             public void onResponse(Call<ResponseOneTask> call, Response<ResponseOneTask> response) {
                 if (response.isSuccessful()) {
+                    b.swiper.setRefreshing(false);
                     if (response.body().getData().isAuthor() || response.body().getData().isExecutor()) {
                         b.cancelTaskClicker.setVisibility(View.VISIBLE);
                     }
+                    OnInternetStatus internetStatusListener = new OnInternetStatus() {
+                    };
+                    internetStatusListener.setConnected(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
                     setInfo(response.body().getData());
                     setExecutorButton(response.body().getData());
                     adapterObservers.setUserList(response.body().getData().getObserverUsers());
                     adapterResponsible.setUserList(response.body().getData().getResponsibleUsers());
                     adapterTaskComments.setComments(response.body().getData().getComments());
                     adapterChecklist.setChecklists(response.body().getData().getChecklists());
-                    Log.e("ChecklistSizeReceived", "onResponse: " + response.body().getData().getChecklists().size());
                     projectId = response.body().getData().getProjectId();
                     setStatus(response.body().getData().getStatus());
                 }
@@ -375,7 +376,10 @@ public class FragmentOneTask extends Fragment {
 
             @Override
             public void onFailure(Call<ResponseOneTask> call, Throwable t) {
-
+                b.swiper.setRefreshing(false);
+                OnInternetStatus internetStatusListener = new OnInternetStatus() {
+                };
+                internetStatusListener.setNoInternet(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
             }
         });
     }

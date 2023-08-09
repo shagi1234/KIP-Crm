@@ -36,6 +36,7 @@ import tm.payhas.crm.api.response.ResponseFilter;
 import tm.payhas.crm.api.response.ResponseTasks;
 import tm.payhas.crm.dataModels.DataFilter;
 import tm.payhas.crm.databinding.FragmentTasksBinding;
+import tm.payhas.crm.interfaces.OnInternetStatus;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentTasks extends Fragment {
@@ -66,7 +67,7 @@ public class FragmentTasks extends Fragment {
         b = FragmentTasksBinding.inflate(inflater);
         hideSoftKeyboard(getActivity());
         accountPreferences = new AccountPreferences(getContext());
-        adapterTasks = new AdapterTasks(getContext(),getActivity());
+        adapterTasks = new AdapterTasks(getContext(), getActivity());
         setDialog();
         setRecycler();
         getFilterArray();
@@ -193,11 +194,11 @@ public class FragmentTasks extends Fragment {
             @Override
             public void onResponse(Call<ResponseTasks> call, Response<ResponseTasks> response) {
                 if (response.code() == 200) {
-                    b.main.setVisibility(View.VISIBLE);
                     b.swipe.setRefreshing(false);
-                    b.progressBar.setVisibility(View.GONE);
                     adapterTasks.setTasks(response.body().getData().getTasks());
                     Log.e("Size", "onResponse: " + response.body().getData().getTasks().size());
+                    OnInternetStatus internetStatusListener = new OnInternetStatus() {};
+                    internetStatusListener.setConnected(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
                 }
 
             }
@@ -206,8 +207,11 @@ public class FragmentTasks extends Fragment {
             public void onFailure(Call<ResponseTasks> call, Throwable t) {
                 Log.e("TAG", "onFailure: " + t.getMessage());
                 b.main.setVisibility(View.VISIBLE);
-                b.progressBar.setVisibility(View.GONE);
+                b.noInternet.getRoot().setVisibility(View.VISIBLE);
+                b.progressBar.getRoot().setVisibility(View.GONE);
                 b.swipe.setRefreshing(false);
+                OnInternetStatus internetStatusListener = new OnInternetStatus() {};
+                internetStatusListener.setNoInternet(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
             }
         });
     }
@@ -217,13 +221,13 @@ public class FragmentTasks extends Fragment {
         b.swipe.setOnRefreshListener(() -> getTasks());
         b.favAdd.setOnClickListener(view -> {
             b.favAdd.setEnabled(false);
-            addFragment(mainFragmentManager, R.id.main_content, FragmentAddTask.newInstance(0,0));
+            addFragment(mainFragmentManager, R.id.main_content, FragmentAddTask.newInstance(0, 0));
             new Handler().postDelayed(() -> b.favAdd.setEnabled(true), 200);
         });
     }
 
     private void setRecycler() {
-        adapterTasks = new AdapterTasks(getContext(),getActivity());
+        adapterTasks = new AdapterTasks(getContext(), getActivity());
         b.rcvTasks.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         b.rcvTasks.setAdapter(adapterTasks);
     }

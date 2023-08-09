@@ -29,6 +29,7 @@ import tm.payhas.crm.api.response.ResponseDashboard;
 import tm.payhas.crm.api.response.ResponseFcmToken;
 import tm.payhas.crm.databinding.FragmentHomeBinding;
 import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.interfaces.OnInternetStatus;
 import tm.payhas.crm.preference.AccountPreferences;
 import tm.payhas.crm.preference.FcmPreferences;
 
@@ -111,7 +112,8 @@ public class FragmentHome extends Fragment {
 
         b.searchInput.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -125,7 +127,8 @@ public class FragmentHome extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {}
+            public void afterTextChanged(Editable editable) {
+            }
         });
     }
 
@@ -154,7 +157,8 @@ public class FragmentHome extends Fragment {
                     b.swiper.setRefreshing(false);
                     b.content.setVisibility(View.VISIBLE);
                     b.linearProgressBar.setVisibility(View.GONE);
-                    b.progressBar.setVisibility(View.GONE);
+                    OnInternetStatus internetStatusListener = new OnInternetStatus() {};
+                    internetStatusListener.setConnected(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
                     Log.e("News", "onResponse: " + response.getData().getNews().size());
                     adapterNews.setNews(response.getData().getNews());
                     adapterBirthday.setBirthdays(response.getData().getBirthdays());
@@ -165,7 +169,10 @@ public class FragmentHome extends Fragment {
 
             @Override
             public void onFailure(Throwable t) {
-                b.progressBar.setVisibility(View.GONE);
+                b.swiper.setRefreshing(false);
+                OnInternetStatus internetStatusListener = new OnInternetStatus() {
+                };
+                internetStatusListener.setNoInternet(b.progressBar.getRoot(), b.noInternet.getRoot(), b.main);
                 b.content.setVisibility(View.VISIBLE);
                 b.linearProgressBar.setVisibility(View.GONE);
             }

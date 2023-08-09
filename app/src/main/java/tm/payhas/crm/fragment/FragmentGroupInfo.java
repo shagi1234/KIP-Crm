@@ -20,8 +20,10 @@ import retrofit2.Response;
 import tm.payhas.crm.R;
 import tm.payhas.crm.adapters.AdapterGroupMember;
 import tm.payhas.crm.api.response.ResponseGroupInfo;
+import tm.payhas.crm.dataModels.DataGroupInfo;
 import tm.payhas.crm.databinding.FragmentGroupInfoBinding;
 import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.interfaces.OnInternetStatus;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentGroupInfo extends Fragment {
@@ -59,27 +61,35 @@ public class FragmentGroupInfo extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         b = FragmentGroupInfoBinding.inflate(inflater);
-        setGroupInfo();
         setUpHelpers();
         setRecycler();
         getGroupMemberInfo();
+        initListeners();
         return b.getRoot();
+    }
+
+    private void initListeners() {
+        b.backBtn.setOnClickListener(view -> getActivity().onBackPressed());
+        b.swiper.setOnRefreshListener(() -> {
+            b.swiper.setRefreshing(true);
+            getGroupMemberInfo();
+        });
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        new Handler().postDelayed(() -> setPadding(b.main,
+        new Handler().postDelayed(() -> setPadding(b.swiper,
                 0,
                 50,
                 0,
                 0), 100);
     }
 
-    private void setGroupInfo() {
+    private void setGroupInfo(DataGroupInfo data) {
         Picasso.get().load(BASE_PHOTO + groupAvatar).placeholder(R.color.primary).into(b.groupAvatar);
         b.groupName.setText(groupName);
-        b.participants.setText(String.valueOf(memberCount) + R.string.group_member);
+        b.participants.setText(String.valueOf(data.getParticipants().size()));
     }
 
     private void setUpHelpers() {
@@ -92,18 +102,33 @@ public class FragmentGroupInfo extends Fragment {
             @Override
             public void onResponse(Call<ResponseGroupInfo> call, Response<ResponseGroupInfo> response) {
                 if (response.isSuccessful()) {
-                    b.linearProgressBar.setVisibility(View.GONE);
                     adapterGroupMember.setMemberList(response.body().getData().getParticipants());
                     adapterGroupMember.notifyDataSetChanged();
+                    setGroupInfo(response.body().getData());
+                    setConnected();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseGroupInfo> call, Throwable t) {
-
+                setNoInternet();
             }
         });
 
+    }
+
+    private void setConnected() {
+        b.swiper.setRefreshing(false);
+        OnInternetStatus internetStatusListener = new OnInternetStatus() {
+        };
+        internetStatusListener.setConnected(b.linearProgressBar, b.noInternet.getRoot(), b.main);
+    }
+
+    private void setNoInternet() {
+        b.swiper.setRefreshing(false);
+        OnInternetStatus internetStatusListener = new OnInternetStatus() {
+        };
+        internetStatusListener.setNoInternet(b.linearProgressBar, b.noInternet.getRoot(), b.main);
     }
 
     private void setRecycler() {

@@ -9,6 +9,20 @@
     android:focusable="true"
     tools:context=".fragment.FragmentCloudFolder">
 
+    <include
+        android:id="@+id/progress_bar"
+        layout="@layout/layout_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible" />
+
+    <include
+        android:id="@+id/no_internet"
+        layout="@layout/layout_no_connection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swiper"
         android:layout_width="match_parent"
@@ -178,6 +192,7 @@
         android:backgroundTint="@color/primary"
         android:src="@drawable/ic_add"
         app:tint="@color/white" />
+
 
 
 </FrameLayout>

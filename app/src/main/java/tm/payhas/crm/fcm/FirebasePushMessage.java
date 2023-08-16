@@ -47,7 +47,7 @@ public class FirebasePushMessage extends FirebaseMessagingService {
         );
 
         if (intent.getExtras().getString("title") != null) {
-//
+
         }
     }
 

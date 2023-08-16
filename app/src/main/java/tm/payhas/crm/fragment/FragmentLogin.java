@@ -7,6 +7,7 @@ import static tm.payhas.crm.helpers.StaticMethods.setPadding;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import tm.payhas.crm.preference.AccountPreferences;
 
 public class FragmentLogin extends Fragment {
     private FragmentLoginBinding b;
+    boolean showPassword = true;
     private AccountPreferences accountPreferences;
 
     public static FragmentLogin newInstance() {
@@ -77,6 +79,20 @@ public class FragmentLogin extends Fragment {
         b.container.setOnClickListener(view -> hideSoftKeyboard(getActivity()));
         b.inputTaker.setOnClickListener(view -> hideSoftKeyboard(getActivity()));
         b.loginContent.setOnClickListener(view -> hideSoftKeyboard(getActivity()));
+
+        b.visibilityChanger.setOnClickListener(v -> {
+
+            if (showPassword) {
+                // Show password
+                b.edtPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            } else {
+                // Hide password
+                b.edtPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            }
+            showPassword = !showPassword;
+
+            b.edtPassword.setSelection(b.edtPassword.getText().length());
+        });
     }
 
     private void setBackground() {

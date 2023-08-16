@@ -7,7 +7,9 @@ import static tm.payhas.crm.helpers.StaticMethods.initSystemUIViewListeners;
 import static tm.payhas.crm.helpers.StaticMethods.transparentStatusAndNavigation;
 import static tm.payhas.crm.statics.StaticConstants.MEDIA_PLAYER;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -15,16 +17,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import tm.payhas.crm.R;
+import tm.payhas.crm.api.request.RequestFcmToken;
+import tm.payhas.crm.api.response.ResponseFcmToken;
 import tm.payhas.crm.fragment.FragmentChangePassword;
 import tm.payhas.crm.fragment.FragmentCloudFile;
 import tm.payhas.crm.fragment.FragmentCloudFolder;
+import tm.payhas.crm.fragment.FragmentContacts;
 import tm.payhas.crm.fragment.FragmentFlow;
 import tm.payhas.crm.fragment.FragmentHome;
 import tm.payhas.crm.fragment.FragmentMessages;
+import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.helpers.MyForegroundService;
 import tm.payhas.crm.helpers.SoftInputAssist;
 import tm.payhas.crm.interfaces.DataFileSelectedListener;
+import tm.payhas.crm.interfaces.OnRefresh;
 import tm.payhas.crm.preference.AccountPreferences;
+import tm.payhas.crm.preference.FcmPreferences;
 import tm.payhas.crm.webSocket.WebSocket;
 
 public class ActivityMain extends AppCompatActivity {
@@ -34,6 +46,7 @@ public class ActivityMain extends AppCompatActivity {
     private SoftInputAssist softInputAssist;
     public static WebSocket webSocket;
     private AccountPreferences ac;
+    private FcmPreferences fcmPreferences;
 
     @Override
     protected void onStart() {
@@ -45,6 +58,8 @@ public class ActivityMain extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent serviceIntent = new Intent(this, MyForegroundService.class);
+        startService(serviceIntent);
         webSocket = new WebSocket(getApplicationContext(), this);
         ac = new AccountPreferences(this);
         root = findViewById(R.id.main_content);
@@ -52,6 +67,8 @@ public class ActivityMain extends AppCompatActivity {
         ActivityLoginRegister.mainFragmentManager = getSupportFragmentManager();
         mainFragmentManager = getSupportFragmentManager();
         softInputAssist = new SoftInputAssist(this);
+        fcmPreferences = FcmPreferences.newInstance(this);
+        setFcmToken();
         setContent();
 
     }
@@ -79,6 +96,8 @@ public class ActivityMain extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         softInputAssist.onDestroy();
+        Intent serviceIntent = new Intent(this, MyForegroundService.class);
+        stopService(serviceIntent);
     }
 
     @Override
@@ -132,6 +151,26 @@ public class ActivityMain extends AppCompatActivity {
 
     }
 
+    private void setFcmToken() {
+        if (!fcmPreferences.getIsSent()) {
+            RequestFcmToken requestFcmToken = new RequestFcmToken();
+            requestFcmToken.setFcmtoken(fcmPreferences.getFcm());
+            Common.getApi().setFcmToken(ac.getToken(), requestFcmToken).enqueue(new Callback<ResponseFcmToken>() {
+                @Override
+                public void onResponse(Call<ResponseFcmToken> call, Response<ResponseFcmToken> response) {
+                    if (response.isSuccessful()) {
+                        Log.e("FCM_TOKEN", "onResponse: " + "Succes");
+                        fcmPreferences.setIsSent(true);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseFcmToken> call, Throwable t) {
+                    Log.e("FCM_TOKEN", "onFailure: " + t.getMessage());
+                }
+            });
+        }
+    }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {

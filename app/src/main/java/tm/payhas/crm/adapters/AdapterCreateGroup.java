@@ -5,6 +5,7 @@ import static tm.payhas.crm.helpers.Common.normalDate;
 import static tm.payhas.crm.helpers.Common.normalTime;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,7 +121,19 @@ public class AdapterCreateGroup extends RecyclerView.Adapter<AdapterCreateGroup.
         private void setUserInfo(DtoUserInfo oneUser) {
             if (oneUser.getLastActivity() != null)
                 lastSeen.setText(String.format("%s %s", normalDate(oneUser.getLastActivity()), normalTime(oneUser.getLastActivity())));
-            nameSurname.setText(String.format("%s %s", oneUser.getPersonalData().getName(), oneUser.getPersonalData().getSurname()));
+            else lastSeen.setText("");
+            String name = oneUser.getPersonalData().getName();
+            String surname = oneUser.getPersonalData().getSurname();
+
+            if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(surname)) {
+                nameSurname.setText(String.format("%s %s", name, surname));
+            } else if (!TextUtils.isEmpty(name)) {
+                nameSurname.setText(name);
+            } else if (!TextUtils.isEmpty(surname)) {
+                nameSurname.setText(surname);
+            } else {
+                nameSurname.setText("");
+            }
             Picasso.get().load(BASE_PHOTO + oneUser.getAvatar()).placeholder(R.color.primary).into(avatar);
         }
 

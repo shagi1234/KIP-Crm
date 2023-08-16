@@ -42,6 +42,7 @@ public class AdapterChatContact extends RecyclerView.Adapter<AdapterChatContact.
     private ArrayList<DtoUserInfo> privateUserList = new ArrayList<>();
     private ArrayList<DataGroup> groups = new ArrayList<>();
 
+
     public AdapterChatContact(Context context, int type) {
         this.context = context;
         this.type = type;
@@ -118,18 +119,19 @@ public class AdapterChatContact extends RecyclerView.Adapter<AdapterChatContact.
 
         private void setInfo() {
             DtoUserInfo privateUser = privateUserList.get(getAdapterPosition());
-            if (privateUser.isActive())
-                onlineIndicator.setVisibility(View.VISIBLE);
+            if (privateUser.isActive()) onlineIndicator.setVisibility(View.VISIBLE);
             else onlineIndicator.setVisibility(View.GONE);
 
             contactName.setText(privateUser.getPersonalData().getName());
             contactChatTime.setText(normalTime(privateUser.getLastActivity()));
             contactChat.setText(privateUser.getMessageRoom().getText());
+            Log.e("TAG", "setInfo: " + privateUser.getMessageRoom().getRoom().getCount().getMessages());
             if (privateUser.getMessageRoom().getRoom().getCount().getMessages() == 0) {
                 contactChatCount.setVisibility(View.GONE);
             } else {
                 contactChatCount.setText(String.valueOf(privateUser.getMessageRoom().getRoom().getCount().getMessages()));
             }
+
             Picasso.get().load(BASE_URL + "/" + privateUser.getAvatar()).placeholder(R.color.primary).into(contactImage);
             contactChatMain.setOnClickListener(view -> {
                 DtoUserInfo privateUser1 = privateUserList.get(getAdapterPosition());

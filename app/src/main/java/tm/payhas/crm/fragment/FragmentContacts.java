@@ -22,9 +22,10 @@ import tm.payhas.crm.api.data.dto.DtoUserInfo;
 import tm.payhas.crm.api.response.ResponseUserGroup;
 import tm.payhas.crm.databinding.FragmentContactsBinding;
 import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.interfaces.OnRefresh;
 import tm.payhas.crm.preference.AccountPreferences;
 
-public class FragmentContacts extends Fragment {
+public class FragmentContacts extends Fragment implements OnRefresh {
     private FragmentContactsBinding b;
     private AdapterChatContact adapterChatContact;
     private ArrayList<DtoUserInfo> privateUsers;
@@ -48,8 +49,7 @@ public class FragmentContacts extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         b = FragmentContactsBinding.inflate(inflater);
         accountPreferences = new AccountPreferences(getContext());
         hideSoftKeyboard(getActivity());
@@ -85,7 +85,6 @@ public class FragmentContacts extends Fragment {
 
     private void initListeners() {
         b.recGroupContact.setOnClickListener(view -> hideSoftKeyboard(getActivity()));
-
     }
 
     private void setRecycler() {
@@ -95,4 +94,9 @@ public class FragmentContacts extends Fragment {
         b.recGroupContact.setAdapter(adapterChatContact);
     }
 
+    @Override
+    public void refresh() {
+        getPrivateContacts();
+        Log.e(TAG, "refresh: ");
+    }
 }

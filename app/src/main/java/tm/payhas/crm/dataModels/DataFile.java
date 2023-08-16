@@ -5,6 +5,7 @@ public class DataFile {
     private String type;
     private int size;
     private String originalFileName;
+    private String duration;
 
     public String getOriginalFileName() {
         return originalFileName;
@@ -12,6 +13,15 @@ public class DataFile {
 
     public void setOriginalFileName(String originalFileName) {
         this.originalFileName = originalFileName;
+    }
+
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
     }
 
     public String getType() {

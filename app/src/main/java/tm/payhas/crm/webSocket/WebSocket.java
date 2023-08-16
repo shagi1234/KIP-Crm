@@ -1,7 +1,10 @@
 package tm.payhas.crm.webSocket;
 
+import tm.payhas.crm.R;
+
 import static tm.payhas.crm.activity.ActivityMain.mainFragmentManager;
 import static tm.payhas.crm.api.network.Network.BASE_URL_SOCKET;
+import static tm.payhas.crm.statics.StaticConstants.CHANNEL_MESSAGES;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGES_RECEIVED;
 import static tm.payhas.crm.statics.StaticConstants.MESSAGE_STATUS;
 import static tm.payhas.crm.statics.StaticConstants.NEW_ROOM;
@@ -28,12 +31,14 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import dev.gustavoavila.websocketclient.WebSocketClient;
-import tm.payhas.crm.adapters.AdapterSingleChat;
 import tm.payhas.crm.dataModels.DataMessageTarget;
 import tm.payhas.crm.dataModels.DataUserStatus;
 import tm.payhas.crm.fragment.FragmentChatRoom;
+import tm.payhas.crm.fragment.FragmentMessages;
+import tm.payhas.crm.helpers.NotificationUtils;
 import tm.payhas.crm.interfaces.ChatRoomInterface;
 import tm.payhas.crm.interfaces.MessageCallBack;
+import tm.payhas.crm.interfaces.OnRefresh;
 import tm.payhas.crm.preference.AccountPreferences;
 
 public class WebSocket {
@@ -61,8 +66,7 @@ public class WebSocket {
 
     public void createWebSocketClient() {
         URI uri;
-        if (connected)
-            return;
+        if (connected) return;
         try {
             uri = new URI(BASE_URL_SOCKET + accountPreferences.getTokenForWebSocket());
             Log.e(TAG, "createWebSocketClient:" + uri);
@@ -85,6 +89,8 @@ public class WebSocket {
                     JSONObject messageJson = new JSONObject(emit);
                     String event = messageJson.getString("event");
 
+                    Fragment fragmentMessage = mainFragmentManager.findFragmentByTag(FragmentMessages.class.getSimpleName());
+
                     switch (event) {
                         case MESSAGE_STATUS:
                             JSONArray receivedArray = messageJson.getJSONArray("data");
@@ -105,6 +111,12 @@ public class WebSocket {
                             JSONObject receivedMessage = messageJson.getJSONObject("data");
                             DataMessageTarget newMessage = new Gson().fromJson(String.valueOf(receivedMessage), DataMessageTarget.class);
                             Log.e(TAG, "onTextReceived: " + "MessageReceived");
+                            Fragment messages = mainFragmentManager.findFragmentByTag(FragmentMessages.class.getSimpleName());
+                            NotificationUtils.showNotification(context, "Lemmer", newMessage.getText(), newMessage.getId());
+
+//                            if (messages instanceof OnRefresh) {
+//                                ((OnRefresh) messages).refresh();
+//                            }
                             activity.runOnUiThread(() -> {
                                 Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
                                 if (chatRoom instanceof ChatRoomInterface) {
@@ -117,6 +129,11 @@ public class WebSocket {
                             JSONObject statusInfo = messageJson.getJSONObject("data");
                             DataUserStatus statusUser = new Gson().fromJson(String.valueOf(statusInfo), DataUserStatus.class);
                             status = statusUser.isActive();
+
+
+//                            if (fragmentMessage instanceof OnRefresh) {
+//                                ((OnRefresh) fragmentMessage).refresh();
+//                            }
                             activity.runOnUiThread(() -> {
                                 Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
                                 if (chatRoom instanceof ChatRoomInterface) {
@@ -141,21 +158,39 @@ public class WebSocket {
                             DataMessageTarget firstMessage = new Gson().fromJson(String.valueOf(newRoom), DataMessageTarget.class);
                             activity.runOnUiThread(() -> {
                                 Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
+
+//                                if (fragmentMessage instanceof OnRefresh) {
+//                                    ((OnRefresh) fragmentMessage).refresh();
+//                                }
+
                                 if (chatRoom instanceof ChatRoomInterface) {
                                     ((ChatRoomInterface) chatRoom).newMessage(firstMessage);
                                 }
+                                Log.e(TAG, "onTextReceived: Come here ");
+
                             });
                             break;
                         case MESSAGES_RECEIVED:
                             JSONObject messageReceived = messageJson.getJSONObject("data");
-                            DataMessageTarget receive = new Gson().fromJson(String.valueOf(messageReceived),DataMessageTarget.class);
+                            DataMessageTarget receive = new Gson().fromJson(String.valueOf(messageReceived), DataMessageTarget.class);
+//                            if (fragmentMessage instanceof OnRefresh) {
+//                                ((OnRefresh) fragmentMessage).refresh();
+//                            }
                             activity.runOnUiThread(() -> {
                                 Fragment chatRoom = mainFragmentManager.findFragmentByTag(FragmentChatRoom.class.getSimpleName());
                                 if (chatRoom instanceof ChatRoomInterface) {
                                     ((ChatRoomInterface) chatRoom).onMessageReceived(receive);
                                 }
                             });
-
+                            break;
+                        case CHANNEL_MESSAGES:
+                            JSONObject messageJsonJSONObject = messageJson.getJSONObject("data");
+                            DataMessageTarget messageTarget = new Gson().fromJson(String.valueOf(messageJsonJSONObject), DataMessageTarget.class);
+                            Log.e(TAG, "onTextReceived: messages Received and notified");
+                            if (fragmentMessage instanceof OnRefresh) {
+                                ((OnRefresh) fragmentMessage).refresh();
+                            }
+                            break;
                     }
 
 

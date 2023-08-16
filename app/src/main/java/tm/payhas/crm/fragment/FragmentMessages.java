@@ -8,6 +8,7 @@ import static tm.payhas.crm.helpers.StaticMethods.setBackgroundDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,19 @@ import androidx.fragment.app.Fragment;
 
 import com.squareup.picasso.Picasso;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import tm.payhas.crm.R;
+import tm.payhas.crm.activity.ActivityMain;
 import tm.payhas.crm.adapters.AdapterViewPager;
+import tm.payhas.crm.api.response.ResponseUserGroup;
 import tm.payhas.crm.databinding.FragmentMessagesBinding;
+import tm.payhas.crm.helpers.Common;
+import tm.payhas.crm.interfaces.OnRefresh;
 import tm.payhas.crm.preference.AccountPreferences;
 
-public class FragmentMessages extends Fragment {
+public class FragmentMessages extends Fragment implements OnRefresh {
     private FragmentMessagesBinding b;
     private AdapterViewPager adapterViewPager = new AdapterViewPager(mainFragmentManager);
     private AccountPreferences ac;
@@ -44,8 +52,7 @@ public class FragmentMessages extends Fragment {
 
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         b = FragmentMessagesBinding.inflate(inflater);
         hideSoftKeyboard(getActivity());
         setUpHelpers();
@@ -69,6 +76,7 @@ public class FragmentMessages extends Fragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         hideSoftKeyboard(getActivity());
+
     }
 
 
@@ -100,9 +108,13 @@ public class FragmentMessages extends Fragment {
         setBackgroundDrawable(getContext(), b.searchBox, R.color.color_transparent, R.color.primary, 6, false, 1);
     }
 
+
     private void setViewPager() {
-        adapterViewPager.addFragment(new FragmentContacts(), getResources().getString(R.string.workers));
-        adapterViewPager.addFragment(new FragmentGroups(), getResources().getString(R.string.group));
+        Fragment fragmentContacts = new FragmentContacts();
+        Fragment fragmentGroups = new FragmentGroups();
+
+        adapterViewPager.addFragment(fragmentContacts, getResources().getString(R.string.workers));
+        adapterViewPager.addFragment(fragmentGroups, getResources().getString(R.string.group));
         b.tabLayout.setupWithViewPager(b.viewPager);
         b.viewPager.setAdapter(adapterViewPager);
     }
@@ -110,5 +122,16 @@ public class FragmentMessages extends Fragment {
     private void setupTabIcons() {
         b.tabLayout.getTabAt(0).setIcon(R.drawable.ic_profile_selectable);
         b.tabLayout.getTabAt(1).setIcon(R.drawable.ic_group);
+    }
+
+    @Override
+    public void refresh() {
+        Log.e("Messages", "onHiddenChanged: " + "refresh send");
+        String fragmentTag = "android:switcher:" + R.id.view_pager + ":" + b.viewPager.getCurrentItem();
+        Fragment fragment = ActivityMain.mainFragmentManager.findFragmentByTag(fragmentTag);
+
+        if (fragment instanceof FragmentContacts && fragment instanceof OnRefresh) {
+            ((OnRefresh) fragment).refresh();
+        }
     }
 }

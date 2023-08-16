@@ -62,9 +62,9 @@ public class FragmentDashboardItem extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        new Handler().postDelayed(() -> setPadding(b.main,
+        new Handler().postDelayed(() -> setPadding(b.swiper,
                 0,
-                50,
+                70,
                 0,
                 0), 100);
     }

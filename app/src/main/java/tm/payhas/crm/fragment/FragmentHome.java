@@ -63,7 +63,6 @@ public class FragmentHome extends Fragment {
         b = FragmentHomeBinding.inflate(inflater, container, false);
         setHelpers();
         setBackground();
-        setFcmToken();
         initListeners();
         setRecyclerViews();
         getDashboardInfo();
@@ -75,26 +74,7 @@ public class FragmentHome extends Fragment {
         fcmPreferences = new FcmPreferences(getContext());
     }
 
-    private void setFcmToken() {
-        if (!fcmPreferences.getIsSent()) {
-            RequestFcmToken requestFcmToken = new RequestFcmToken();
-            requestFcmToken.setFcmtoken(fcmPreferences.getFcm());
-            Common.getApi().setFcmToken(ac.getToken(), requestFcmToken).enqueue(new Callback<ResponseFcmToken>() {
-                @Override
-                public void onResponse(Call<ResponseFcmToken> call, Response<ResponseFcmToken> response) {
-                    if (response.isSuccessful()) {
-                        Log.e("FCM_TOKEN", "onResponse: " + "Succes");
-                        fcmPreferences.setIsSent(true);
-                    }
-                }
 
-                @Override
-                public void onFailure(Call<ResponseFcmToken> call, Throwable t) {
-                    Log.e("FCM_TOKEN", "onFailure: " + t.getMessage());
-                }
-            });
-        }
-    }
 
     private void initListeners() {
         b.swiper.setOnRefreshListener(() -> {

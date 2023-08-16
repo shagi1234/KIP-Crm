@@ -47,15 +47,7 @@ public class FirebasePushMessage extends FirebaseMessagingService {
         );
 
         if (intent.getExtras().getString("title") != null) {
-//            /* && AccountPreferences.newInstance(getApplicationContext()).getUserIsLoggedIn()*/)
-//            if (intent.getExtras().getString("to").equals(EXECUTOR)) {
-//                AccountPreferences.newInstance(this).setNewNotificationExecutor(true);
-//                getFirebaseMessageExecutor(
-//                        intent.getExtras().getString("title"),
-//                        intent.getExtras().getString("body"),
-//                        intent.getExtras().getString("taskId")
-//                );
-//            }
+//
         }
     }
 

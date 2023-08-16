@@ -43,6 +43,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -104,6 +105,7 @@ import tm.payhas.crm.helpers.SoftInputAssist;
 import tm.payhas.crm.helpers.WaveformRecorder;
 import tm.payhas.crm.interfaces.ChatRoomInterface;
 import tm.payhas.crm.interfaces.NewMessage;
+import tm.payhas.crm.interfaces.OnRefresh;
 import tm.payhas.crm.preference.AccountPreferences;
 import tm.payhas.crm.webSocket.EmmitUserStatus;
 
@@ -168,11 +170,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     @Override
     public void onResume() {
         super.onResume();
-        new Handler().postDelayed(() -> setPadding(b.chatContent,
-                0,
-                statusBarHeight,
-                0,
-                0), 100);
+        new Handler().postDelayed(() -> setPadding(b.chatContent, 0, statusBarHeight, 0, 0), 100);
     }
 
     @Override
@@ -187,8 +185,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         b = FragmentChatRoomBinding.inflate(inflater);
         setWaveForm();
         if (getArguments() != null) {
@@ -224,20 +221,22 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
 
     private void setUserStatus() {
         if (type == PRIVATE) {
-            if (isActive)
-                b.userStatus.setText("Online");
-            else
-                b.userStatus.setText(normalTime(lastActivity));
+            if (isActive) b.userStatus.setText("Online");
+            else b.userStatus.setText(normalTime(lastActivity));
         }
 
     }
 
     @SuppressLint("SetTextI18n")
     private void setRoom() {
-        if (roomId == 0) {
-            b.noMessages.setVisibility(VISIBLE);
+        Fragment fragmentMessage = mainFragmentManager.findFragmentByTag(FragmentMessages.class.getSimpleName());
+        if (fragmentMessage instanceof OnRefresh) {
+            ((OnRefresh) fragmentMessage).refresh();
         }
         if (type == PRIVATE) {
+            if (roomId == 0) {
+                b.noMessages.setVisibility(VISIBLE);
+            }
             if (isSet) {
                 b.recChatScreen.smoothScrollToPosition(1);
             } else {
@@ -247,6 +246,9 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
             b.username.setText(userName);
             Picasso.get().load(BASE_URL + "/" + avatarUrl).placeholder(R.color.primary).into(b.contactImage);
         } else {
+            if (roomId == 0) {
+                b.noMessages.setVisibility(VISIBLE);
+            }
             if (isSet) {
                 b.recChatScreen.smoothScrollToPosition(1);
             } else {
@@ -262,6 +264,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
 
     private void setAuthorId() {
         adapterSingleChat.setAuthorId(accountPreferences.getAuthorId());
+        Log.e(TAG, "setAuthorId: " + accountPreferences.getAuthorId());
     }
 
     private void getMessages() {
@@ -315,12 +318,13 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         });
         b.sendMessage.setOnClickListener(view -> {
             if (toReply) {
+                b.noMessages.setVisibility(GONE);
                 sendMessage(replyMessageId);
                 b.replyLayout.setVisibility(View.GONE);
                 replyMessageId = 0;
                 toReply = false;
-            } else
-                sendMessage(0);
+            } else sendMessage(0);
+            b.noMessages.setVisibility(GONE);
             b.input.setText("");
         });
         b.input.addTextChangedListener(new TextWatcher() {
@@ -416,18 +420,26 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
             mediaRecorder.release();
             mediaRecorder = null;
             isRecording = false;
-            File voiceRecorded = new File(getOutputFilePath(requireContext()));
-            uploadFile(3, voiceRecorded);
-            return getOutputFilePath(requireContext());
+
+            File recordedAudio = new File(getOutputFilePath(requireContext()));
+
+            if (recordedAudio != null) {
+                uploadFile(3, recordedAudio);
+                return recordedAudio.getAbsolutePath();
+            } else {
+                Log.e(TAG, "stopRecording: is failed");
+                // Conversion to MP3 failed
+                return null;
+            }
         }
         return null;
     }
 
+
     private void setRecycler() {
         if (type == PRIVATE)
             adapterSingleChat = new AdapterSingleChat(getContext(), roomId, PRIVATE);
-        else
-            adapterSingleChat = new AdapterSingleChat(getContext(), roomId, GROUP);
+        else adapterSingleChat = new AdapterSingleChat(getContext(), roomId, GROUP);
         b.recChatScreen.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, true));
         b.recChatScreen.setAdapter(adapterSingleChat);
         registerForContextMenu(b.recChatScreen);
@@ -446,6 +458,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         personalData.setBirthday(accountPreferences.getPrefBirthday());
         personalData.setLastName(accountPreferences.getPrefLastname());
         userInfo.setPersonalData(personalData);
+        userInfo.setId(accountPreferences.getAuthorId());
         return userInfo;
     }
 
@@ -461,14 +474,10 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         newMessageData.setFriendId(userId);
         newMessageData.setCreatedAt(getCurrentTime());
         newMessageData.setLocalId(UUID.randomUUID().toString());
-        if (replyId!=0){
+        if (replyId != 0) {
             newMessageData.setAnswerId(replyId);
         }
-        if (roomId == 0) {
-            newMessage.setEvent(NEW_ROOM);
-        } else {
-            newMessage.setEvent(CREATE_MESSAGE);
-        }
+        newMessage.setEvent(CREATE_MESSAGE);
         newMessage.setData(newMessageData);
         String s = new Gson().toJson(newMessage);
         webSocket.sendMessage(s);
@@ -476,6 +485,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     }
 
     private void sendFile(int i, DataFile dataFile) {
+        b.noMessages.setVisibility(GONE);
         RequestNewMessage newMessage = new RequestNewMessage();
         DataMessageTarget newMessageData = new DataMessageTarget();
         newMessageData.setRoomId(roomId);
@@ -495,6 +505,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         DataAttachment dataAttachment = new DataAttachment();
         dataAttachment.setFileUrl(dataFile.getUrl());
         dataAttachment.setSize(dataFile.getSize());
+        dataAttachment.setDuration(dataFile.getDuration());
         newMessageData.setAttachment(dataAttachment);
         newMessage.setEvent(CREATE_MESSAGE);
         newMessage.setData(newMessageData);
@@ -608,9 +619,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
 
         MultipartBody.Part fileToUpload = null;
 
-        RequestBody requestFile = RequestBody.create(
-                MediaType.parse(FileUtil.getMimeType(file)),
-                file);
+        RequestBody requestFile = RequestBody.create(MediaType.parse(FileUtil.getMimeType(file)), file);
 
         Log.e(TAG, "uploadFile: " + FileUtil.getMimeType(file));
         try {
@@ -634,6 +643,12 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
                     } else if (i == 2) {
                         sendFile(2, fileUrl);
                     } else if (i == 3) {
+                        // Get the duration of the MP3 file using MediaMetadataRetriever
+                        long durationInMillis = getAudioDuration(file);
+
+                        int durationInSeconds = (int) (durationInMillis / 1000);
+                        fileUrl.setDuration(String.valueOf(durationInSeconds));
+                        Log.e(TAG, "onResponse: " + durationInSeconds);
                         sendFile(3, fileUrl);
                     }
 
@@ -646,6 +661,21 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
                 b.linearProgressBar.setVisibility(View.GONE);
             }
         });
+    }
+
+    private long getAudioDuration(File audioFile) {
+        long durationInMillis = 0;
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        try {
+            retriever.setDataSource(audioFile.getAbsolutePath());
+            String durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            durationInMillis = Long.parseLong(durationStr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            retriever.release();
+        }
+        return durationInMillis;
     }
 
     public void showDialog() {
@@ -704,10 +734,8 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
 
     @Override
     public void userStatus(boolean isActive) {
-        if (isActive)
-            b.userStatus.setText("Online");
-        else
-            b.userStatus.setText("Offline");
+        if (isActive) b.userStatus.setText("Online");
+        else b.userStatus.setText("Offline");
     }
 
     @Override

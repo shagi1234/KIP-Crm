@@ -10,6 +10,7 @@ import static tm.payhas.crm.helpers.StaticMethods.statusBarHeight;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import tm.payhas.crm.activity.ActivitySplashScreen;
 import tm.payhas.crm.databinding.FragmentProfileBinding;
 import tm.payhas.crm.interfaces.PasswordInterface;
 import tm.payhas.crm.preference.AccountPreferences;
+import tm.payhas.crm.preference.FcmPreferences;
 
 public class FragmentProfile extends Fragment implements PasswordInterface {
     private FragmentProfileBinding b;
@@ -48,16 +50,11 @@ public class FragmentProfile extends Fragment implements PasswordInterface {
     @Override
     public void onResume() {
         super.onResume();
-        new Handler().postDelayed(() -> setPadding(b.customTitleBar,
-                0,
-                statusBarHeight,
-                0,
-                0), 50);
+        new Handler().postDelayed(() -> setPadding(b.customTitleBar, 0, statusBarHeight, 0, 0), 50);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         b = FragmentProfileBinding.inflate(inflater);
         hideSoftKeyboard(getActivity());
         accountPreferences = new AccountPreferences(getContext());
@@ -75,12 +72,14 @@ public class FragmentProfile extends Fragment implements PasswordInterface {
     private void setInfo() {
         b.name.setText(accountPreferences.getUserName() + "  " + accountPreferences.getPrefSurname());
         b.phoneNumber.setText(accountPreferences.getPhoneNumber());
+        Log.e("Profile", "setInfo: " + accountPreferences.getPhoneNumber());
     }
 
     private void initListeners() {
         b.logout.setOnClickListener(view -> {
             b.logout.setEnabled(false);
             accountPreferences.getEditor().clear().commit();
+            FcmPreferences.newInstance(getContext()).setIsSent(false);
             getActivity().finish();
             startActivity(new Intent(getContext(), ActivitySplashScreen.class));
             new Handler().postDelayed(() -> b.logout.setEnabled(true), 200);

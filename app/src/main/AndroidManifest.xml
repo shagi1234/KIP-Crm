@@ -30,6 +30,11 @@
         android:theme="@style/Theme.CRM"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_logo_lemmer" />
+
         <activity
             android:name=".activity.ActivityPassword"
             android:exported="false" />
@@ -68,6 +73,8 @@
 
         <service
             android:name="tm.payhas.crm.fcm.FirebasePushMessage"
+            android:directBootAware="true"
+            android:enabled="true"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

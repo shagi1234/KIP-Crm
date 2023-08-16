@@ -41,13 +41,12 @@ public class FirebasePushMessage extends FirebaseMessagingService {
         Log.e(TAG, "handleIntent: " + "\n" +
                 " title " + intent.getExtras().getString("title") + "\n" +
                 " body " + intent.getExtras().getString("body") + "\n" +
-                " taskId " + intent.getExtras().getString("taskId") + "\n" +
+                " roomId " + intent.getExtras().getString("roomId") + "\n" +
                 " to " + intent.getExtras().getString("to") + "\n" +
                 " sound " + intent.getExtras().getString("sound")
         );
-
         if (intent.getExtras().getString("title") != null) {
-
+            getFirebaseMessage(intent.getExtras().getString("title"), intent.getExtras().getString("body"), intent.getExtras().getString("roomId"));
         }
     }
 
@@ -60,7 +59,6 @@ public class FirebasePushMessage extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage message) {
-        return;
     }
 
     @Override
@@ -68,16 +66,6 @@ public class FirebasePushMessage extends FirebaseMessagingService {
         super.onNewToken(token);
         FcmPreferences.newInstance(getApplicationContext()).setFcm(token);
         Log.e(TAG, "onNewToken: " + token);
-    }
-
-
-    private void notifyToUser() {
-        if (mainFragmentManager != null) {
-            Fragment main = mainFragmentManager.findFragmentByTag(FragmentFlow.class.getSimpleName());
-            //notifyy
-        }
-
-
     }
 
     private void getFirebaseMessage(String title, String body, String taskId) {
@@ -120,7 +108,7 @@ public class FirebasePushMessage extends FirebaseMessagingService {
         mBuilder.setSmallIcon(R.drawable.ic_logo_lemmer)
                 .setPriority(Notification.PRIORITY_MAX)
                 .setStyle(bigText)
-                .setContentText(title)
+                .setContentText(body)
                 .setVibrate(new long[]{1500, 1000, 1500, 1000})
                 .setAutoCancel(true)
                 .setContentIntent(contentIntent);
@@ -131,12 +119,13 @@ public class FirebasePushMessage extends FirebaseMessagingService {
                     channelId,
                     "Show necessary orders",
                     NotificationManager.IMPORTANCE_HIGH);
+
             mNotificationManager.createNotificationChannel(channel);
             mBuilder.setChannelId(channelId);
         }
 
         mNotificationManager.notify(1, mBuilder.build());
-        notifyToUser();
+
     }
 
     public static boolean contains(final int[] arr, final int key) {

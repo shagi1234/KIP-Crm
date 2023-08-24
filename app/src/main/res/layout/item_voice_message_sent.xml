@@ -11,26 +11,43 @@
     android:orientation="horizontal">
 
     <LinearLayout
+        android:layout_marginEnd="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:orientation="vertical"
         tools:ignore="UseCompoundDrawables">
+        <FrameLayout
+            android:id="@+id/clicker_resend"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="bottom">
 
-        <ImageView
-            android:id="@+id/msg_indicator"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_msg_indicator_sent"
-            tools:ignore="ContentDescription" />
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animationView"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/clock_animation" />
+
+            <ImageView
+                android:id="@+id/msg_indicator"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center"
+                android:background="@color/white"
+                android:src="@drawable/ic_msg_indicator_sent"
+                android:visibility="gone"
+                tools:ignore="ContentDescription" />
+        </FrameLayout>
 
         <TextView
             android:id="@+id/message_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginEnd="2dp"
+            android:layout_gravity="center"
             android:fontFamily="@font/inter_regular"
             android:text="2:45"
             android:textColor="@color/chat_time_color"
@@ -61,12 +78,11 @@
             android:layout_marginHorizontal="10dp"
             android:orientation="vertical">
 
-            <tm.payhas.crm.helpers.MusicProgressBar
+            <SeekBar
                 android:id="@+id/sent_voice_progress"
-                android:layout_width="wrap_content"
-                android:layout_height="3dp"
-                android:layout_gravity="center_vertical"
-                android:background="@color/sent_message" />
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:layout_gravity="center_vertical" />
 
             <TextView
                 android:id="@+id/voice_message_info"

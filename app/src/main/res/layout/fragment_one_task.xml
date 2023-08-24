@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".fragment.FragmentOneTask">
+    tools:context=".presentation.view.fragment.FragmentOneTask">
 
     <include
         android:id="@+id/progress_bar"

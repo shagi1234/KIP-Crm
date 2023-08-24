@@ -7,7 +7,7 @@
     android:background="@color/white"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".fragment.FragmentLogin">
+    tools:context=".presentation.view.fragment.FragmentLogin">
 
     <LinearLayout
         android:id="@+id/container"

@@ -42,14 +42,14 @@
                     app:riv_oval="true" />
 
                 <com.makeramen.roundedimageview.RoundedImageView
-                    android:layout_width="10dp"
                     android:id="@+id/online_indicator"
+                    android:layout_width="10dp"
                     android:layout_height="10dp"
-                    android:visibility="gone"
                     android:layout_gravity="bottom|end"
                     android:layout_marginEnd="1dp"
                     android:layout_marginBottom="1dp"
                     android:src="@color/primary"
+                    android:visibility="gone"
                     app:riv_oval="true" />
 
             </FrameLayout>
@@ -119,6 +119,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_radius_50"
                     android:fontFamily="@font/inter_regular"
                     android:gravity="center_vertical"
                     android:maxLines="1"
@@ -127,6 +128,7 @@
                     android:text="9"
                     android:textColor="@color/white"
                     android:textSize="12sp"
+                    android:visibility="gone"
                     tools:ignore="HardcodedText" />
 
 

@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
@@ -30,13 +29,8 @@
         android:theme="@style/Theme.CRM"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_logo_lemmer" />
-
         <activity
-            android:name=".activity.ActivityPassword"
+            android:name=".presentation.view.activity.ActivityPassword"
             android:exported="false" />
 
         <provider
@@ -50,13 +44,13 @@
         </provider>
 
         <activity
-            android:name=".activity.ActivityMain"
+            android:name=".presentation.view.activity.ActivityMain"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".activity.ActivitySplashScreen"
+            android:name=".presentation.view.activity.ActivitySplashScreen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -65,26 +59,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.ActivityLoginRegister"
+            android:name=".presentation.view.activity.ActivityLoginRegister"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan"
             tools:ignore="LockedOrientationActivity" />
 
         <service
-            android:name="tm.payhas.crm.fcm.FirebasePushMessage"
-            android:directBootAware="true"
-            android:enabled="true"
+            android:name="tm.payhas.crm.data.remote.fcm.FirebasePushMessage"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <service
-            android:name=".helpers.MyForegroundService"
-            android:enabled="true"
-            android:exported="false" />
+        <receiver
+            android:name=".domain.helpers.NotificationClickReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="tm.payhas.crm.NOTIFICATION_CLICKED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

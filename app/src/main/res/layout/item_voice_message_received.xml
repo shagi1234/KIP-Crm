@@ -63,10 +63,10 @@
                 android:layout_marginHorizontal="10dp"
                 android:orientation="vertical">
 
-                <tm.payhas.crm.helpers.MusicProgressBar
+                <SeekBar
                     android:id="@+id/received_voice_progress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="3dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="15dp"
                     android:layout_gravity="center_vertical" />
 
                 <TextView

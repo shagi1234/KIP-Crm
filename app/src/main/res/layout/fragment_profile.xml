@@ -7,7 +7,7 @@
     android:background="@color/white"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".fragment.FragmentProfile">
+    tools:context=".presentation.view.fragment.FragmentProfile">
 
     <LinearLayout
         android:id="@+id/parent"
@@ -262,8 +262,8 @@
                         android:layout_marginStart="10dp"
                         android:padding="8dp"
                         android:src="@drawable/ic_lock"
-                        tools:ignore="ContentDescription"
-                        app:tint="@color/edt_hint_color" />
+                        app:tint="@color/edt_hint_color"
+                        tools:ignore="ContentDescription" />
 
                     <TextView
                         android:layout_width="0dp"

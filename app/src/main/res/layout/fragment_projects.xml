@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".fragment.FragmentProjects">
+    tools:context=".presentation.view.fragment.FragmentProjects">
 
     <include
         android:id="@+id/progress_bar"

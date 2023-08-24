@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -13,23 +14,41 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:layout_marginEnd="8dp"
         android:orientation="vertical"
         tools:ignore="UseCompoundDrawables">
 
-        <ImageView
-            android:id="@+id/msg_indicator"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_msg_indicator_sent"
-            tools:ignore="ContentDescription" />
+        <FrameLayout
+            android:id="@+id/clicker_resend"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="bottom">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animationView"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/clock_animation" />
+
+            <ImageView
+                android:id="@+id/msg_indicator"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center"
+                android:background="@color/white"
+                android:src="@drawable/ic_msg_indicator_sent"
+                android:visibility="gone"
+                tools:ignore="ContentDescription" />
+        </FrameLayout>
 
         <TextView
             android:id="@+id/message_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginEnd="2dp"
+            android:layout_gravity="center"
             android:fontFamily="@font/inter_regular"
             android:text="2:45"
             android:textColor="@color/chat_time_color"
@@ -39,12 +58,15 @@
 
 
     <TextView
+        android:gravity="center_vertical"
         android:id="@+id/message_sent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:background="@drawable/sent_msg_bg"
         android:fontFamily="@font/roboto_flex"
         android:maxWidth="245dp"
+        android:minHeight="40dp"
         android:paddingHorizontal="10dp"
         android:paddingVertical="8dp"
         android:text="The full passage of standard Lorem Ipsum copy is: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"

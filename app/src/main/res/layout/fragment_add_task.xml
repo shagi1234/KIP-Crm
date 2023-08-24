@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".fragment.FragmentAddTask">
+    tools:context=".presentation.view.fragment.FragmentAddTask">
 
     <LinearLayout
         android:id="@+id/main_content"

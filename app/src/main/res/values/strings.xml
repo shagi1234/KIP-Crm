@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Lemmer</string>
+    <string name="app_name" translatable="false">Lemmer Dublicate</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello</string>
+    <string name="hello_blank_fragment" translatable="false">Hello</string>
     <string-array name="importancy">
         <item>Низкий</item>
         <item>Средний</item>

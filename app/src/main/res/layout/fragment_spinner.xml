@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".fragment.FragmentSpinner">
+    tools:context=".presentation.view.fragment.FragmentSpinner">
 
     <include
         android:id="@+id/progress_bar"

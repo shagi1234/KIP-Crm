@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".fragment.FragmentOneProject">
+    tools:context=".presentation.view.fragment.FragmentOneProject">
 
 
     <include

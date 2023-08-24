@@ -7,7 +7,7 @@
     android:background="@color/white"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".fragment.FragmentCloudFolder">
+    tools:context=".presentation.view.fragment.FragmentCloudFolder">
 
     <include
         android:id="@+id/progress_bar"

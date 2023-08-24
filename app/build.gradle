@@ -33,6 +33,9 @@ android {
 }
 
 dependencies {
+    implementation "com.squareup:kotlinpoet:1.12.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel:2.2.0"
+    implementation "androidx.lifecycle:lifecycle-livedata:2.2.0"
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -94,4 +97,12 @@ dependencies {
 
     //PhotoView
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+
+    //Progress Animation
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+
+    //lottyfiles
+    implementation 'com.airbnb.android:lottie:5.2.0'
+
+
 }

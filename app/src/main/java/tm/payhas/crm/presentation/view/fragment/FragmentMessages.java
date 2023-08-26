@@ -12,7 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.squareup.picasso.Picasso;
 
@@ -21,11 +23,13 @@ import tm.payhas.crm.presentation.view.activity.ActivityLoginRegister;
 import tm.payhas.crm.presentation.view.adapters.AdapterViewPager;
 import tm.payhas.crm.databinding.FragmentMessagesBinding;
 import tm.payhas.crm.data.localdb.preference.AccountPreferences;
+import tm.payhas.crm.presentation.viewModel.ViewModelUser;
 
 public class FragmentMessages extends Fragment {
     private FragmentMessagesBinding b;
     private AdapterViewPager adapterViewPager = new AdapterViewPager(ActivityLoginRegister.mainFragmentManager);
     private AccountPreferences ac;
+    private ViewModelUser viewModelUser;
 
 
     public static FragmentMessages newInstance() {
@@ -42,17 +46,23 @@ public class FragmentMessages extends Fragment {
 
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        b = FragmentMessagesBinding.inflate(inflater);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        b = DataBindingUtil.inflate(inflater, R.layout.fragment_messages, container, false);
         hideSoftKeyboard(getActivity());
         setUpHelpers();
+        setViewModel();
         setBackground();
         setViewPager();
         setupTabIcons();
         initListeners();
         setPage();
         return b.getRoot();
+    }
+
+    private void setViewModel() {
+        viewModelUser = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(ViewModelUser.class);
+        b.setViewModel(viewModelUser);
+        b.setLifecycleOwner(this);
     }
 
     private void setUpHelpers() {

@@ -27,11 +27,12 @@ public class RepositoryUser {
     private final DaoUser userDao;
     private final Context context;
     private final String TAG = "Repository_user";
-
+    private LiveData<List<EntityUserInfo>> allUsers;
 
     public RepositoryUser(Context context) {
         MessagesDatabase messagesDatabase = MessagesDatabase.getInstance(context);
         userDao = messagesDatabase.userDao();
+        allUsers = userDao.getUsers();
         this.context = context;
     }
 
@@ -139,7 +140,7 @@ public class RepositoryUser {
     }
 
     public LiveData<List<EntityUserInfo>> getUsersSorted() {
-        LiveData<List<EntityUserInfo>> allUsersLiveData = userDao.getUsers();
+        LiveData<List<EntityUserInfo>> allUsersLiveData = allUsers;
 
         LiveData<List<EntityUserInfo>> sortedUsersLiveData = Transformations.map(allUsersLiveData, allUsers -> {
             if (allUsers != null) {
@@ -292,6 +293,10 @@ public class RepositoryUser {
 
     public LiveData<Integer> getRoomIdByUserId(int userId) {
         return userDao.getRoomIdByUserId(userId);
+    }
+
+    public LiveData<List<EntityUserInfo>> searchUsersByName(String name) {
+        return userDao.searchUsersByName(name);
     }
 
 }

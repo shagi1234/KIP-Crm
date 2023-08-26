@@ -9,9 +9,11 @@ import static tm.payhas.crm.domain.helpers.StaticMethods.statusBarHeight;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -24,6 +26,7 @@ import tm.payhas.crm.data.localdb.dao.DaoGroup;
 import tm.payhas.crm.data.localdb.dao.DaoMessage;
 import tm.payhas.crm.data.localdb.dao.DaoUser;
 import tm.payhas.crm.data.localdb.preference.FcmPreferences;
+import tm.payhas.crm.data.localdb.preference.NotificationPreferences;
 import tm.payhas.crm.data.localdb.room.MessagesDatabase;
 import tm.payhas.crm.databinding.FragmentProfileBinding;
 import tm.payhas.crm.presentation.view.activity.ActivityMain;
@@ -82,6 +85,10 @@ public class FragmentProfile extends Fragment implements PasswordInterface {
     }
 
     private void initListeners() {
+        b.notificationSwitcher.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            NotificationPreferences.setNotificationEnabled(getContext(), isChecked);
+            Log.e("PROFILENOTIF", "onCheckedChanged: " + isChecked + NotificationPreferences.isNotificationEnabled(getContext()));
+        });
         b.logout.setOnClickListener(view -> {
             b.logout.setEnabled(false);
             accountPreferences.getEditor().clear().commit();
@@ -110,7 +117,6 @@ public class FragmentProfile extends Fragment implements PasswordInterface {
     }
 
     private void clearAllDataInBackground(MessagesDatabase database) {
-        // Use Kotlin Coroutines to perform database operations in a background thread
         new Thread(() -> {
             database.runInTransaction(() -> {
                 database.messageDao().deleteAll();
@@ -121,6 +127,7 @@ public class FragmentProfile extends Fragment implements PasswordInterface {
     }
 
     private void setBackground() {
+        b.notificationSwitcher.setChecked(NotificationPreferences.isNotificationEnabled(getContext()));
         setBackgroundDrawable(getContext(), b.ntfImage, R.color.profile_icon_bg, 0, 8, false, 0);
         setBackgroundDrawable(getContext(), b.langImg, R.color.profile_icon_bg, 0, 8, false, 0);
         setBackgroundDrawable(getContext(), b.pinImage, R.color.profile_icon_bg, 0, 8, false, 0);

@@ -1,6 +1,7 @@
 package tm.payhas.crm.domain.useCases;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -13,11 +14,17 @@ import tm.payhas.crm.data.localdb.repository.RepositoryUser;
 public class UseCaseUsers {
 
     public RepositoryUser repositoryUser;
-    private Context context;
 
     public UseCaseUsers(Context context) {
-        this.context = context;
         repositoryUser = new RepositoryUser(context);
+    }
+
+    public LiveData<List<EntityUserInfo>> getUsers(String searchText) {
+        if (TextUtils.isEmpty(searchText)) {
+            return repositoryUser.getUsersSorted(); // Return sorted users if search text is empty
+        } else {
+            return repositoryUser.searchUsersByName(searchText); // Return search results
+        }
     }
 
     public LiveData<List<EntityUserInfo>> getAllUsers() {
@@ -67,5 +74,9 @@ public class UseCaseUsers {
 
     public LiveData<Integer> getRoomIdForUser(int userId) {
         return repositoryUser.getRoomIdByUserId(userId);
+    }
+
+    public LiveData<List<EntityUserInfo>> getUsersByName(String text) {
+        return repositoryUser.searchUsersByName(text);
     }
 }

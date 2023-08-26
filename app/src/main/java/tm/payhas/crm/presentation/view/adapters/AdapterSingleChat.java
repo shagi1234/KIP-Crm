@@ -36,6 +36,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -43,6 +44,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -81,8 +83,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
     public static final int LAYOUT_RECEIVED_REPLY = 10;
     public static final int LAYOUT_DATE = 11;
     private ViewModelChatRoom viewModelChatRoom;
-    private ChatMenu chatMenu;
-
+    public ChatMenu chatMenu;
 
     public AdapterSingleChat(Context context, Integer roomId, int type, int authorId, UseCaseChatRoom useCaseChatRoom, ViewModelChatRoom viewModelChatRoom, RecyclerView recyclerView) {
         this.roomId = roomId;
@@ -231,6 +232,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
         private final TextView time;
         private final ImageView status;
         private FrameLayout clickerResend;
+        private boolean isClickableResend;
 
         public SenderMessageViewHolder(View itemView) {
             super(itemView);
@@ -245,35 +247,40 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
         public void bind(EntityMessage messageTarget) {
             msgSent.setText(messageTarget.getText());
             msgSent.setOnLongClickListener(view -> {
-                chatMenu.showMenu(messageTarget, itemView, true);
+                chatMenu.showMenu(messageTarget, msgSent, true, false);
                 return true;
             });
             if (messageTarget.getCreatedAt() != null) {
                 time.setText(normalTime(messageTarget.getCreatedAt()));
             }
             clickerResend.setOnClickListener(view -> {
-                useCaseChatRoom.showDialog(context, messageTarget);
+                if (isClickableResend) useCaseChatRoom.showDialog(context, messageTarget);
             });
             if (messageTarget.getStatus() != null && !messageTarget.getStatus().isEmpty()) {
                 switch (messageTarget.getStatus()) {
                     case MESSAGE_SENDING:
+                        isClickableResend = false;
                         status.setVisibility(View.GONE);
                         Log.e(TAG, "bind: +receiving sending !");
                         break;
                     case MESSAGE_UN_SEND:
+                        isClickableResend = true;
                         Log.e(TAG, "bind: +receiving unsent!");
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_error_message);
                         break;
                     case MESSAGE_SENT:
+                        isClickableResend = false;
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_msg_indicator_sent);
                         break;
                     case MESSAGE_DELIVERED:
+                        isClickableResend = false;
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_message_received);
                         break;
                     case MESSAGE_READ:
+                        isClickableResend = false;
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_msg_indicator_read);
                         break;
@@ -291,6 +298,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
         private final RoundedImageView replyImage;
         private final View line;
         private FrameLayout clickerResend;
+        private boolean isClickableResend;
 
         public SenderReplyViewHolder(View itemView) {
             super(itemView);
@@ -309,7 +317,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
             msgReply.setText(messageTarget.getText());
             time.setText(normalTime(messageTarget.getCreatedAt()));
             itemView.setOnLongClickListener(view -> {
-                chatMenu.showMenu(messageTarget, itemView, true);
+                chatMenu.showMenu(messageTarget, userReplyText, true, false);
                 return true;
             });
             if (messageTarget.getAnswering() != null) {
@@ -333,26 +341,31 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
             }
             clickerResend.setOnClickListener(view -> {
-                useCaseChatRoom.showDialog(context, messageTarget);
+                if (isClickableResend) useCaseChatRoom.showDialog(context, messageTarget);
             });
             if (messageTarget.getStatus() != null && !messageTarget.getStatus().isEmpty()) {
                 switch (messageTarget.getStatus()) {
                     case MESSAGE_SENDING:
+                        isClickableResend = false;
                         status.setVisibility(View.GONE);
                         break;
                     case MESSAGE_UN_SEND:
+                        isClickableResend = true;
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_error_message);
                         break;
                     case MESSAGE_SENT:
+                        isClickableResend = false;
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_msg_indicator_sent);
                         break;
                     case MESSAGE_DELIVERED:
+                        isClickableResend = false;
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_message_received);
                         break;
                     case MESSAGE_READ:
+                        isClickableResend = false;
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_msg_indicator_read);
                         break;
@@ -360,7 +373,6 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         }
     }
-
 
     private class ReceivedMessageViewHolder extends RecyclerView.ViewHolder {
         private final TextView msgReceived;
@@ -391,7 +403,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
             msgReceived.setText(messageTarget.getText());
             msgReceived.setOnLongClickListener(view -> {
-                chatMenu.showMenu(messageTarget, itemView, false);
+                chatMenu.showMenu(messageTarget, msgReceived, false, false);
                 return true;
             });
             time.setText(normalTime(messageTarget.getCreatedAt()));
@@ -436,7 +448,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
                 replyUserText.setText(messageTarget.getAnswering().getTextAnswer());
             }
             itemView.setOnLongClickListener(view -> {
-                chatMenu.showMenu(messageTarget, itemView, false);
+                chatMenu.showMenu(messageTarget, replyUserText, false, false);
                 return true;
             });
         }
@@ -452,6 +464,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
         private FrameLayout clickerResend;
         private MediaPlayer mediaPlayer;
         private Runnable updateSeekBar;
+        private boolean isClickableResend;
         private Handler seekBarHandler = new Handler();
 
         public SenderVoiceViewHolder(View itemView) {
@@ -474,7 +487,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
         @RequiresApi(api = Build.VERSION_CODES.Q)
         private void setListeners(EntityMessage oneMessage) {
             itemView.setOnLongClickListener(view -> {
-                chatMenu.showMenu(oneMessage, itemView, true);
+                chatMenu.showMenu(oneMessage, seekBar, true, false);
                 return true;
             });
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -566,26 +579,31 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         private void setInformation(EntityMessage oneMessage) {
             clickerResend.setOnClickListener(view -> {
-                useCaseChatRoom.showDialog(context, oneMessage);
+                if (isClickableResend) useCaseChatRoom.showDialog(context, oneMessage);
             });
             if (oneMessage.getStatus() != null && !oneMessage.getStatus().isEmpty()) {
                 switch (oneMessage.getStatus()) {
                     case MESSAGE_SENDING:
                         status.setVisibility(View.GONE);
+                        isClickableResend = false;
                         break;
                     case MESSAGE_UN_SEND:
+                        isClickableResend = true;
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_error_message);
                         break;
                     case MESSAGE_SENT:
+                        isClickableResend = false;
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_msg_indicator_sent);
                         break;
                     case MESSAGE_DELIVERED:
+                        isClickableResend = false;
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_message_received);
                         break;
                     case MESSAGE_READ:
+                        isClickableResend = false;
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_msg_indicator_read);
                         break;
@@ -630,7 +648,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
                 senderGroupLayout.setVisibility(View.GONE);
             }
             itemView.setOnLongClickListener(view -> {
-                chatMenu.showMenu(oneMessage, itemView, false);
+                chatMenu.showMenu(oneMessage, seekBar, false, false);
                 return true;
             });
             voiceInformation.setText(oneMessage.getAttachment().getSize() / 1000 + "KB");
@@ -731,6 +749,8 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
         private final TextView fileInformation;
         private final FrameLayout clickerResend;
         private final ImageView fileIcon;
+        private boolean isClickableResend;
+        private ProgressBar downloadProgress;
 
         public SenderFileViewHolder(View itemView) {
             super(itemView);
@@ -740,12 +760,14 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
             fileInformation = itemView.findViewById(R.id.msg_file_info);
             clickerResend = itemView.findViewById(R.id.clicker_resend);
             fileIcon = itemView.findViewById(R.id.file_icon);
+            downloadProgress = itemView.findViewById(R.id.download_progress);
         }
 
         @RequiresApi(api = Build.VERSION_CODES.Q)
         public void bind(EntityMessage oneMessage) {
             itemView.setOnLongClickListener(view -> {
-                chatMenu.showMenu(oneMessage, itemView, true);
+                chatMenu.setProgressBar(downloadProgress);
+                chatMenu.showMenu(oneMessage, downloadProgress, true, true);
                 return true;
             });
             FileFormatUtil.getFileFormatFromUrl(oneMessage.getAttachment().getFileUrl(), fileFormat -> updateIconBasedOnFileFormat(fileFormat));
@@ -754,26 +776,31 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
             fileInformation.setText(String.valueOf((oneMessage.getAttachment().getSize() / 1000)) + "KB");
             time.setText(normalTime(oneMessage.getCreatedAt()));
             clickerResend.setOnClickListener(view -> {
-                useCaseChatRoom.showDialog(context, oneMessage);
+                if (isClickableResend) useCaseChatRoom.showDialog(context, oneMessage);
             });
             if (oneMessage.getStatus() != null && !oneMessage.getStatus().isEmpty()) {
                 switch (oneMessage.getStatus()) {
                     case MESSAGE_SENDING:
+                        isClickableResend = false;
                         status.setVisibility(View.GONE);
                         break;
                     case MESSAGE_UN_SEND:
+                        isClickableResend = true;
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_error_message);
                         break;
                     case MESSAGE_SENT:
+                        isClickableResend = false;
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_msg_indicator_sent);
                         break;
                     case MESSAGE_DELIVERED:
+                        isClickableResend = false;
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_message_received);
                         break;
                     case MESSAGE_READ:
+                        isClickableResend = false;
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_msg_indicator_read);
                         break;
@@ -810,7 +837,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
         private final RoundedImageView senderGroupAvatar;
         private final TextView senderGroupName;
         private final ImageView fileIcon;
-
+        private final ProgressBar downloadProgress;
 
         public ReceivedFileViewHolder(View itemView) {
             super(itemView);
@@ -821,6 +848,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
             senderGroupAvatar = itemView.findViewById(R.id.group_sender_avatar);
             senderGroupName = itemView.findViewById(R.id.name_sender_group);
             fileIcon = itemView.findViewById(R.id.icon_file);
+            downloadProgress = itemView.findViewById(R.id.download_progress);
         }
 
         @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -838,9 +866,11 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
             itemView.setOnLongClickListener(view -> {
-                chatMenu.showMenu(oneMessage, itemView, false);
+                chatMenu.setProgressBar(downloadProgress);
+                chatMenu.showMenu(oneMessage, fileInformation, false, true);
                 return true;
             });
+
             if (oneMessage.getAttachment() != null) {
                 if (oneMessage.getAttachment().getFileName() != null) {
                     fileName.setText(oneMessage.getAttachment().getFileName());
@@ -880,6 +910,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
         private final TextView imageSentTime;
         private final TextView imageSentSize;
         private final FrameLayout clickerResend;
+        private boolean isClickableResend;
 
         public SendImageViewHolder(View itemView) {
             super(itemView);
@@ -893,7 +924,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
         @RequiresApi(api = Build.VERSION_CODES.Q)
         public void bind(EntityMessage oneMessage) {
             itemView.setOnLongClickListener(view -> {
-                chatMenu.showMenu(oneMessage, itemView, true);
+                chatMenu.showMenu(oneMessage, image, true, false);
                 return true;
             });
             itemView.setOnClickListener(view -> {
@@ -912,9 +943,11 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
             if (oneMessage.getStatus() != null && !oneMessage.getStatus().isEmpty()) {
                 switch (oneMessage.getStatus()) {
                     case MESSAGE_SENDING:
+                        isClickableResend = true;
                         status.setVisibility(View.GONE);
                         break;
                     case MESSAGE_UN_SEND:
+                        isClickableResend = false;
                         status.setVisibility(View.VISIBLE);
                         status.setImageResource(R.drawable.ic_error_message);
                         break;
@@ -970,7 +1003,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
                 new Handler().postDelayed(() -> itemView.setEnabled(true), 200);
             });
             itemView.setOnLongClickListener(view -> {
-                chatMenu.showMenu(oneMessage, itemView, false);
+                chatMenu.showMenu(oneMessage, itemView, false, false);
                 return true;
             });
             Picasso.get().load(BASE_URL + "/" + oneMessage.getAttachment().getFileUrl()).placeholder(getPlaceholder(context)).into(image);

@@ -2,12 +2,14 @@ package tm.payhas.crm.presentation.view.adapters;
 
 import static tm.payhas.crm.data.remote.api.network.Network.BASE_PHOTO;
 import static tm.payhas.crm.data.remote.api.network.Network.BASE_URL;
+import static tm.payhas.crm.domain.helpers.Common.humanReadableDate;
 import static tm.payhas.crm.domain.helpers.Common.normalTime;
 import static tm.payhas.crm.domain.helpers.StaticMethods.hideSoftKeyboard;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +22,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import tm.payhas.crm.R;
 import tm.payhas.crm.data.localdb.entity.EntityUserInfo;
@@ -130,11 +135,12 @@ public class AdapterChatContact extends RecyclerView.Adapter<AdapterChatContact.
             if (privateUser.isActive()) onlineIndicator.setVisibility(View.VISIBLE);
             else onlineIndicator.setVisibility(View.GONE);
             contactName.setText(privateUser.getPersonalData().getName() + " " + privateUser.getPersonalData().getLastName());
-            if (privateUser.getMessageRoom().getCreatedAtRoom() != null)
-                contactChatCount.setText(normalTime(privateUser.getMessageRoom().getCreatedAtRoom()));
-            else contactChatTime.setText(normalTime(privateUser.getLastActivity()));
-
-
+            if (privateUser.getMessageRoom() != null && privateUser.getMessageRoom().getCreatedAtRoom() != null && !Objects.equals(privateUser.getMessageRoom().getCreatedAtRoom(), "")) {
+                contactChatTime.setText(humanReadableDate(privateUser.getMessageRoom().getCreatedAtRoom()));
+                Log.e("TAG", "setInfo: " + privateUser.getMessageRoom().getCreatedAtRoom());
+            } else {
+                contactChatTime.setText(humanReadableDate(privateUser.getLastActivity()));
+            }
             contactChat.setText(privateUser.getMessageRoom().getTextRoom());
             if (privateUser.getMessageRoom().getRoom().getCount().getMessages() != 0) {
                 contactChatCount.setVisibility(View.VISIBLE);
@@ -145,6 +151,18 @@ public class AdapterChatContact extends RecyclerView.Adapter<AdapterChatContact.
 
             Picasso.get().load(BASE_URL + "/" + privateUser.getAvatar()).placeholder(R.color.primary).into(contactImage);
 
+        }
+
+        public String getTimeStringFromISO8601(String dateString) {
+            if (dateString == null || dateString.isEmpty()) {
+                return ""; // Handle empty or null input appropriately
+            }
+
+            DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+            LocalTime localTime = LocalTime.from(inputFormatter.parse(dateString));
+            return outputFormatter.format(localTime);
         }
 
         public void bindGroup(EntityGroup entityGroup, int position) {

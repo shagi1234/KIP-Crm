@@ -9,6 +9,8 @@ import static tm.payhas.crm.domain.statics.StaticConstants.MEDIA_PLAYER;
 import static tm.payhas.crm.presentation.view.adapters.AdapterChatContact.GROUP;
 import static tm.payhas.crm.presentation.view.adapters.AdapterChatContact.PRIVATE;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -66,7 +68,13 @@ public class ActivityMain extends AppCompatActivity {
         Log.e("FCM_TOKEN", "onCreate: " + fcm.getIsSent());
         setFcmToken();
         setContent();
+        dismissNotification();
         Log.e("Activity main", "onCreate: " + ac.getToken());
+    }
+
+    private void dismissNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
     }
 
     private void setFcmToken() {
@@ -101,6 +109,7 @@ public class ActivityMain extends AppCompatActivity {
         super.onResume();
         initSystemUIViewListeners(root);
         softInputAssist.onResume();
+        dismissNotification();
     }
 
     @Override
@@ -127,6 +136,7 @@ public class ActivityMain extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        dismissNotification();
         softInputAssist.onDestroy();
     }
 

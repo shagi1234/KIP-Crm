@@ -33,7 +33,7 @@ public class EntityMessage {
     private DataAttachment attachment;
     private String createdAt;
     private String updatedAt;
-    private String deletedAt;
+    private String deletedAt = null;
     @TypeConverters
     @Embedded
     private DataAuthor author;

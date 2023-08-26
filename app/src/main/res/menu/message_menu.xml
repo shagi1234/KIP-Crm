@@ -7,10 +7,18 @@
         android:title="Copy"
         android:visible="true" />
     <item
+        android:id="@+id/download"
+        android:enabled="true"
+        android:icon="@drawable/ic_download"
+        android:iconTint="@color/edt_hint"
+        android:title="Download"
+        android:visible="false" />
+    <item
         android:id="@+id/delete"
         android:enabled="true"
         android:icon="@drawable/ic_trash"
-        android:title="Delete" />
+        android:title="Delete"
+        android:visible="false" />
     <item
         android:id="@+id/reply"
         android:enabled="true"

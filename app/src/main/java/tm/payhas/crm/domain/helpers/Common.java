@@ -33,6 +33,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -125,20 +126,83 @@ public class Common {
         String initialStringDate = dateGiven;
         Locale turkmenistanLocale = new Locale("tm", "TM");
 
-        String finalDateTime = ""; // Updated variable name
-        String normalDate = ""; // Updated variable name
+        String finalDateTime = "";
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", turkmenistanLocale);
         try {
             Date date = format.parse(initialStringDate);
+
+            // Add 5 hours to the date
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            calendar.add(Calendar.HOUR_OF_DAY, 5); // Adding 5 hours
+            date = calendar.getTime();
+
             String stringDate = new SimpleDateFormat("dd/MM/yyyy", turkmenistanLocale).format(date);
             String stringTime = new SimpleDateFormat("HH:mm", turkmenistanLocale).format(date);
-            finalDateTime = stringDate.concat(" ").concat(stringTime);// Update finalDateTime
-            normalDate = stringTime;
+            finalDateTime = stringTime;
             Log.i("Date_and_Time", "" + finalDateTime);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return normalDate; // Return the combined date and time
+        return finalDateTime; // Return the combined date and time
+    }
+
+    public static String humanReadableDate(String dateGiven) {
+        String initialStringDate = dateGiven;
+        Locale turkmenistanLocale = new Locale("tm", "TM");
+
+        String finalDateTime = "";
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", turkmenistanLocale);
+        try {
+            Date date = format.parse(initialStringDate);
+
+            // Add 5 hours to the date
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            calendar.add(Calendar.HOUR_OF_DAY, 5); // Adding 5 hours
+            date = calendar.getTime();
+
+            Calendar currentDate = Calendar.getInstance();
+            currentDate.setTime(new Date());
+
+            Calendar inputDate = Calendar.getInstance();
+            inputDate.setTime(date);
+
+            // Check if it's today
+            if (currentDate.get(Calendar.YEAR) == inputDate.get(Calendar.YEAR) && currentDate.get(Calendar.DAY_OF_YEAR) == inputDate.get(Calendar.DAY_OF_YEAR)) {
+                String stringTime = new SimpleDateFormat("HH:mm", turkmenistanLocale).format(date);
+                return stringTime;
+            }
+
+            // Check if it's yesterday
+            Calendar yesterday = (Calendar) currentDate.clone();
+            yesterday.add(Calendar.DAY_OF_YEAR, -1);
+            if (yesterday.get(Calendar.YEAR) == inputDate.get(Calendar.YEAR) && yesterday.get(Calendar.DAY_OF_YEAR) == inputDate.get(Calendar.DAY_OF_YEAR)) {
+                String stringTime = new SimpleDateFormat("HH:mm", turkmenistanLocale).format(date);
+                return "Yesterday " + stringTime;
+            }
+
+            // Check if it's within the same week
+            if (currentDate.get(Calendar.YEAR) == inputDate.get(Calendar.YEAR) && currentDate.get(Calendar.WEEK_OF_YEAR) == inputDate.get(Calendar.WEEK_OF_YEAR)) {
+                String dayOfWeek = new SimpleDateFormat("EEEE", turkmenistanLocale).format(date);
+                String stringTime = new SimpleDateFormat("HH:mm", turkmenistanLocale).format(date);
+                return dayOfWeek + " " + stringTime;
+            }
+
+            // Check if it's within the same year
+            if (currentDate.get(Calendar.YEAR) == inputDate.get(Calendar.YEAR)) {
+                String stringDate = new SimpleDateFormat("MMMM", turkmenistanLocale).format(date);
+                return stringDate;
+            }
+
+            // Otherwise, show full date
+            String stringDate = new SimpleDateFormat("dd/MM/yyyy", turkmenistanLocale).format(date);
+            return stringDate;
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return ""; // Return an empty string if parsing fails
     }
 
     public static String normalDate(String dateGiven) {
@@ -149,6 +213,13 @@ public class Common {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", turkmenistanLocale);
         try {
             Date date = format.parse(initialStringDate);
+
+            // Add 5 hours to the date
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            calendar.add(Calendar.HOUR_OF_DAY, 5); // Adding 5 hours
+            date = calendar.getTime();
+
             String stringDate = new SimpleDateFormat("dd/MM/yyyy", turkmenistanLocale).format(date);
             String stringTime = new SimpleDateFormat("HH:mm", turkmenistanLocale).format(date);
             String finalDateTime = stringDate.concat(" ").concat(stringTime);
@@ -159,6 +230,7 @@ public class Common {
         }
         return dateTaken;
     }
+
 
     public static Date notNormalDate(String dateGiven) {
         String initialStringDate = dateGiven;

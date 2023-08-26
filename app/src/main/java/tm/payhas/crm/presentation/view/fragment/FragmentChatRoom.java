@@ -31,11 +31,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
+import android.media.ExifInterface;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.MediaStore;
@@ -58,6 +62,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -70,6 +75,8 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import tm.payhas.crm.R;
@@ -105,6 +112,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     private boolean isRecording;
     private boolean isSet = false;
     private boolean isScrolling = false;
+    private String currentPhotoPath;
 
 
     public static FragmentChatRoom newInstance(int roomId, int userId, int type) {
@@ -141,6 +149,8 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     @Override
     public void onPause() {
         super.onPause();
+        // Unregister the DownloadReceiver when the activity goes into the background
+        adapterSingleChat.chatMenu.unregisterDownloadReceiver();
     }
 
     @Override
@@ -227,6 +237,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     private void observerRoomId() {
         viewModelChatRoom.getRoomIdForUser(userId).observe(getViewLifecycleOwner(), roomId -> {
             if (this.roomId == 0 && roomId != 0) {
+                this.roomId = roomId;
                 getMessages(roomId);
                 setRoom();
             }
@@ -533,8 +544,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         FrameLayout galleryClicker = dialog.findViewById(R.id.clicker_gallery);
         FrameLayout clickerFile = dialog.findViewById(R.id.clicker_file);
         cameraClicker.setOnClickListener(view1 -> {
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            dispatchTakePictureIntent();
             dialog.dismiss();
         });
         galleryClicker.setOnClickListener(view -> {
@@ -554,12 +564,7 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     }
 
     private void pickFileFromInternalStorage() {
-        String[] mimeTypes = {"application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                "text/plain", "application/pdf", "application/zip", "video/mp4",
-                "video/x-msvideo", "video/x-matroska", "audio/mpeg",
-                "audio/wav", "audio/x-wav", "audio/midi", "audio/x-midi"};
+        String[] mimeTypes = {"application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "text/plain", "application/pdf", "application/zip", "video/mp4", "video/x-msvideo", "video/x-matroska", "audio/mpeg", "audio/wav", "audio/x-wav", "audio/midi", "audio/x-midi"};
 
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -567,6 +572,40 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
         intent.setType("*/*");
         intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_CODE);
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */);
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                Log.e(TAG, "dispatchTakePictureIntent: " + "error occured" + ex);
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(getContext(), "tm.payhas.crm.fileprovider", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, CAMERA_REQUEST);
+            }
+        }
     }
 
     @Override
@@ -577,7 +616,6 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e(TAG, "onActivityResult: " + "Image Taken");
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 try {
@@ -586,19 +624,45 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
                     throw new RuntimeException(e);
                 }
             }
-        } else if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
-            if (data != null) {
-
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                Uri tempUri = getImageUri(getContext(), photo);
-
-                File finalFile = new File(getRealPathFromURI(tempUri, getActivity()));
+        } else if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            if (currentPhotoPath != null) {
                 try {
-                    viewModelChatRoom.sendFileImageVoice(PHOTO, finalFile, 0, "", null, roomId, userId);
+                    ExifInterface exif = new ExifInterface(currentPhotoPath);
+                    int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+
+                    // Load the captured image as a bitmap
+                    Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
+
+                    Matrix matrix = new Matrix();
+                    switch (orientation) {
+                        case ExifInterface.ORIENTATION_ROTATE_90:
+                            matrix.postRotate(90);
+                            break;
+                        case ExifInterface.ORIENTATION_ROTATE_180:
+                            matrix.postRotate(180);
+                            break;
+                        case ExifInterface.ORIENTATION_ROTATE_270:
+                            matrix.postRotate(270);
+                            break;
+                        // Handle other cases if necessary
+                    }
+
+                    // Apply rotation to the bitmap
+                    Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+                    // Send the corrected image to viewModelChatRoom
+                    Uri tempUri = getImageUri(getContext(), rotatedBitmap);
+                    File finalFile = new File(getRealPathFromURI(tempUri, getActivity()));
+                    try {
+                        viewModelChatRoom.sendFileImageVoice(PHOTO, finalFile, 0, "", null, roomId, userId);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
+        }
     }
 
     @Override

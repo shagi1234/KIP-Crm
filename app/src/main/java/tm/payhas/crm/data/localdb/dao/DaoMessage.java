@@ -32,7 +32,7 @@ public interface DaoMessage {
     @Query("DELETE FROM table_message")
     void deleteAll();
 
-    @Query("SELECT * FROM table_message WHERE roomId = :roomId ORDER BY createdAt DESC")
+    @Query("SELECT * FROM table_message WHERE roomId = :roomId AND deletedAt IS NULL ORDER BY createdAt DESC")
     LiveData<List<EntityMessage>> getRoomMessages(int roomId);
 
     @Query("SELECT * FROM table_message WHERE status = 'status-1'")

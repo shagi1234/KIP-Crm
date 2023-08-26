@@ -60,4 +60,7 @@ public interface DaoUser {
     @Query("SELECT roomIdRoom FROM table_users WHERE id = :userId")
     Integer getRoomIdByUser(int userId);
 
+    @Query("SELECT * FROM table_users WHERE name LIKE :searchText")
+    LiveData<List<EntityUserInfo>> searchUsersByName(String searchText);
+
 }

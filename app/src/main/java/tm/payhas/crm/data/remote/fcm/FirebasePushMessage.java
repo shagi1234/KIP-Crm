@@ -6,8 +6,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -16,6 +18,7 @@ import java.util.Random;
 import tm.payhas.crm.R;
 import tm.payhas.crm.data.localdb.preference.AccountPreferences;
 import tm.payhas.crm.data.localdb.preference.FcmPreferences;
+import tm.payhas.crm.data.localdb.preference.NotificationPreferences;
 import tm.payhas.crm.presentation.view.activity.ActivityMain;
 
 public class FirebasePushMessage extends FirebaseMessagingService {
@@ -46,6 +49,9 @@ public class FirebasePushMessage extends FirebaseMessagingService {
     }
 
     private void showNotification(String title, String body, String roomId, String authorId, String roomType) {
+        if (!NotificationPreferences.isNotificationEnabled(getApplicationContext())) {
+            return; // Notifications are disabled, do nothing
+        }
         Intent activityIntent = new Intent(getApplicationContext(), ActivityMain.class);
         activityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         activityIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -55,31 +61,15 @@ public class FirebasePushMessage extends FirebaseMessagingService {
         activityIntent.putExtra("authorId", authorId);
         activityIntent.putExtra("roomType", roomType);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(
-                getApplicationContext(),
-                0,
-                activityIntent,
-                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
-        );
+        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, activityIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "guncha")
-                .setSmallIcon(R.drawable.ic_logo_lemmer)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setVibrate(new long[]{1500, 1000, 1500, 1000})
-                .setAutoCancel(true)
-                .setContentIntent(contentIntent);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "guncha").setSmallIcon(R.drawable.ic_logo_lemmer).setPriority(NotificationCompat.PRIORITY_MAX).setContentTitle(title).setContentText(body).setVibrate(new long[]{1500, 1000, 1500, 1000}).setAutoCancel(true).setContentIntent(contentIntent);
 
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String channelId = "guncha";
-            NotificationChannel channel = new NotificationChannel(
-                    channelId,
-                    "Show necessary orders",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
+            NotificationChannel channel = new NotificationChannel(channelId, "Show necessary orders", NotificationManager.IMPORTANCE_HIGH);
 
             mNotificationManager.createNotificationChannel(channel);
             mBuilder.setChannelId(channelId);

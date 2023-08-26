@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Lemmer Dublicate</string>
+    <string name="app_name" translatable="false">Lemmer</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Hello</string>
     <string-array name="importancy">

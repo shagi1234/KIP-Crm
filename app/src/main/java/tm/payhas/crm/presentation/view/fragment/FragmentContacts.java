@@ -56,6 +56,7 @@ public class FragmentContacts extends Fragment {
 
     }
 
+
     private void setViewModel() {
         viewModelUser = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(ViewModelUser.class);
         b.setViewModel(viewModelUser);
@@ -80,6 +81,7 @@ public class FragmentContacts extends Fragment {
 
     private void initListeners() {
         b.recGroupContact.setOnClickListener(view -> hideSoftKeyboard(getActivity()));
+
     }
 
     private void setRecycler() {

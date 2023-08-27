@@ -1,5 +1,6 @@
 package tm.payhas.crm.presentation.view.activity;
 
+import static tm.payhas.crm.data.localdb.preference.NotificationPreferences.setLaunched;
 import static tm.payhas.crm.domain.helpers.Common.addFragment;
 import static tm.payhas.crm.domain.helpers.Common.hideAdd;
 import static tm.payhas.crm.domain.helpers.Common.menuBar;
@@ -28,6 +29,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tm.payhas.crm.R;
 import tm.payhas.crm.data.localdb.preference.FcmPreferences;
+import tm.payhas.crm.data.localdb.preference.NotificationPreferences;
 import tm.payhas.crm.data.remote.api.request.RequestFcmToken;
 import tm.payhas.crm.data.remote.api.response.ResponseFcmToken;
 import tm.payhas.crm.domain.helpers.Common;
@@ -68,6 +70,7 @@ public class ActivityMain extends AppCompatActivity {
         Log.e("FCM_TOKEN", "onCreate: " + fcm.getIsSent());
         setFcmToken();
         setContent();
+        setLaunched(this,true);
         dismissNotification();
         Log.e("Activity main", "onCreate: " + ac.getToken());
     }
@@ -138,6 +141,7 @@ public class ActivityMain extends AppCompatActivity {
         super.onDestroy();
         dismissNotification();
         softInputAssist.onDestroy();
+        setLaunched(this,false);
     }
 
     @Override

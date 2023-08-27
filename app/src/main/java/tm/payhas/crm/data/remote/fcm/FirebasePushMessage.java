@@ -49,6 +49,11 @@ public class FirebasePushMessage extends FirebaseMessagingService {
     }
 
     private void showNotification(String title, String body, String roomId, String authorId, String roomType) {
+
+        if (!(NotificationPreferences.isLaunched(getApplicationContext()))) {
+            return;
+        }
+
         if (!NotificationPreferences.isNotificationEnabled(getApplicationContext())) {
             return; // Notifications are disabled, do nothing
         }

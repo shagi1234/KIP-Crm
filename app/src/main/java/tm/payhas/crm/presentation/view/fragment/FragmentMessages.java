@@ -3,6 +3,7 @@ package tm.payhas.crm.presentation.view.fragment;
 import static tm.payhas.crm.data.remote.api.network.Network.BASE_PHOTO;
 import static tm.payhas.crm.domain.helpers.StaticMethods.hideSoftKeyboard;
 import static tm.payhas.crm.domain.helpers.StaticMethods.setBackgroundDrawable;
+import static tm.payhas.crm.presentation.view.fragment.FragmentFlow.BADGE;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -77,6 +78,7 @@ public class FragmentMessages extends Fragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         hideSoftKeyboard(getActivity());
+        BADGE.setVisible(false);
     }
 
 

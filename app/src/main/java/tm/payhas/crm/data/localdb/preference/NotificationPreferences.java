@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 public class NotificationPreferences {
 
     private static final String PREF_KEY_NOTIFICATION_ENABLED = "notification_enabled";
+    private static final String APPLICATION_IS_LAUNCHED = "app_launched";
 
     public static boolean isNotificationEnabled(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -16,5 +17,15 @@ public class NotificationPreferences {
     public static void setNotificationEnabled(Context context, boolean enabled) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit().putBoolean(PREF_KEY_NOTIFICATION_ENABLED, enabled).apply();
+    }
+
+    public static boolean isLaunched(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(APPLICATION_IS_LAUNCHED, true);
+    }
+
+    public static void setLaunched(Context context, boolean isLaunched) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(APPLICATION_IS_LAUNCHED, isLaunched).apply();
     }
 }

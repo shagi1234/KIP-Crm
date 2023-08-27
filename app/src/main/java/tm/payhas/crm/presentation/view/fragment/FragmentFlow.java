@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.badge.BadgeDrawable;
+
 import tm.payhas.crm.R;
 import tm.payhas.crm.databinding.FragmentFlowBinding;
 import tm.payhas.crm.domain.helpers.Common;
@@ -22,6 +24,7 @@ import tm.payhas.crm.presentation.view.activity.ActivityLoginRegister;
 
 public class FragmentFlow extends Fragment {
     private FragmentFlowBinding b;
+    public static BadgeDrawable BADGE;
 
     public static FragmentFlow newInstance() {
         FragmentFlow fragment = new FragmentFlow();
@@ -40,23 +43,27 @@ public class FragmentFlow extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        new Handler().postDelayed(() -> setPadding(b.secondaryContent,
-                0,
-                statusBarHeight,
-                0,
-                0), 100);
+        new Handler().postDelayed(() -> setPadding(b.secondaryContent, 0, statusBarHeight, 0, 0), 100);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         b = FragmentFlowBinding.inflate(inflater);
         hideSoftKeyboard(getActivity());
+        setBadge();
         setContent();
         initListeners();
         return b.getRoot();
     }
+
+    @SuppressLint("ResourceAsColor")
+    private void setBadge() {
+        BADGE = b.bottomNavigationBar.getOrCreateBadge(R.id.chat);
+        BADGE.setVisible(false);
+        BADGE.setBackgroundColor(R.color.primary);
+    }
+
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
@@ -70,7 +77,7 @@ public class FragmentFlow extends Fragment {
 
     @SuppressLint("NonConstantResourceId")
     private void initListeners() {
-        menuBar=b.bottomNavigationBar;
+        menuBar = b.bottomNavigationBar;
         b.bottomNavigationBar.setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.home:

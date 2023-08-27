@@ -7,6 +7,7 @@ import static tm.payhas.crm.domain.statics.StaticConstants.NEW_ROOM;
 import static tm.payhas.crm.domain.statics.StaticConstants.RECEIVED_NEW_MESSAGE;
 import static tm.payhas.crm.domain.statics.StaticConstants.REMOVE_MESSAGE;
 import static tm.payhas.crm.domain.statics.StaticConstants.USER_STATUS;
+import static tm.payhas.crm.presentation.view.fragment.FragmentFlow.BADGE;
 
 import android.app.Activity;
 import android.content.Context;
@@ -81,9 +82,11 @@ public class WebSocket {
                     switch (event) {
                         case MESSAGE_STATUS:
                             messageStatus(messageJson);
+                            BADGE.setVisible(true);
                             break;
 
                         case RECEIVED_NEW_MESSAGE:
+                            BADGE.setVisible(true);
                             receivedNewMessage(messageJson);
                             break;
 

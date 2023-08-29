@@ -24,6 +24,7 @@ import static tm.payhas.crm.domain.statics.StaticConstants.VOICE;
 import static tm.payhas.crm.presentation.view.activity.ActivityMain.webSocket;
 import static tm.payhas.crm.presentation.view.adapters.AdapterChatContact.GROUP;
 import static tm.payhas.crm.presentation.view.adapters.AdapterChatContact.PRIVATE;
+import static tm.payhas.crm.presentation.view.fragment.FragmentFlow.BADGE;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -137,18 +138,20 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
             viewModelChatRoom.closeUseCase(getContext());
         }
         hideSoftKeyboard(getActivity());
-
+        BADGE.setVisible(false);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        BADGE.setVisible(false);
         new Handler().postDelayed(() -> setPadding(b.chatContent, 0, statusBarHeight, 0, 0), 100);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        BADGE.setVisible(false);
         // Unregister the DownloadReceiver when the activity goes into the background
         adapterSingleChat.chatMenu.unregisterDownloadReceiver();
     }

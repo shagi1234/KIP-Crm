@@ -1,6 +1,5 @@
 package tm.payhas.crm.presentation.view.activity;
 
-import static tm.payhas.crm.data.localdb.preference.NotificationPreferences.setLaunched;
 import static tm.payhas.crm.domain.helpers.Common.addFragment;
 import static tm.payhas.crm.domain.helpers.Common.hideAdd;
 import static tm.payhas.crm.domain.helpers.Common.menuBar;
@@ -38,7 +37,6 @@ import tm.payhas.crm.presentation.view.fragment.FragmentChatRoom;
 import tm.payhas.crm.presentation.view.fragment.FragmentCloudFile;
 import tm.payhas.crm.presentation.view.fragment.FragmentCloudFolder;
 import tm.payhas.crm.presentation.view.fragment.FragmentFlow;
-import tm.payhas.crm.presentation.view.fragment.FragmentHome;
 import tm.payhas.crm.presentation.view.fragment.FragmentMessages;
 import tm.payhas.crm.domain.helpers.SoftInputAssist;
 import tm.payhas.crm.domain.interfaces.DataFileSelectedListener;
@@ -70,7 +68,7 @@ public class ActivityMain extends AppCompatActivity {
         Log.e("FCM_TOKEN", "onCreate: " + fcm.getIsSent());
         setFcmToken();
         setContent();
-        setLaunched(this,true);
+        NotificationPreferences.setLaunched(this, true);
         dismissNotification();
         Log.e("Activity main", "onCreate: " + ac.getToken());
     }
@@ -141,7 +139,7 @@ public class ActivityMain extends AppCompatActivity {
         super.onDestroy();
         dismissNotification();
         softInputAssist.onDestroy();
-        setLaunched(this,false);
+        NotificationPreferences.setLaunched(this, false);
     }
 
     @Override
@@ -150,6 +148,7 @@ public class ActivityMain extends AppCompatActivity {
         if (!webSocket.connected) {
             webSocket.createWebSocketClient();
         }
+
     }
 
     @Override

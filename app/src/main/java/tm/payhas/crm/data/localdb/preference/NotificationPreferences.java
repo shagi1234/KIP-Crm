@@ -21,7 +21,7 @@ public class NotificationPreferences {
 
     public static boolean isLaunched(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean(APPLICATION_IS_LAUNCHED, true);
+        return prefs.getBoolean(APPLICATION_IS_LAUNCHED, false);
     }
 
     public static void setLaunched(Context context, boolean isLaunched) {

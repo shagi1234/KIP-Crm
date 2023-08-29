@@ -7,6 +7,7 @@ import static tm.payhas.crm.domain.helpers.StaticMethods.setPadding;
 import static tm.payhas.crm.domain.helpers.StaticMethods.statusBarHeight;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -29,6 +30,7 @@ import tm.payhas.crm.data.localdb.preference.FcmPreferences;
 import tm.payhas.crm.data.localdb.preference.NotificationPreferences;
 import tm.payhas.crm.data.localdb.room.MessagesDatabase;
 import tm.payhas.crm.databinding.FragmentProfileBinding;
+import tm.payhas.crm.domain.helpers.NotificationHelper;
 import tm.payhas.crm.presentation.view.activity.ActivityMain;
 import tm.payhas.crm.presentation.view.activity.ActivitySplashScreen;
 import tm.payhas.crm.domain.interfaces.PasswordInterface;
@@ -85,9 +87,13 @@ public class FragmentProfile extends Fragment implements PasswordInterface {
     }
 
     private void initListeners() {
+
         b.notificationSwitcher.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-            NotificationPreferences.setNotificationEnabled(getContext(), isChecked);
-            Log.e("PROFILENOTIF", "onCheckedChanged: " + isChecked + NotificationPreferences.isNotificationEnabled(getContext()));
+            if (NotificationHelper.areNotificationsEnabled(getContext())) {
+                NotificationPreferences.setNotificationEnabled(getContext(), isChecked);
+            } else {
+                NotificationHelper.requestNotificationPermission(getActivity());
+            }
         });
         b.logout.setOnClickListener(view -> {
             b.logout.setEnabled(false);
@@ -139,4 +145,22 @@ public class FragmentProfile extends Fragment implements PasswordInterface {
     public void setEnabled() {
         b.passwordSwitcher.setChecked(!accountPreferences.getPassword().equals(""));
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == NotificationHelper.REQUEST_NOTIFICATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+                b.notificationSwitcher.setChecked(true); // Enable the switch
+                NotificationPreferences.setNotificationEnabled(getContext(), true);
+            } else {
+                // Permission denied
+                b.notificationSwitcher.setChecked(false); // Disable the switch
+                NotificationPreferences.setNotificationEnabled(getContext(), false);
+            }
+        }
+    }
+
 }

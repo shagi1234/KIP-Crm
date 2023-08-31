@@ -21,6 +21,11 @@ public class UseCaseGroup {
         allGroups = repositoryGroup.getGroups();
     }
 
+    public void insertGroup(EntityGroup entityGroup) {
+        repositoryGroup.insertGroup(entityGroup);
+    }
+
+
     public void getConnectedAndUpdated() {
         repositoryGroup.fetchAndInsertGroups();
     }

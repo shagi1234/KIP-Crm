@@ -26,6 +26,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tm.payhas.crm.R;
 import tm.payhas.crm.databinding.FragmentCreateGroupBinding;
+import tm.payhas.crm.domain.useCases.UseCaseGroup;
 import tm.payhas.crm.presentation.view.activity.ActivityMain;
 import tm.payhas.crm.presentation.view.adapters.AdapterCreateGroup;
 import tm.payhas.crm.data.remote.api.request.RequestNewGroup;
@@ -41,6 +42,7 @@ public class FragmentCreateGroup extends Fragment implements OnUserCountChangeLi
     private AdapterCreateGroup adapterCreateGroup;
     private String avatarUrl;
     private ArrayList<Integer> selectedUserList = new ArrayList<>();
+    private UseCaseGroup useCaseGroup;
 
     public static FragmentCreateGroup newInstance() {
         FragmentCreateGroup fragment = new FragmentCreateGroup();
@@ -63,13 +65,13 @@ public class FragmentCreateGroup extends Fragment implements OnUserCountChangeLi
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         b = FragmentCreateGroupBinding.inflate(inflater);
         setRecycler();
         getMembers();
         initListeners();
+        useCaseGroup = new UseCaseGroup(getContext());
         return b.getRoot();
     }
 
@@ -131,6 +133,7 @@ public class FragmentCreateGroup extends Fragment implements OnUserCountChangeLi
                         if (groupInfoFragment != null) {
                             groupInfoFragment.refresh(); // Call the method to refresh data in the GroupInfoFragment
                         }
+                        useCaseGroup.insertGroup(response.body().getData());
                         new Handler().postDelayed(() -> getActivity().onBackPressed(), 500);
 
                     }

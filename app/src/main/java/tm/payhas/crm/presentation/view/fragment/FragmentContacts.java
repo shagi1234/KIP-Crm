@@ -2,6 +2,9 @@ package tm.payhas.crm.presentation.view.fragment;
 
 import static tm.payhas.crm.domain.helpers.StaticMethods.hideSoftKeyboard;
 
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,24 +14,24 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import java.util.List;
-
 import tm.payhas.crm.R;
-import tm.payhas.crm.data.localdb.entity.EntityUserInfo;
 import tm.payhas.crm.databinding.FragmentContactsBinding;
+import tm.payhas.crm.domain.helpers.NetworkConnectivityUtil;
+import tm.payhas.crm.domain.interfaces.NetworkChangeListener;
 import tm.payhas.crm.presentation.view.adapters.AdapterChatContact;
 
 import tm.payhas.crm.presentation.viewModel.ViewModelUser;
 
-public class FragmentContacts extends Fragment {
+public class FragmentContacts extends Fragment implements NetworkChangeListener {
     private FragmentContactsBinding b;
     private AdapterChatContact adapterChatContact;
     private ViewModelUser viewModelUser;
     private final String TAG = "FragmentChatContacts";
+    private NetworkConnectivityUtil connectivityUtil;
+
 
     public static FragmentContacts newInstance() {
         FragmentContacts fragment = new FragmentContacts();
@@ -51,9 +54,14 @@ public class FragmentContacts extends Fragment {
         getPrivateContacts();
         setRecycler();
         initListeners();
+        setNetworkObserver();
         return b.getRoot();
 
 
+    }
+
+    private void setNetworkObserver() {
+        connectivityUtil = new NetworkConnectivityUtil(requireContext(), this);
     }
 
 
@@ -91,4 +99,20 @@ public class FragmentContacts extends Fragment {
         b.recGroupContact.setAdapter(adapterChatContact);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        connectivityUtil.unregisterReceiver(requireContext());
+    }
+
+    @Override
+    public void onNetworkConnected() {
+        Log.e(TAG, "onNetworkConnected: ");
+        viewModelUser.getConnectedAndUpdate();
+    }
+
+    @Override
+    public void onNetworkDisconnected() {
+        Log.e(TAG, "onNetworkDisconnected: ");
+    }
 }

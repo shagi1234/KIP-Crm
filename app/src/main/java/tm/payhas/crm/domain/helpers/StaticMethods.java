@@ -38,6 +38,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.TimeZone;
 
 import tm.payhas.crm.R;
 import tm.payhas.crm.data.localdb.entity.EntityMessage;
@@ -352,6 +353,10 @@ public class StaticMethods {
         Locale turkmenistanLocale = new Locale("tm", "TM");
         Calendar calendar = Calendar.getInstance(turkmenistanLocale);
         calendar.add(Calendar.MINUTE, 1); // Add one minute
+
+        // Set the timezone to UTC
+        TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
+        calendar.setTimeZone(utcTimeZone);
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", turkmenistanLocale);
         return df.format(calendar.getTime());

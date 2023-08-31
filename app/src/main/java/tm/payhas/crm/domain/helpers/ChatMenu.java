@@ -77,7 +77,6 @@ public class ChatMenu implements DownloadProgressListener {
                     downloadReceiver = new DownloadReceiver(progressBar, this);
                     IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
                     context.registerReceiver(downloadReceiver, filter);
-
                     FileDownloadManager.downloadFile(context, BASE_PHOTO + message.getAttachment().getFileUrl(), message.getAttachment().getFileName());
                     return true;
                 case R.id.reply:

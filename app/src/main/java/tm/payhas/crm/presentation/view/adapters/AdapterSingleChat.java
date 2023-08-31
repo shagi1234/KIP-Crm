@@ -772,9 +772,16 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
             });
             FileFormatUtil.getFileFormatFromUrl(oneMessage.getAttachment().getFileUrl(), fileFormat -> updateIconBasedOnFileFormat(fileFormat));
             Log.e(TAG, "bind: " + oneMessage.getAttachment().getFileName());
-            fileName.setText(oneMessage.getAttachment().getFileName());
-            fileInformation.setText(String.valueOf((oneMessage.getAttachment().getSize() / 1000)) + "KB");
-            time.setText(normalTime(oneMessage.getCreatedAt()));
+            if (oneMessage.getAttachment() != null) {
+                if (oneMessage.getAttachment().getFileName() != null) {
+                    fileName.setText(oneMessage.getAttachment().getFileName());
+                }
+                if (oneMessage.getAttachment().getSize() != 0 && oneMessage.getAttachment().getSize() != null) {
+                    fileInformation.setText(String.valueOf((oneMessage.getAttachment().getSize() / 1000)) + "KB");
+                }
+                if (oneMessage.getCreatedAt() != null)
+                    time.setText(normalTime(oneMessage.getCreatedAt()));
+            }
             clickerResend.setOnClickListener(view -> {
                 if (isClickableResend) useCaseChatRoom.showDialog(context, oneMessage);
             });
@@ -860,8 +867,6 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
             } else {
                 senderGroupLayout.setVisibility(View.GONE);
             }
-            fileInformation.setText(String.valueOf((oneMessage.getAttachment().getSize() / 1000)) + "KB");
-            fileName.setText(oneMessage.getAttachment().getFileName());
             FileFormatUtil.getFileFormatFromUrl(oneMessage.getAttachment().getFileUrl(), fileFormat -> updateIconBasedOnFileFormat(fileFormat));
 
 
@@ -875,8 +880,8 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
                 if (oneMessage.getAttachment().getFileName() != null) {
                     fileName.setText(oneMessage.getAttachment().getFileName());
                 }
-                if (oneMessage.getAttachment().getSize() == 0) {
-                    fileInformation.setText(oneMessage.getAttachment().getSize());
+                if (oneMessage.getAttachment().getSize() != 0 && oneMessage.getAttachment().getSize() != null) {
+                    fileInformation.setText(String.valueOf((oneMessage.getAttachment().getSize() / 1000)) + "KB");
                 }
                 if (oneMessage.getCreatedAt() != null)
                     time.setText(normalTime(oneMessage.getCreatedAt()));
@@ -911,6 +916,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
         private final TextView imageSentSize;
         private final FrameLayout clickerResend;
         private boolean isClickableResend;
+        private ProgressBar downloadProgress;
 
         public SendImageViewHolder(View itemView) {
             super(itemView);
@@ -919,12 +925,14 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
             imageSentTime = itemView.findViewById(R.id.img_sent_time);
             imageSentSize = itemView.findViewById(R.id.img_size);
             clickerResend = itemView.findViewById(R.id.clicker_resend);
+            downloadProgress = itemView.findViewById(R.id.download_progress);
         }
 
         @RequiresApi(api = Build.VERSION_CODES.Q)
         public void bind(EntityMessage oneMessage) {
             itemView.setOnLongClickListener(view -> {
-                chatMenu.showMenu(oneMessage, image, true, false);
+                chatMenu.setProgressBar(downloadProgress);
+                chatMenu.showMenu(oneMessage, downloadProgress, true, true);
                 return true;
             });
             itemView.setOnClickListener(view -> {
@@ -976,6 +984,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
         private final LinearLayout senderGroupLayout;
         private final RoundedImageView senderGroupAvatar;
         private final TextView senderGroupName;
+        private final ProgressBar downloadProgress;
 
         public ReceivedImageViewHolder(View itemView) {
             super(itemView);
@@ -985,6 +994,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
             senderGroupLayout = itemView.findViewById(R.id.layout_sender_group);
             senderGroupAvatar = itemView.findViewById(R.id.group_sender_avatar);
             senderGroupName = itemView.findViewById(R.id.name_sender_group);
+            downloadProgress = itemView.findViewById(R.id.download_progress);
         }
 
         @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -1003,7 +1013,8 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
                 new Handler().postDelayed(() -> itemView.setEnabled(true), 200);
             });
             itemView.setOnLongClickListener(view -> {
-                chatMenu.showMenu(oneMessage, itemView, false, false);
+                chatMenu.showMenu(oneMessage, itemView, false, true);
+                chatMenu.setProgressBar(downloadProgress);
                 return true;
             });
             Picasso.get().load(BASE_URL + "/" + oneMessage.getAttachment().getFileUrl()).placeholder(getPlaceholder(context)).into(image);

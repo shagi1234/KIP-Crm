@@ -71,7 +71,7 @@
             android:src="@drawable/ic_folder_word" />
 
         <LinearLayout
-            android:layout_width="200dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginHorizontal="10dp"
@@ -85,8 +85,9 @@
                 android:layout_marginStart="2dp"
                 android:layout_marginTop="6dp"
                 android:fontFamily="@font/inter_regular"
-                android:maxWidth="100dp"
+                android:maxWidth="150dp"
                 android:maxLines="1"
+                android:minWidth="200dp"
                 android:text="Lorem ipsum"
                 android:textColor="@color/text_color"
                 android:textSize="12sp"

@@ -311,6 +311,8 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 int totalItemCount = layoutManager.getItemCount();
                 int lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+                int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
+
 
                 isScrolling = newState != RecyclerView.SCROLL_STATE_IDLE;
 
@@ -322,6 +324,13 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
 
                 if (totalItemCount <= lastVisibleItem + 1) {
                     viewModelChatRoom.loadNextPage();
+                }
+
+                // Check if scrolling up from the last item
+                if (firstVisibleItem == 0 && newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    viewModelChatRoom.getAllMessages(roomId);
+                    Log.e(TAG, "Scrolling down from the top");
+                    // Your additional logic goes here
                 }
             }
         });
@@ -351,7 +360,6 @@ public class FragmentChatRoom extends Fragment implements ChatRoomInterface {
             }
         });
         b.sendMessage.setOnClickListener(view -> {
-            webSocket.connectToWebSocket();
             sendMessage();
             AnimationSet animationSet = new AnimationSet(true);
 

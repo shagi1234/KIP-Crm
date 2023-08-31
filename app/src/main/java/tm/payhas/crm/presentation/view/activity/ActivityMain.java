@@ -57,7 +57,9 @@ public class ActivityMain extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        webSocket = new WebSocket(this);
+        if (webSocket == null) {
+            webSocket = new WebSocket(this);
+        }
         ac = new AccountPreferences(this);
         root = findViewById(R.id.main_content);
         transparentStatusAndNavigation(this);
@@ -145,10 +147,6 @@ public class ActivityMain extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (!webSocket.connected) {
-            webSocket.createWebSocketClient();
-        }
-
     }
 
     @Override

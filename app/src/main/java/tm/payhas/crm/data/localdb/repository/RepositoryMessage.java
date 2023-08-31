@@ -52,7 +52,7 @@ public class RepositoryMessage {
 
     public void startUpdatingSendingMessages() {
         timer = new Timer();
-        timer.schedule(new UpdateSendingMessagesTask(), 0, 5000);// Call the method every 5 seconds
+        timer.schedule(new UpdateSendingMessagesTask(), 5000, 10000);// Call the method every 5 seconds
         Log.e(TAG, "startUpdatingSendingMessages: looping");
     }
 
@@ -68,6 +68,9 @@ public class RepositoryMessage {
         @Override
         public void run() {
             checkAndUpdateSendingMessages();
+            if (!areSendingMessagesPresent()) {
+                stopUpdatingSendingMessages();
+            }
         }
     }
 
@@ -109,6 +112,9 @@ public class RepositoryMessage {
 
 
     public void checkAndUpdateSendingMessages() {
+        if (!areSendingMessagesPresent()) {
+            return;
+        }
         List<EntityMessage> sendingMessages = daoMessage.getAndCheckSendingMessages();
         Log.e(TAG, "checkAndUpdateSendingMessages: Checking sending messages" + sendingMessages.size());
         if (sendingMessages.isEmpty()) {
@@ -128,7 +134,7 @@ public class RepositoryMessage {
 
                 long elapsedTime = currentDateTime.getTime() - messageCreatedAtDateTime.getTime();
 
-                if (elapsedTime >= 5000) { // Replace with your time threshold
+                if (elapsedTime >= 10000) { // Replace with your time threshold
                     message.setStatus(MESSAGE_UN_SEND);
                     Log.e(TAG, "checkAndUpdateSendingMessages: updated message" + message.getId() + message.getStatus());
                     update(message);
@@ -153,7 +159,6 @@ public class RepositoryMessage {
 
         return roomExistsLiveData;
     }
-
 
 
     private static class DeleteMessageAsyncTask extends AsyncTask<EntityMessage, Void, Void> {
@@ -247,6 +252,11 @@ public class RepositoryMessage {
     public LiveData<List<EntityMessage>> getMessages(int roomId) {
         fetchAndInsertMessages(1);
         return daoMessage.getRoomMessages(roomId);
+    }
+
+    private boolean areSendingMessagesPresent() {
+        List<EntityMessage> sendingMessages = daoMessage.getAndCheckSendingMessages();
+        return !sendingMessages.isEmpty();
     }
 
 }

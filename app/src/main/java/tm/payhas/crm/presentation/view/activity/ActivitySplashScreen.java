@@ -36,7 +36,6 @@ public class ActivitySplashScreen extends AppCompatActivity {
             setLocale("ru");
             languageManager.setLanguage("ru");
         }
-
         new Handler().postDelayed(() -> {
             if (ac.getLoggedIn()) {
                 Intent intent;

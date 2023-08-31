@@ -61,7 +61,7 @@ public class FragmentContacts extends Fragment implements NetworkChangeListener 
     }
 
     private void setNetworkObserver() {
-        connectivityUtil = new NetworkConnectivityUtil(requireContext(), this);
+        connectivityUtil = new NetworkConnectivityUtil(getContext(), this);
     }
 
 
@@ -107,12 +107,11 @@ public class FragmentContacts extends Fragment implements NetworkChangeListener 
 
     @Override
     public void onNetworkConnected() {
-        Log.e(TAG, "onNetworkConnected: ");
-        viewModelUser.getConnectedAndUpdate();
+        NetworkChangeListener.super.onNetworkConnected();
     }
 
     @Override
     public void onNetworkDisconnected() {
-        Log.e(TAG, "onNetworkDisconnected: ");
+        NetworkChangeListener.super.onNetworkDisconnected();
     }
 }

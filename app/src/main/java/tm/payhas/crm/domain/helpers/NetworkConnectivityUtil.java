@@ -7,14 +7,13 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import tm.payhas.crm.presentation.view.fragment.FragmentContacts;
+import tm.payhas.crm.domain.interfaces.NetworkChangeListener;
 
 public class NetworkConnectivityUtil {
-
     private NetworkChangeListener listener;
     private BroadcastReceiver networkReceiver;
 
-    public NetworkConnectivityUtil(Context context, FragmentContacts listener) {
+    public NetworkConnectivityUtil(Context context, NetworkChangeListener listener) {
         this.listener = listener;
         networkReceiver = new NetworkChangeReceiver();
         context.registerReceiver(networkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));

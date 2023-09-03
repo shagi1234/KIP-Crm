@@ -56,8 +56,6 @@ public class FragmentContacts extends Fragment implements NetworkChangeListener 
         initListeners();
         setNetworkObserver();
         return b.getRoot();
-
-
     }
 
     private void setNetworkObserver() {
@@ -89,7 +87,6 @@ public class FragmentContacts extends Fragment implements NetworkChangeListener 
 
     private void initListeners() {
         b.recGroupContact.setOnClickListener(view -> hideSoftKeyboard(getActivity()));
-
     }
 
     private void setRecycler() {

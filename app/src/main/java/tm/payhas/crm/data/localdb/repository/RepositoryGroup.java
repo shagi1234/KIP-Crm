@@ -25,12 +25,10 @@ import tm.payhas.crm.data.localdb.room.MessagesDatabase;
 import tm.payhas.crm.data.localdb.preference.AccountPreferences;
 
 public class RepositoryGroup {
-
     private final DaoGroup daoGroup;
     private final Context context;
     public LiveData<List<EntityGroup>> allGroups;
     private final String TAG = "Repository_group";
-
     public RepositoryGroup(Context context) {
         this.context = context;
         MessagesDatabase messagesDatabase = MessagesDatabase.getInstance(context);

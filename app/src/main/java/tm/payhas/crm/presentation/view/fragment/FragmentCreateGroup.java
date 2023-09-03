@@ -159,7 +159,5 @@ public class FragmentCreateGroup extends Fragment implements OnUserCountChangeLi
     public void avatarUrl(String avatar) {
         avatarUrl = avatar;
         Picasso.get().load(BASE_PHOTO + avatar).placeholder(R.color.primary).into(b.groupAvatar);
-
-
     }
 }

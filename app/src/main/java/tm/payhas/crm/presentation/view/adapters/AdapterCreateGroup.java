@@ -120,7 +120,7 @@ public class AdapterCreateGroup extends RecyclerView.Adapter<AdapterCreateGroup.
         private void setUserInfo(EntityUserInfo oneUser) {
             if (oneUser.getLastActivity() != null)
                 lastSeen.setText(String.format("%s %s", normalDate(oneUser.getLastActivity()), normalTime(oneUser.getLastActivity())));
-            nameSurname.setText(String.format("%s %s", oneUser.getPersonalData().getName(), oneUser.getPersonalData().getSurname()));
+            nameSurname.setText(oneUser.getPersonalData().getName()+" "+oneUser.getPersonalData().getLastName());
             Picasso.get().load(BASE_PHOTO + oneUser.getAvatar()).placeholder(R.color.primary).into(avatar);
         }
 

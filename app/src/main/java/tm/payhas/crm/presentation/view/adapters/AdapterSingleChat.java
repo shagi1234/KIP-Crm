@@ -487,7 +487,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
         @RequiresApi(api = Build.VERSION_CODES.Q)
         private void setListeners(EntityMessage oneMessage) {
             itemView.setOnLongClickListener(view -> {
-                chatMenu.showMenu(oneMessage, seekBar, true, false);
+                chatMenu.showMenu(oneMessage, seekBar, true, true);
                 return true;
             });
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -648,7 +648,7 @@ public class AdapterSingleChat extends RecyclerView.Adapter<RecyclerView.ViewHol
                 senderGroupLayout.setVisibility(View.GONE);
             }
             itemView.setOnLongClickListener(view -> {
-                chatMenu.showMenu(oneMessage, seekBar, false, false);
+                chatMenu.showMenu(oneMessage, seekBar, false, true);
                 return true;
             });
             voiceInformation.setText(oneMessage.getAttachment().getSize() / 1000 + "KB");

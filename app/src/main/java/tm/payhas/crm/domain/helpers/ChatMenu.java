@@ -5,6 +5,8 @@ import static tm.payhas.crm.data.remote.api.network.Network.BASE_URL;
 
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -58,15 +60,22 @@ public class ChatMenu implements DownloadProgressListener {
         popupMenu.setGravity(popupGravity);
         popupMenu.getMenuInflater().inflate(R.menu.message_menu, popupMenu.getMenu());
         MenuItem download = popupMenu.getMenu().findItem(R.id.download);
+        MenuItem copy = popupMenu.getMenu().findItem(R.id.copy);
         MenuItem delete = popupMenu.getMenu().findItem(R.id.delete);
         delete.setVisible(isSent);
         download.setVisible(isFile);
+        copy.setVisible(!isFile);
 
         popupMenu.setForceShowIcon(true);
         popupMenu.setGravity(Gravity.CLIP_HORIZONTAL);
         popupMenu.setOnMenuItemClickListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.copy:
+                    ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                    // Create a ClipData object to hold the text
+                    ClipData clipData = ClipData.newPlainText("Message", message.getText());
+                    // Set the data to the clipboard
+                    clipboardManager.setPrimaryClip(clipData);
                     return true;
                 case R.id.delete:
                     viewModelChatRoom.deleteMessage(message.getId());
